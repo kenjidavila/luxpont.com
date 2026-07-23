@@ -220,6 +220,7 @@ button { font-family:inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  .reveal{ opacity:1 !important; transform:none !important; }
 }
 
 /* ════════════════════════════════════════════════════════
@@ -237,7 +238,7 @@ button { font-family:inherit; }
 .body-text strong { color:var(--black); font-weight:500; }
 .body-text em { font-style:italic; }
 
-.reveal { opacity:0; transform:translateY(22px); transition:opacity 0.8s var(--ease), transform 0.8s var(--ease); }
+.reveal { opacity:0; transform:translateY(26px); transition:opacity 0.9s var(--ease), transform 0.9s var(--ease); will-change:opacity, transform; }
 .reveal.in { opacity:1; transform:none; }
 
 @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
@@ -336,9 +337,9 @@ body.lang-banner-active #nav{ top:41px; }
 .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:stretch; }
 @media(max-width:960px){ .grid-2{ grid-template-columns:1fr; gap:48px; } }
 
-.media-frame{ position:relative; overflow:hidden; min-height:420px; border:1px solid var(--border); border-radius:14px; }
-.media-frame img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
-@media(max-width:960px){ .media-frame{ min-height:320px; } }
+.media-frame{ position:relative; display:block; overflow:hidden; min-height:420px; height:100%; align-self:stretch; margin:0; padding:0; background:none; border:1px solid var(--border); border-radius:14px; }
+.media-frame img{ display:block; width:100%; height:100%; object-fit:cover; object-position:center; position:absolute; inset:0; margin:0; padding:0; border:none; }
+@media(max-width:960px){ .media-frame{ min-height:320px; height:auto; } }
 
 .pill-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
 .pill{ font-family:var(--mono); font-size:8px; letter-spacing:0.14em; text-transform:uppercase; color:var(--black); opacity:0.55; border:1px solid rgba(0,0,0,0.15); border-radius:999px; padding:5px 13px; }
@@ -972,10 +973,14 @@ if (heroVideo && reduceMotion) {
   heroVideo.removeAttribute('loop');
 }
 
-// ── REVEAL ON SCROLL — fades in AND out as sections cross the viewport ───────
+// ── REVEAL ON SCROLL — fades in AND out as content crosses the viewport ──────
+// Symmetric top/bottom margin so each element fades in a touch before it
+// reaches the edge and fades out a touch before it fully leaves, instead of
+// popping in/out right at the viewport boundary. IntersectionObserver only
+// (no scroll listener) so this stays off the main thread while scrolling.
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => e.target.classList.toggle('in', e.isIntersecting));
-}, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+}, { threshold: 0.12, rootMargin: '-8% 0px -8% 0px' });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 // ── GALLERY ARROW CONTROLS ───────────────────────────────────────────────────
