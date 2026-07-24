@@ -143,11 +143,14 @@ if (btnCookieAccept) btnCookieAccept.addEventListener('click', acceptCookies);
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqegodkr';
 const contactForm = document.getElementById('contact-form');
 if (contactForm) {
+  const btnTextEl = document.getElementById('btn-text');
+  const idleLabel = btnTextEl ? btnTextEl.textContent : '';
+
   contactForm.addEventListener('submit', async function(e){
     e.preventDefault();
     const gdpr = document.getElementById('f-gdpr');
     if (!gdpr || !gdpr.checked) {
-      alert('Por favor, acepte la Política de Privacidad para enviar el formulario.');
+      alert(contactForm.dataset.gdprAlert || idleLabel);
       return;
     }
     const btn = document.getElementById('submit-btn');
@@ -157,7 +160,7 @@ if (contactForm) {
     const errorMsg = document.getElementById('form-error');
 
     btn.disabled = true;
-    btnText.textContent = 'Enviando...';
+    btnText.textContent = btn.dataset.sending || idleLabel;
     btnArrow.style.display = 'none';
 
     const formData = new FormData(contactForm);
@@ -170,14 +173,14 @@ if (contactForm) {
         contactForm.reset();
         successMsg.style.display = 'block';
         errorMsg.style.display = 'none';
-        btnText.textContent = 'Mensaje enviado';
+        btnText.textContent = btn.dataset.sent || idleLabel;
       } else {
         throw new Error('Server error');
       }
     } catch (err) {
       errorMsg.style.display = 'block';
       successMsg.style.display = 'none';
-      btnText.textContent = 'Solicitar una primera conversación';
+      btnText.textContent = idleLabel;
       btnArrow.style.display = 'inline';
       btn.disabled = false;
     }
@@ -185,9 +188,14 @@ if (contactForm) {
 }
 
 // ── LANGUAGE DETECTION BANNER ────────────────────────────────────────────────
+// Offers the visitor's browser-preferred language when it differs from the
+// language of the page they landed on. Works the same on all three sites
+// (ES/EN/FR) since it always excludes the current page's own language.
 (function detectLanguage(){
   const DISMISS_KEY = 'lux_lang_dismissed';
   if (sessionStorage.getItem(DISMISS_KEY)) return;
+
+  const currentLang = (document.documentElement.lang || 'es').split('-')[0];
 
   const lang = (navigator.language || navigator.userLanguage || 'es').toLowerCase();
   const primary = lang.split('-')[0];
@@ -200,23 +208,24 @@ if (contactForm) {
 
   const frRegions = ['fr','be','ch','ca','lu','mc','sn','ci','cm','ml','bf','ne','tg','bj','ga','cg','cd','mg','rw','bi','dj','km','sc','ht','gp','mq','gf','re','yt','nc','pf','wf','pm','mf','bl'];
   const enRegions = ['us','gb','au','ca','nz','ie','za','sg','ng','gh','ke','ug','tz','zm','zw','bw','na','mw','rw','ss','sd','et','ph','jm','tt','bb','bs','ag','lc','vc','kn','gd','dm','bz','gy','sl','lr','gm','ls','sz','mz','pw','fj','pg','sb','to','tv','ki','ws','vu'];
+  const esRegions = ['mx','ar','co','pe','ve','cl','ec','gt','cu','bo','do','hn','py','sv','ni','cr','pa','uy','gq'];
 
   let showLang = null;
   if (primary === 'fr' || frRegions.includes(region)) showLang = 'fr';
   else if (primary === 'en' || enRegions.includes(region)) showLang = 'en';
-  if (!showLang) return;
+  else if (primary === 'es' || esRegions.includes(region)) showLang = 'es';
+  if (!showLang || showLang === currentLang) return;
 
-  if (showLang === 'fr') {
-    text.textContent = 'Ce site est disponible en français.';
-    btn.textContent = 'Voir en français';
-    btn.href = 'https://luxpont.com/fr/';
-    btn.setAttribute('hreflang', 'fr');
-  } else {
-    text.textContent = 'This site is available in English.';
-    btn.textContent = 'View in English';
-    btn.href = 'https://luxpont.com/en/';
-    btn.setAttribute('hreflang', 'en');
-  }
+  const copy = {
+    es: { text: 'Este sitio está disponible en español.', label: 'Ver en español', href: 'https://luxpont.com/' },
+    en: { text: 'This site is available in English.', label: 'View in English', href: 'https://luxpont.com/en/' },
+    fr: { text: 'Ce site est disponible en français.', label: 'Voir en français', href: 'https://luxpont.com/fr/' }
+  }[showLang];
+
+  text.textContent = copy.text;
+  btn.textContent = copy.label;
+  btn.href = copy.href;
+  btn.setAttribute('hreflang', showLang);
   banner.classList.add('visible');
   document.body.classList.add('lang-banner-active');
 })();
