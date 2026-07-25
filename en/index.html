@@ -342,6 +342,17 @@ body.lang-banner-active #nav{ top:41px; }
 .media-frame img{ display:block; width:100%; height:100%; object-fit:cover; object-position:center; position:absolute; inset:0; margin:0; padding:0; border:none; }
 @media(max-width:960px){ .media-frame{ min-height:320px; height:auto; } }
 
+/* Split screen, full-bleed image half — no white frame, no gutter on the media side */
+.section.split{ padding:0; display:grid; grid-template-columns:1fr 1fr; align-items:stretch; gap:0; }
+.split-text{ padding:var(--section) var(--gutter); display:flex; flex-direction:column; justify-content:center; }
+.split-media{ position:relative; display:block; overflow:hidden; min-height:480px; height:100%; margin:0; padding:0; background:none; border:none; border-radius:0; }
+.split-media img{ display:block; width:100%; height:100%; object-fit:cover; object-position:center; position:absolute; inset:0; margin:0; padding:0; border:none; }
+@media(max-width:960px){
+  .section.split{ grid-template-columns:1fr; }
+  .split-text{ padding:64px var(--gutter) 44px; }
+  .split-media{ min-height:320px; height:64vw; }
+}
+
 .pill-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
 .pill{ font-family:var(--mono); font-size:8px; letter-spacing:0.14em; text-transform:uppercase; color:var(--black); opacity:0.55; border:1px solid rgba(0,0,0,0.15); border-radius:999px; padding:5px 13px; }
 .pull-quote{ border-left:2px solid var(--gold); padding-left:24px; margin-top:38px; }
@@ -593,8 +604,8 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
   </div>
 
   <!-- ══ ABOUT LUXPONT ══ -->
-  <section id="firma" class="section grid-2">
-    <div class="reveal">
+  <section id="firma" class="section split">
+    <div class="split-text reveal">
       <div class="label">About Luxpont</div>
       <h2 class="h2-display">Wealth that outlasts<br>generations <em>is structured today.</em></h2>
       <div class="body-text" style="margin-top:24px">
@@ -611,7 +622,7 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
         <span class="pill">KYC</span>
       </div>
     </div>
-    <div class="media-frame reveal" style="border-radius:0;border:none">
+    <div class="split-media reveal">
       <img src="/assets/redesign/img/about.webp" alt="Classical European architecture at sunset" loading="lazy">
     </div>
   </section>
@@ -711,8 +722,8 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
   </section>
 
   <!-- ══ GBP WEALTH ACCOUNT — complementary service ══ -->
-  <section class="section bg-light border-t grid-2">
-    <div class="reveal">
+  <section class="section bg-light border-t split">
+    <div class="split-text reveal">
       <div class="label">A Luxpont Service</div>
       <h2 class="h2-display">Sterling Wealth Account (GBP)</h2>
       <div class="pull-quote" style="margin-top:28px">
@@ -720,7 +731,7 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
       </div>
       <p class="body-text" style="margin-top:20px">We open an investment account in the United Kingdom, in pounds sterling, with access to an investment-grade fixed-income portfolio — rated A or above — and selected equities, targeting a net return in the region of 10% a year. Your capital stays available and in sterling: shielded from your home currency's volatility and from hostile political or fiscal environments. Return and store of value, at the same time.</p>
     </div>
-    <div class="media-frame reveal" style="min-height:460px;border-radius:0;border:none">
+    <div class="split-media reveal">
       <img src="/assets/redesign/img/uk.webp" alt="Palace of Westminster, London" loading="lazy">
     </div>
   </section>
@@ -802,11 +813,11 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
   </section>
 
   <!-- ══ COVERAGE ══ -->
-  <section id="cobertura" class="section bg-light border-t grid-2">
-    <div class="media-frame reveal" style="min-height:520px">
+  <section id="cobertura" class="section bg-light border-t split">
+    <div class="split-media reveal">
       <img src="/assets/redesign/img/madrid.webp" alt="Edificio Canalejas, Madrid" loading="lazy">
     </div>
-    <div class="reveal">
+    <div class="split-text reveal">
       <div class="label">Coverage</div>
       <div class="foco-list">
         <div class="foco-item"><div class="t">Primary focus.</div><p>Continental Europe — the Netherlands, Luxembourg, Switzerland, Spain and France —: solid structures, tax efficiency and real banking access.</p></div>
