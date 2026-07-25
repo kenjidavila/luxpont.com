@@ -19,25 +19,12 @@ function onScroll(){
     ticking = false;
     const y = window.scrollY || 0;
 
-    // Nav only turns solid once the hero's sticky panel has fully scrolled
-    // past, so it never cuts a white bar across the video while pinned.
-    const navThreshold = heroEl ? Math.max(80, heroEl.offsetHeight - window.innerHeight - 120) : 80;
+    // Nav only turns solid once the hero has mostly scrolled past, so it
+    // never cuts a white bar across the video while the hero is in view.
+    const navThreshold = heroEl ? Math.max(80, heroEl.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
 
     if (scrollHint) scrollHint.style.opacity = Math.max(0, 1 - y / 260);
-
-    // Hero video scroll-scrub — maps how far the tall #hero track has
-    // scrolled (while its inner panel stays pinned) onto the video's
-    // currentTime, so playback position tracks scroll position.
-    if (heroVideo && heroEl && !reduceMotion && heroVideo.duration) {
-      const total = heroEl.offsetHeight - window.innerHeight;
-      const scrolled = Math.min(Math.max(-heroEl.getBoundingClientRect().top, 0), total);
-      const fraction = total > 0 ? scrolled / total : 0;
-      const targetTime = fraction * heroVideo.duration;
-      if (Math.abs(heroVideo.currentTime - targetTime) > 0.04) {
-        heroVideo.currentTime = targetTime;
-      }
-    }
 
     // Método CBCA — interactive question reveal
     if (preguntasTrack && preguntasSticky && !reduceMotion) {
@@ -55,19 +42,12 @@ function onScroll(){
 }
 window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', onScroll);
-
-if (heroVideo) {
-  if (reduceMotion) {
-    heroVideo.loop = true;
-  } else {
-    // Let the video render its first frame, then pause and hand playback
-    // control fully over to scroll position.
-    heroVideo.addEventListener('playing', () => heroVideo.pause(), { once: true });
-    heroVideo.addEventListener('loadedmetadata', onScroll);
-  }
-}
-
 onScroll();
+
+if (heroVideo && reduceMotion) {
+  heroVideo.removeAttribute('autoplay');
+  heroVideo.removeAttribute('loop');
+}
 
 // ── REVEAL ON SCROLL — fades in AND out as content crosses the viewport ──────
 // Symmetric top/bottom margin so each element fades in a touch before it
