@@ -163,13 +163,14 @@
 
 <!-- TYPE SYSTEM:
  Display headings → Cormorant Garamond 300/400 (prestige, heritage)
- Body / UI        → Open Sans      300/400/500 (clarity, legibility)
+ Body / UI        → Inter          300/400/500/600 (clarity, legibility)
  Data / labels     → DM Mono       400 (precision, technical)
- Palette — black #0f0f0f, white, gold #C9A84C, muted #5a5a5a, light #f5f5f5
+ Palette (tema claro) — marfil #f6f3ec, navy #16223f, oro #b7944e
 -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="/assets/css/site.css">
+<link rel="preload" as="image" href="/assets/redesign/img/hero-atrio-4k.webp" fetchpriority="high">
 </head>
 <body>
 
@@ -227,18 +228,23 @@
 
 <main id="main">
 
-  <!-- ══ HERO — video only, autoplay/loop background ══ -->
+  <!-- ══ HERO — image 4K plein cadre, atrium avec sphère armillaire ══ -->
   <div id="hero">
-      <video id="hero-video" src="/assets/redesign/video/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
-      <div class="hero-overlay"></div>
+      <div class="hero-bg">
+        <picture>
+          <source type="image/webp" srcset="/assets/redesign/img/hero-atrio-4k.webp">
+          <img src="/assets/redesign/img/hero-atrio-4k.jpg" alt="" width="2560" height="1707" fetchpriority="high">
+        </picture>
+      </div>
+      <div class="hero-scrim"></div>
       <div class="hero-grain"></div>
       <div class="hero-content">
-        <div class="hero-eyebrow">Cross Border Capital Architecture (CBCA)</div>
-        <h1 class="hero-h1">Repousser les frontières.<br>Construire l'avenir.<br><em>Préserver votre héritage, le faire perdurer.</em></h1>
+        <div class="hero-eyebrow">Cross Border Capital Architecture</div>
+        <h1 class="hero-h1">Repousser les frontières. Construire l'avenir.<br><em>Préserver votre héritage, le faire perdurer.</em></h1>
         <p class="hero-lead">Le cabinet spécialisé dans l'application de <em>Cross Border Capital Architecture</em> : la doctrine avec laquelle nous concevons, construisons, activons, préservons et faisons évoluer des structures patrimoniales transfrontalières.</p>
         <div class="hero-actions">
-          <a href="#contacto" class="btn-outline">Demander un entretien</a>
-          <a href="#metodo" class="btn-outline secondary">Découvrir la méthode CBCA</a>
+          <a href="#contacto" class="btn-solid">Demander un entretien</a>
+          <a href="#metodo" class="btn-outline">Découvrir la méthode CBCA</a>
         </div>
       </div>
       <div class="hero-scroll" id="heroScrollHint"><div class="hs-line"></div></div>

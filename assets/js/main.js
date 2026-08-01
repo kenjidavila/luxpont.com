@@ -1,7 +1,6 @@
 // ── NAV SCROLL STATE + METODO SCROLL-REVEAL (single rAF loop) ────────────────
 const nav = document.getElementById('nav');
 const heroEl = document.getElementById('hero');
-const heroVideo = document.getElementById('hero-video');
 const scrollHint = document.getElementById('heroScrollHint');
 const preguntasTrack = document.getElementById('preguntasTrack');
 const preguntasItems = preguntasTrack ? Array.from(preguntasTrack.querySelectorAll('.pregunta-item')) : [];
@@ -20,7 +19,7 @@ function onScroll(){
     const y = window.scrollY || 0;
 
     // Nav only turns solid once the hero has mostly scrolled past, so it
-    // never cuts a white bar across the video while the hero is in view.
+    // never cuts a bar across the hero image while the hero is in view.
     const navThreshold = heroEl ? Math.max(80, heroEl.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
 
@@ -43,11 +42,6 @@ function onScroll(){
 window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', onScroll);
 onScroll();
-
-if (heroVideo && reduceMotion) {
-  heroVideo.removeAttribute('autoplay');
-  heroVideo.removeAttribute('loop');
-}
 
 // ── REVEAL ON SCROLL — fades in AND out as content crosses the viewport ──────
 // Symmetric top/bottom margin so each element fades in a touch before it
