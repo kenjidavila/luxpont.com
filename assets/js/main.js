@@ -1,6 +1,8 @@
-// ── NAV SCROLL STATE + METODO SCROLL-REVEAL (single rAF loop) ────────────────
+// ── NAV SCROLL STATE + HERO WHITEOUT + METODO SCROLL-REVEAL (single rAF loop) ─
 const nav = document.getElementById('nav');
-const heroEl = document.getElementById('hero');
+const heroTrack = document.getElementById('hero-track');
+const heroWhiteout = document.querySelector('.hero-whiteout');
+const heroBgImg = document.querySelector('.hero-bg img');
 const scrollHint = document.getElementById('heroScrollHint');
 const preguntasTrack = document.getElementById('preguntasTrack');
 const preguntasItems = preguntasTrack ? Array.from(preguntasTrack.querySelectorAll('.pregunta-item')) : [];
@@ -18,9 +20,22 @@ function onScroll(){
     ticking = false;
     const y = window.scrollY || 0;
 
-    // Nav only turns solid once the hero has mostly scrolled past, so it
-    // never cuts a bar across the hero image while the hero is in view.
-    const navThreshold = heroEl ? Math.max(80, heroEl.offsetHeight - 120) : 80;
+    // Hero whiteout — pinned #hero sits inside a tall #hero-track; the scroll
+    // fraction through that track (0..1) drives the marfil overlay opacity
+    // and a light brightness/blur lift on the photo, so the image "aclara"
+    // in lockstep with the scroll instead of on a timer.
+    if (heroTrack && !reduceMotion) {
+      const trackRect = heroTrack.getBoundingClientRect();
+      const total = Math.max(1, heroTrack.offsetHeight - window.innerHeight);
+      const scrolled = -trackRect.top;
+      const p = Math.max(0, Math.min(1, scrolled / total));
+      if (heroWhiteout) heroWhiteout.style.opacity = p;
+      if (heroBgImg) heroBgImg.style.filter = `brightness(${1 + p * 0.3}) blur(${p * 3}px)`;
+    }
+
+    // Nav only turns solid once the hero track has mostly scrolled past, so
+    // it never cuts a bar across the hero image while the hero is pinned.
+    const navThreshold = heroTrack ? Math.max(80, heroTrack.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
 
     if (scrollHint) scrollHint.style.opacity = Math.max(0, 1 - y / 260);
