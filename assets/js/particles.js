@@ -1,46 +1,52 @@
-// Hero particle field — Canvas2D, no WebGL. One landmark only: the
-// Coliseo, matched point-by-point against the exact reference image
-// "Coliseo en particulas.png" (see particle-shapes.js header for the
-// extraction method) — nothing cropped out of that reference, and every
-// particle carries the real RGB sampled from its source pixel.
+// Hero particle field — Canvas2D, no WebGL. Two landmarks alternate in
+// the same hero: Coliseo (particles right, text left) and Metropolis
+// (particles left, text right) — each matched point-by-point against its
+// exact reference image (see particle-shapes.js header for the extraction
+// method). Every extracted point renders, every frame, for whichever
+// landmark is active — no thinning, no live-render budget. Rendering
+// that many points with individual ctx.arc()+fill() calls (what earlier
+// iterations of this file did) is too many draw calls for 60fps well
+// before reaching the full count, so this writes directly into a pixel
+// buffer (ImageData) each frame — one bounds-checked array write per
+// particle — and blits the whole buffer with a single putImageData()
+// call. That's what makes full density affordable at 60fps.
 //
-// Every one of the ~188k extracted points renders, every frame — no
-// thinning, no live-render budget, no separate "full detail" render path
-// for a resting state. Rendering that many points with individual
-// ctx.arc()+fill() calls (what earlier iterations of this file did) is
-// too many draw calls for 60fps well before reaching the full count, so
-// this writes directly into a pixel buffer (ImageData) each frame — one
-// bounds-checked array write per particle — and blits the whole buffer
-// with a single putImageData() call. That's what makes full density
-// affordable at 60fps, and it's also why build/hold/fade can all read
-// from the exact same point set: there's no "thin it for the animated
-// phases, use everything for the static one" split left to cause a seam.
+// Layout: on wide screens the field fully covers one side of the hero,
+// edge to edge, from the bottom of the nav pill down to the bottom of the
+// viewport — a "cover" fit (like CSS background-size:cover) against the
+// real .hero-content DOM rect, not a fixed image aspect ratio. Which side
+// depends on which landmark is active: Coliseo covers the right (text
+// stays on the left), Metropolis covers the left (text moves right).
+// .hero-content itself is what physically slides sides — a slow CSS
+// `left` transition toggled by the .mirrored class — and this file
+// re-measures its live position every single frame (not just on resize)
+// so the particle field's cover region continuously tracks the text
+// while it's mid-slide. That continuous coupling is what makes the
+// landmark swap read as one organic motion instead of a jump cut: text
+// and particles move together, not text has jumped >> particles catch up.
+// On narrow screens there's no room for a side split, so it falls back to
+// centered, behind (centered) text, same for either landmark.
 //
-// Layout: on wide screens the field fully covers the right side of the
-// hero, edge to edge, from the bottom of the nav pill down to the bottom
-// of the viewport — a "cover" fit (like CSS background-size:cover)
-// against the real nav/.hero-content DOM rects, not a fixed image aspect
-// ratio, so it stays full-bleed at any viewport size instead of
-// letterboxing. On narrow screens it falls back to centered, behind the
-// (centered) text.
-//
-// One continuous cycle: build (particles fly in and assemble), hold
-// (steady), fade (each particle detaches on its own stagger and drifts
-// slowly downward as it dims, like dust settling, inviting a scroll) are
-// three windows of the same position/opacity curve over the same array.
+// One continuous cycle per landmark: build (particles fly in from the
+// nearest bottom corner and assemble), hold (steady), fade (each particle
+// detaches on its own stagger and drifts slowly downward as it dims, like
+// dust settling, inviting a scroll) — then the next landmark takes over
+// the same way, mirrored.
 (function () {
   const canvas = document.getElementById('particle-canvas');
-  if (!canvas || !window.LUXPONT_SHAPES) return;
+  if (!canvas || !window.LUXPONT_SHAPES || !window.LUXPONT_SHAPES.length) return;
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
-
-  const shapeData = window.LUXPONT_SHAPES[0];
-  if (!shapeData) return;
 
   const navEl = document.getElementById('nav');
   const heroContentEl = document.querySelector('.hero-content');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Coliseo builds on the right (text stays put on the left); Metropolis
+  // mirrors to the left (text slides right). Anything not listed defaults
+  // to the normal (non-mirrored) side.
+  const MIRRORED = { metropolis: true };
 
   function mulberry32(seed) {
     let s = seed;
@@ -55,73 +61,28 @@
   function lerp(a, b, t) { return a + (b - a) * t; }
   function smooth(t) { const k = Math.max(0, Math.min(1, t)); return k * k * (3 - 2 * k); }
 
-  const totalPts = shapeData.points.length / 2;
-  const points = shapeData.points;
-  const colors = shapeData.colors;
+  function buildShapeState(shapeData, seed) {
+    const points = shapeData.points;
+    const colors = shapeData.colors;
+    const totalPts = points.length / 2;
 
-  // Real extent of the point cloud in its own normalized units (computed
-  // once from the actual data instead of assumed, so this keeps working
-  // if the extraction ever changes).
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (let i = 0; i < points.length; i += 2) {
-    const x = points[i], y = points[i + 1];
-    if (x < minX) minX = x; if (x > maxX) maxX = x;
-    if (y < minY) minY = y; if (y > maxY) maxY = y;
-  }
-  const shapeCx = (minX + maxX) / 2;
-  const shapeCy = (minY + maxY) / 2;
-  const xSpan = maxX - minX;
-  const ySpan = maxY - minY;
-
-  function computeLayout(width, height) {
-    const small = width < 760;
-    if (small) {
-      return {
-        cx: width * 0.5 - shapeCx * (Math.min(width, height) * 0.42),
-        cy: height * 0.56 - shapeCy * (Math.min(width, height) * 0.42),
-        scale: Math.min(width, height) * 0.42,
-      };
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (let i = 0; i < points.length; i += 2) {
+      const x = points[i], y = points[i + 1];
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
     }
-    const navBottom = navEl ? navEl.getBoundingClientRect().bottom : 90;
-    const contentRight = heroContentEl ? heroContentEl.getBoundingClientRect().right : width * 0.42;
-    const left = Math.min(contentRight + 24, width * 0.7);
-    const top = navBottom + 16;
-    const rectW = Math.max(1, width - left);
-    // A height-bound cover fit otherwise plants the shape's bounding box
-    // flush against the very bottom of the viewport with zero margin. The
-    // source scene isn't evenly dense along that edge (the tree's base is
-    // mostly sparse drifting dust, the building's base is solid stonework),
-    // so a flush-zero-margin bottom reads as an uneven, tilted ground line
-    // — the building crashing into the edge while the tree visibly floats
-    // above it. A small consistent bottom margin gives both sides the same
-    // breathing room instead.
-    const rectH = Math.max(1, height - top - 44);
-    // "cover" fit: scale so the shape fills the whole target rect on
-    // both axes (cropping whichever axis overflows), instead of
-    // "contain" fit, which would letterbox to preserve the source
-    // image's own aspect ratio.
-    const scale = Math.max(rectW / xSpan, rectH / ySpan);
-    return {
-      cx: left + rectW / 2 - shapeCx * scale,
-      cy: top + rectH / 2 - shapeCy * scale,
-      scale,
-    };
-  }
 
-  // Per-point static properties, precomputed once for the full ~188k-point
-  // set (typed arrays, not one JS object per particle — keeps this cheap
-  // in both memory and per-frame iteration cost).
-  const depth = new Float32Array(totalPts);
-  const phase = new Float32Array(totalPts);
-  const speed = new Float32Array(totalPts);
-  const wobble = new Float32Array(totalPts);
-  const size = new Float32Array(totalPts);
-  const isGlow = new Uint8Array(totalPts);
-  const buildDelay = new Float32Array(totalPts);
-  const fallDelay = new Float32Array(totalPts);
-  const twinkle = new Float32Array(totalPts);
-  {
-    const rand = mulberry32(101);
+    const depth = new Float32Array(totalPts);
+    const phase = new Float32Array(totalPts);
+    const speed = new Float32Array(totalPts);
+    const wobble = new Float32Array(totalPts);
+    const size = new Float32Array(totalPts);
+    const isGlow = new Uint8Array(totalPts);
+    const buildDelay = new Float32Array(totalPts);
+    const fallDelay = new Float32Array(totalPts);
+    const twinkle = new Float32Array(totalPts);
+    const rand = mulberry32(seed);
     for (let i = 0; i < totalPts; i++) {
       const r = colors[i * 3], g = colors[i * 3 + 1], b = colors[i * 3 + 2];
       const d = rand();
@@ -135,25 +96,80 @@
       fallDelay[i] = rand() * 0.55;
       twinkle[i] = rand() * Math.PI * 2;
     }
+    const order = new Uint32Array(totalPts);
+    for (let i = 0; i < totalPts; i++) order[i] = i;
+    Array.prototype.sort.call(order, (a, b) => depth[a] - depth[b]);
+
+    return {
+      name: shapeData.name, points, colors, totalPts, order,
+      shapeCx: (minX + maxX) / 2, shapeCy: (minY + maxY) / 2,
+      xSpan: maxX - minX, ySpan: maxY - minY,
+      mirrored: !!MIRRORED[shapeData.name],
+      depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle,
+    };
   }
-  // Depth-sorted paint order once, so writing pixels in this order gives
-  // back-to-front layering "for free" (a later write at the same pixel
-  // simply wins, which is correct front-to-back precedence here).
-  const order = new Uint32Array(totalPts);
-  for (let i = 0; i < totalPts; i++) order[i] = i;
-  Array.prototype.sort.call(order, (a, b) => depth[a] - depth[b]);
+
+  const shapeStates = window.LUXPONT_SHAPES.map((s, idx) => buildShapeState(s, 101 + idx * 37));
+
+  function computeLayout(width, height, shape) {
+    const small = width < 760;
+    if (small) {
+      const s = Math.min(width, height) * 0.42;
+      return {
+        cx: width * 0.5 - shape.shapeCx * s,
+        cy: height * 0.56 - shape.shapeCy * s,
+        scale: s,
+      };
+    }
+    const navBottom = navEl ? navEl.getBoundingClientRect().bottom : 90;
+    const rect = heroContentEl ? heroContentEl.getBoundingClientRect() : null;
+    let left, right;
+    if (shape.mirrored) {
+      // particles cover the left side, up to the text block's live edge
+      left = 0;
+      right = rect ? Math.max(1, rect.left - 24) : width * 0.3;
+    } else {
+      left = rect ? Math.min(rect.right + 24, width * 0.7) : width * 0.42;
+      right = width;
+    }
+    const top = navBottom + 16;
+    const rectW = Math.max(1, right - left);
+    // Bottom margin so the shape's bounding box doesn't sit flush against
+    // the very edge of the viewport — the source scenes aren't evenly
+    // dense along that edge (sparse drifting dust on one side, solid
+    // stonework on the other), so a zero-margin crop reads as an uneven,
+    // tilted ground line.
+    const rectH = Math.max(1, height - top - 44);
+    const scale = Math.max(rectW / shape.xSpan, rectH / shape.ySpan);
+    return {
+      cx: left + rectW / 2 - shape.shapeCx * scale,
+      cy: top + rectH / 2 - shape.shapeCy * scale,
+      scale,
+    };
+  }
 
   const BUILD = 4.2;  // seconds to fly in from the corner and assemble
   const HOLD = 4.4;   // seconds fully formed
   const FADE = 5.8;   // seconds — slow: each particle detaches on its own
                        // stagger and drifts down as it fades, not a flat dim
-  const TOTAL = BUILD + HOLD + FADE;
+  const PER_SHAPE = BUILD + HOLD + FADE;
+  const TOTAL = PER_SHAPE * shapeStates.length;
 
   let width = 0, height = 0, dpr = 1;
-  let currentLayout = { cx: 0, cy: 0, scale: 1 };
   let imgData = null;
   let buf = null;
   let dw = 0, dh = 0;
+  let lastShapeIdx = -1;
+  let cachedLayout = { cx: 0, cy: 0, scale: 1 };
+  let transitionEndsAt = -Infinity;
+  let needsLayoutRefresh = true; // forces one fresh measurement on first frame and after resize
+  // .hero-content is stationary for ~92% of each shape's time on screen —
+  // it only physically moves for the ~1.8s CSS transition right after a
+  // switch. Querying getBoundingClientRect() (forces a layout read) every
+  // single frame regardless was measured to cause real, compounding frame-
+  // time growth over a running page; only re-querying while a slide is
+  // actually in flight removes that cost for the steady-state 92%.
+  const TRANSITION_WINDOW = 1.9;
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -167,7 +183,7 @@
     canvas.style.height = height + 'px';
     imgData = ctx.createImageData(dw, dh);
     buf = imgData.data;
-    currentLayout = computeLayout(width, height);
+    needsLayoutRefresh = true;
   }
   resize();
   window.addEventListener('resize', resize);
@@ -178,15 +194,35 @@
     // the sign of the dividend, so an unclamped negative time would floor
     // to a negative phase and break the build math. Clamp at zero.
     const localT = Math.max(0, time) % TOTAL;
+    const shapeIdx = Math.min(shapeStates.length - 1, Math.floor(localT / PER_SHAPE));
+    const shape = shapeStates[shapeIdx];
+    const t = localT - shapeIdx * PER_SHAPE;
+
+    if (shapeIdx !== lastShapeIdx) {
+      lastShapeIdx = shapeIdx;
+      if (heroContentEl) heroContentEl.classList.toggle('mirrored', shape.mirrored);
+      transitionEndsAt = time + TRANSITION_WINDOW;
+    }
 
     let phaseName, phaseLocal;
-    if (localT < BUILD) { phaseName = 'build'; phaseLocal = localT / BUILD; }
-    else if (localT < BUILD + HOLD) { phaseName = 'hold'; phaseLocal = 1; }
-    else { phaseName = 'fade'; phaseLocal = (localT - BUILD - HOLD) / FADE; }
+    if (t < BUILD) { phaseName = 'build'; phaseLocal = t / BUILD; }
+    else if (t < BUILD + HOLD) { phaseName = 'hold'; phaseLocal = 1; }
+    else { phaseName = 'fade'; phaseLocal = (t - BUILD - HOLD) / FADE; }
 
-    const { cx, cy, scale } = currentLayout;
-    const cornerX = width * 1.02;
+    // Re-measured only while .hero-content is actually mid-slide, so the
+    // particle field's cover region tracks it continuously during the
+    // transition; the rest of the cycle reuses the last measurement since
+    // the text isn't moving.
+    if (time < transitionEndsAt || needsLayoutRefresh) {
+      cachedLayout = computeLayout(width, height, shape);
+      needsLayoutRefresh = false;
+    }
+    const { cx, cy, scale } = cachedLayout;
+    const cornerX = shape.mirrored ? width * -0.02 : width * 1.02;
     const cornerY = height * 1.04;
+
+    const { points, colors, order, totalPts } = shape;
+    const { depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle } = shape;
 
     buf.fill(255); // reset the whole buffer to opaque white
 
@@ -260,7 +296,7 @@
   }
 
   if (reduceMotion) {
-    draw(BUILD + HOLD * 0.5); // static frame: fully assembled
+    draw(BUILD + HOLD * 0.5); // static frame: first landmark, fully assembled
     return;
   }
 
