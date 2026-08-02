@@ -1,13 +1,14 @@
 // Hero particle field — Canvas2D, no WebGL. Architecture ported from
 // @elise/particles (packages/particles/src/{field,particle-nucleus}.ts in
 // elise-web): pure canvas 2D, additive ("lighter") glow blending, particles
-// bucketed by depth before painting. What's new here: every particle target
-// is the EXACT centroid of a real ink dot detected in the source stipple
-// illustration (particle-shapes.js — connected-component labeling, not a
-// statistical resample), particles all originate from the bottom-right
-// corner and fly to their target to construct each reference, hold, fade
-// out, then the next reference builds the same way. Ink-black/oro on pure
-// white — no blue anywhere in the palette.
+// bucketed by depth before painting. Every particle target comes from
+// particle-shapes.js's high-density extraction of the source stipple
+// illustrations (real ink-pixel locations, proportional to true measured
+// ink area — see that file's header). Particles all originate from the
+// bottom-right corner and fly to their target to construct each reference,
+// hold, fade out, then the next reference builds the same way. Sequence:
+// Coliseo (right) -> Metrópolis (left) -> Castillo (center). Ink-black/oro
+// on pure white — no blue anywhere in the palette.
 (function () {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas || !window.LUXPONT_SHAPES) return;
@@ -17,7 +18,15 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isSmall = window.innerWidth < 760;
 
-  const SEQUENCE = ['coliseo', 'castillo', 'metropolis'];
+  const SEQUENCE = ['coliseo', 'metropolis', 'castillo'];
+  // horizontal anchor per shape on wide screens: coliseo hugs the right,
+  // metrópolis hugs the left, castillo builds centered. Castillo is wide
+  // and landscape (aspect ~2.4), so centered it would sit squarely behind
+  // the text column; nudged down and scaled down a touch so it reads as a
+  // backdrop under the copy instead of fighting it for legibility.
+  const ANCHOR_X = { coliseo: 0.74, metropolis: 0.26, castillo: 0.5 };
+  const ANCHOR_Y = { coliseo: 0.5, metropolis: 0.5, castillo: 0.66 };
+  const SCALE_MULT = { coliseo: 0.46, metropolis: 0.46, castillo: 0.36 };
   const shapesByName = {};
   window.LUXPONT_SHAPES.forEach((s) => { shapesByName[s.name] = s; });
 
@@ -41,16 +50,33 @@
   function lerpColor(a, b, t) { return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]; }
   function smooth(t) { const k = Math.max(0, Math.min(1, t)); return k * k * (3 - 2 * k); }
 
-  // Every real dot from the source becomes exactly one particle. On small
-  // screens a stride thins the pool for performance — still real detected
-  // points, just fewer of them, not a re-sample.
+  // The high-density extraction can carry 40k-130k real points per shape
+  // (particle-shapes.js). Rendering all of them every frame is too many
+  // canvas draw calls for a steady 60fps, so each shape's pool is thinned
+  // to a live-render budget via a partial Fisher-Yates pick (not a regular
+  // stride: the source array groups a dense blob's points consecutively,
+  // so a fixed-interval stride would over/under-sample in bursts — a
+  // shuffled pick keeps the thin spatially unbiased and preserves the
+  // real density gradient the extraction captured).
+  const LIVE_TARGET = isSmall ? 12000 : 24000;
+  function pickIndices(totalPts, target, rand) {
+    const n = Math.min(target, totalPts);
+    const idx = new Array(totalPts);
+    for (let i = 0; i < totalPts; i++) idx[i] = i;
+    for (let i = totalPts - 1; i > totalPts - n - 1 && i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      const tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp;
+    }
+    return idx.slice(totalPts - n);
+  }
   function buildParticles(shapeName, seed) {
     const s = shapesByName[shapeName];
     const totalPts = s.points.length / 2;
-    const stride = isSmall ? 3 : 1;
     const rand = mulberry32(seed);
+    const indices = pickIndices(totalPts, LIVE_TARGET, rand);
     const list = [];
-    for (let i = 0; i < totalPts; i += stride) {
+    for (let k = 0; k < indices.length; k++) {
+      const i = indices[k];
       const ct = rand();
       let color;
       let isGlow = false;
@@ -72,6 +98,10 @@
         twinkle: rand() * Math.PI * 2,
       });
     }
+    // Depth-sort once here instead of re-bucketing every frame: painting
+    // in ascending-depth order already gives the back-to-front layering
+    // the old per-frame bucket pass existed for, at a fraction of the cost.
+    list.sort((a, b) => a.depth - b.depth);
     return list;
   }
 
@@ -103,11 +133,6 @@
     ctx.fillRect(0, 0, width, height);
 
     const small = width < 760;
-    const cx = small ? width * 0.5 : width * 0.72;
-    const cy = small ? height * 0.58 : height * 0.5;
-    const scale = Math.min(width, height) * (small ? 0.4 : 0.46);
-    const cornerX = width * 1.02;
-    const cornerY = height * 1.04;
 
     // time can start marginally negative (a headless/first-frame timestamp
     // quirk where rAF's `now` lands a hair before `start`); JS's `%` keeps
@@ -116,17 +141,24 @@
     const t = Math.max(0, time) % TOTAL;
     const shapeIdx = Math.min(SEQUENCE.length - 1, Math.floor(t / PER_SHAPE));
     const localT = t - shapeIdx * PER_SHAPE;
-    const particles = shapeSets[SEQUENCE[shapeIdx]];
+    const shapeName = SEQUENCE[shapeIdx];
+    const particles = shapeSets[shapeName];
+
+    const cx = small ? width * 0.5 : width * ANCHOR_X[shapeName];
+    const cy = small ? height * 0.58 : height * ANCHOR_Y[shapeName];
+    const scale = Math.min(width, height) * (small ? 0.4 : SCALE_MULT[shapeName]);
+    const cornerX = width * 1.02;
+    const cornerY = height * 1.04;
 
     let phase, phaseLocal;
     if (localT < BUILD) { phase = 'build'; phaseLocal = localT / BUILD; }
     else if (localT < BUILD + HOLD) { phase = 'hold'; phaseLocal = 1; }
     else { phase = 'fade'; phaseLocal = (localT - BUILD - HOLD) / FADE; }
 
-    const BUCKETS = 12;
-    const buckets = new Array(BUCKETS);
-    for (let b = 0; b < BUCKETS; b++) buckets[b] = [];
-
+    // particles[] is pre-sorted by depth (ascending) once at build time, so
+    // painting straight through the array already gives back-to-front
+    // layering — no per-frame bucket allocation/push needed.
+    ctx.globalCompositeOperation = 'source-over';
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       const tScreenX = cx + p.tx * scale;
@@ -152,42 +184,28 @@
 
       if (x < -60 || x > width + 60 || y < -60 || y > height + 60) continue;
 
-      let bi = Math.floor(p.depth * BUCKETS);
-      if (bi >= BUCKETS) bi = BUCKETS - 1;
-      buckets[bi].push(x, y, p.size, p.color[0], p.color[1], p.color[2], p.isGlow ? 1 : 0, p.twinkle, opacity);
-    }
-
-    for (let b = 0; b < BUCKETS; b++) {
-      const arr = buckets[b];
-      for (let k = 0; k < arr.length; k += 9) {
-        const sx = arr[k], sy = arr[k + 1], size = arr[k + 2];
-        const r = arr[k + 3] | 0, g = arr[k + 4] | 0, bl = arr[k + 5] | 0;
-        const isGlow = arr[k + 6];
-        const twinkle = arr[k + 7];
-        const opacity = arr[k + 8];
-        if (isGlow) {
-          const bright = reduceMotion ? 0.85 : 0.6 + 0.4 * Math.sin(time * 2.2 + twinkle);
-          ctx.globalCompositeOperation = 'lighter';
-          const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, size * 3);
-          grad.addColorStop(0, `rgba(${r},${g},${bl},${0.7 * bright * opacity})`);
-          grad.addColorStop(0.5, `rgba(${r},${g},${bl},${0.14 * bright * opacity})`);
-          grad.addColorStop(1, `rgba(${r},${g},${bl},0)`);
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(sx, sy, size * 3, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.fillStyle = `rgba(${r},${g},${bl},${Math.min(1, bright * opacity)})`;
-          ctx.beginPath();
-          ctx.arc(sx, sy, size * 1.05, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.fillStyle = `rgba(${r},${g},${bl},${0.88 * opacity})`;
-          ctx.beginPath();
-          ctx.arc(sx, sy, size * 0.72, 0, Math.PI * 2);
-          ctx.fill();
-        }
+      const r = p.color[0] | 0, g = p.color[1] | 0, bl = p.color[2] | 0;
+      if (p.isGlow) {
+        const bright = reduceMotion ? 0.85 : 0.6 + 0.4 * Math.sin(time * 2.2 + p.twinkle);
+        ctx.globalCompositeOperation = 'lighter';
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, p.size * 3);
+        grad.addColorStop(0, `rgba(${r},${g},${bl},${0.7 * bright * opacity})`);
+        grad.addColorStop(0.5, `rgba(${r},${g},${bl},${0.14 * bright * opacity})`);
+        grad.addColorStop(1, `rgba(${r},${g},${bl},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = `rgba(${r},${g},${bl},${Math.min(1, bright * opacity)})`;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size * 1.05, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = `rgba(${r},${g},${bl},${0.88 * opacity})`;
+        ctx.beginPath();
+        ctx.arc(x, y, p.size * 0.72, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
   }
