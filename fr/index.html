@@ -228,10 +228,18 @@
 
 <main id="main">
 
-  <!-- ══ HERO + FIRMA — séquence fixe : l'image s'éclaircit et Firma apparaît au même endroit, sans défilement perceptible ══ -->
+  <!-- ══ SÉQUENCE FIXE — 12 diapositives superposées, sans défilement perceptible ══ -->
   <div id="hero-track">
-    <div id="firma" class="pin-anchor" aria-hidden="true"></div>
+    <div id="firma" class="pin-anchor" aria-hidden="true" style="top:108vh"></div>
+    <div id="metodo" class="pin-anchor" aria-hidden="true" style="top:468vh"></div>
+    <div id="mandatos" class="pin-anchor" aria-hidden="true" style="top:828vh"></div>
+    <div id="cobertura" class="pin-anchor" aria-hidden="true" style="top:1068vh"></div>
+    <div id="dossier" class="pin-anchor" aria-hidden="true" style="top:1188vh"></div>
+    <div id="contacto" class="pin-anchor" aria-hidden="true" style="top:1308vh"></div>
+
     <div class="pin-wrapper">
+
+      <!-- 01 · HERO -->
       <div id="hero" class="pin-layer">
         <div class="hero-bg">
           <picture>
@@ -253,298 +261,297 @@
         </div>
         <div class="hero-scroll" id="heroScrollHint"><div class="hs-line"></div></div>
       </div>
-      <div id="firma-panel" class="pin-layer">
-        <div class="museum-inner">
-          <div class="museum-head">
-            <div class="label">À propos de Luxpont</div>
-            <h2 class="h2-display">Le patrimoine qui traverse<br>les générations <em>se structure aujourd'hui.</em></h2>
-          </div>
-          <div class="museum-grid">
-            <figure class="museum-card">
-              <div class="museum-frame"><img src="/assets/redesign/img/about.webp" alt="Architecture européenne classique au coucher du soleil" loading="lazy"></div>
-              <figcaption>
-                <span class="museum-num">01</span>
-                <h3>Lorsqu'un patrimoine franchit des frontières</h3>
-                <p>Il cesse d'être une simple question juridique ou fiscale : il devient un problème d'architecture. Chaque juridiction ajoute une nouvelle couche — propriété, contrôle, risque, fiscalité, succession — et sans une structure conçue dès l'origine, le patrimoine croît plus vite que ce qui le soutient.</p>
-              </figcaption>
-            </figure>
-            <figure class="museum-card">
-              <div class="museum-frame"><img src="/assets/redesign/img/uk.webp" alt="Palais de Westminster, Londres" loading="lazy"></div>
-              <figcaption>
-                <span class="museum-num">02</span>
-                <h3>Cross Border Capital Architecture</h3>
-                <p>La doctrine que nous appliquons pour les groupes d'entreprises et les familles qui étendent leur patrimoine vers l'Europe continentale et le Royaume-Uni : diagnostic, conception, construction, activation, preuve et évolution.</p>
-              </figcaption>
+
+      <!-- 02 · À PROPOS DE LUXPONT — pièce de galerie : texte à gauche, image encadrée à droite -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="gallery-piece">
+            <div class="gallery-piece-text">
+              <div class="label">À propos de Luxpont</div>
+              <h2 class="h2-display compact">Le patrimoine qui traverse<br>les générations <em>se structure aujourd'hui.</em></h2>
+              <div class="body-text gallery-piece-copy">
+                <p>Lorsqu'un patrimoine franchit des frontières, il cesse d'être une simple question juridique ou fiscale : il devient un problème d'architecture. Chaque juridiction traversée ajoute une nouvelle couche — de propriété, de contrôle, de risque, de fiscalité, de succession — et sans une structure conçue dès l'origine, le patrimoine finit par croître plus vite que ce qui le soutient.</p>
+                <p>Luxpont est le cabinet spécialisé dans l'application de <em>Cross Border Capital Architecture</em> (CBCA) pour les groupes d'entreprises et les familles qui étendent leur patrimoine vers l'Europe continentale et le Royaume-Uni.</p>
+                <p>Chaque mandat suit le même cycle : diagnostic, conception, construction, activation, preuve et évolution. Du premier contact jusqu'à ce que votre capital opère en Europe.</p>
+              </div>
+            </div>
+            <figure class="gallery-piece-frame">
+              <img src="/assets/redesign/img/about.webp" alt="Architecture européenne classique au coucher du soleil" loading="lazy">
             </figure>
           </div>
         </div>
       </div>
+
+      <!-- 03 · QUOTE — bateaux -->
+      <div class="pin-layer" id="bespoke">
+        <div class="bespoke-bg" style="background-image:url('/assets/redesign/img/bespoke.webp')"></div>
+        <div class="bespoke-overlay"></div>
+        <div class="bespoke-inner">
+          <div class="bespoke-attr">Luxpont Strategy &amp; Capital</div>
+          <blockquote class="bespoke-q">« Les visionnaires qui franchissent les frontières ont besoin de structures solides et de conseillers qui assument la responsabilité de <em>les construire.</em> »</blockquote>
+          <div class="bespoke-rule"></div>
+        </div>
+      </div>
+
+      <!-- 04 · VALEURS FONDAMENTALES — galerie horizontale -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="gallery-head">
+            <div>
+              <div class="label">Valeurs Fondamentales</div>
+              <h2 class="h2-display compact" style="max-width:620px">Ce que nous ne négocions pas. <em>Sur aucun mandat.</em></h2>
+            </div>
+            <div class="gallery-nav" data-gallery="valores">
+              <button type="button" data-scroll="prev" aria-label="Précédent">‹</button>
+              <button type="button" data-scroll="next" aria-label="Suivant">›</button>
+            </div>
+          </div>
+          <div class="gallery" data-gallery-track="valores">
+            <div class="card value-card"><div class="card-body"><div class="card-num">01</div><h3 class="card-title">Intégrité sans compromis.</h3><p class="card-desc">Nous ne promettons que ce que nous pouvons garantir. Nous concevons chaque structure avec une honnêteté technique totale — limites, risques et conditions inclus — parce que votre confiance vaut plus que le mandat.</p></div></div>
+            <div class="card value-card"><div class="card-body"><div class="card-num">02</div><h3 class="card-title">La discrétion comme principe.</h3><p class="card-desc">Vous n'avez jamais à vous demander où s'arrête cette information. Ce que vous nous confiez n'existe pas en dehors de cet espace.</p></div></div>
+            <div class="card value-card"><div class="card-body"><div class="card-num">03</div><h3 class="card-title">Précision technique.</h3><p class="card-desc">La profondeur avant la vitesse. Chaque architecture est validée au regard de la réglementation en vigueur, des conventions de double imposition applicables et des exigences bancaires de chaque juridiction.</p></div></div>
+            <div class="card value-card"><div class="card-body"><div class="card-num">04</div><h3 class="card-title">Exécution complète.</h3><p class="card-desc">Le mandat s'achève lorsque votre capital est opérationnel. Nous ne livrons pas des plans : nous livrons des structures en fonctionnement, avec le compte actif et le premier mouvement exécuté.</p></div></div>
+            <div class="card value-card"><div class="card-body"><div class="card-num">05</div><h3 class="card-title">Sélectivité délibérée.</h3><p class="card-desc">Peu de clients. Une profondeur maximale. Nous travaillons avec un nombre limité de mandats à la fois : c'est la condition pour que la qualité reste durable.</p></div></div>
+            <div class="card value-card"><div class="card-body"><div class="card-num">06</div><h3 class="card-title">Responsabilité assumée.</h3><p class="card-desc">Il n'existe pas de conseiller qui conçoit et délègue l'exécution à un tiers. Nous assumons la responsabilité technique et opérationnelle de bout en bout. Si quelque chose ne fonctionne pas, c'est notre problème — pas le vôtre.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 · MÉTHODE CBCA — six questions, un seul écran -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="label">Méthode CBCA</div>
+          <h2 class="h2-display compact" style="max-width:760px">Les structures changent. Les pays changent. Les lois changent. <em>Une architecture bien conçue demeure.</em></h2>
+          <p class="body-text" style="max-width:640px;margin-top:14px">C'est pourquoi nous appliquons Cross Border Capital Architecture (CBCA) : une méthode qui répond toujours aux six mêmes questions.</p>
+          <div class="preguntas-grid">
+            <div class="pregunta-chip"><span class="pregunta-num">01</span><p>Qui contrôle réellement le patrimoine ?</p></div>
+            <div class="pregunta-chip"><span class="pregunta-num">02</span><p>Où chaque actif doit-il résider juridiquement ?</p></div>
+            <div class="pregunta-chip"><span class="pregunta-num">03</span><p>Comment le capital circule-t-il entre les juridictions ?</p></div>
+            <div class="pregunta-chip"><span class="pregunta-num">04</span><p>Quelles preuves soutiennent la structure ?</p></div>
+            <div class="pregunta-chip"><span class="pregunta-num">05</span><p>Quelle substance économique la sous-tend ?</p></div>
+            <div class="pregunta-chip"><span class="pregunta-num">06</span><p>Comment sa continuité générationnelle est-elle garantie ?</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 · LA MÉTHODOLOGIE — quatre modules -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="label">Méthodologie CBCA</div>
+          <h2 class="h2-display compact">Se déploie en <em>quatre modules.</em></h2>
+          <div class="modulos-grid">
+            <div class="modulo-card">
+              <div class="n">01</div>
+              <div class="tag">Tout commence ici</div>
+              <h3>Architecture Horizon Europe™</h3>
+              <p>La cartographie juridique complète de votre groupe en Europe : titularité, contrôle et flux de dividendes, avec les véhicules adéquats dans la juridiction adéquate.</p>
+            </div>
+            <div class="modulo-card">
+              <div class="n">02</div>
+              <h3>Modèle de Préservation Patrimoniale Multijuridictionnelle™</h3>
+              <p>Chaque actif dans l'entité adéquate, succession planifiée et conventions de double imposition appliquées, pour que le capital continue de créer du patrimoine.</p>
+            </div>
+            <div class="modulo-card">
+              <div class="n">03</div>
+              <h3>Activation Opérationnelle Internationale™</h3>
+              <p>Comptes bancaires d'entreprise auprès de banques européennes pour des entités nouvellement constituées à actionnariat étranger : la structure commence vraiment à circuler.</p>
+            </div>
+            <div class="modulo-card">
+              <div class="n">04</div>
+              <h3>Protocole de Preuve CBCA™</h3>
+              <p>Substance économique documentée chaque année, pour que la structure résiste à tout contrôle fiscal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 07 · COMPTE PATRIMONIAL EN LIVRES STERLING (GBP) -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="gallery-piece">
+            <div class="gallery-piece-text">
+              <div class="label">Un Service de Luxpont</div>
+              <h2 class="h2-display compact">Compte Patrimonial en Livres Sterling (GBP)</h2>
+              <div class="pull-quote" style="margin-top:20px">
+                <p>Votre patrimoine à l'abri dans l'une des monnaies les plus stables au monde. Et mis au travail.</p>
+              </div>
+              <p class="body-text" style="margin-top:16px">Compte d'investissement au Royaume-Uni, en livres sterling, avec obligations investment grade et actions sélectionnées —rendement net de référence de l'ordre de 10 % par an—, protégé de la volatilité de votre devise d'origine.</p>
+            </div>
+            <figure class="gallery-piece-frame">
+              <img src="/assets/redesign/img/uk.webp" alt="Palais de Westminster, Londres" loading="lazy">
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08 · MANDATS REPRÉSENTATIFS — galerie horizontale -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="gallery-head">
+            <div>
+              <div class="label">Mandats Représentatifs</div>
+              <h2 class="h2-display compact" style="max-width:600px">Chaque mandat a <em>sa propre architecture.</em></h2>
+            </div>
+            <div class="gallery-nav" data-gallery="mandatos">
+              <button type="button" data-scroll="prev" aria-label="Précédent">‹</button>
+              <button type="button" data-scroll="next" aria-label="Suivant">›</button>
+            </div>
+          </div>
+          <p class="gallery-note">Trois mandats réels, chacun avec le module CBCA appliqué. Les données identifiantes ont été omises par souci de confidentialité ; les références sont vérifiables sous NDA.</p>
+          <div class="gallery" data-gallery-track="mandatos" style="margin-top:20px">
+            <div class="card" style="flex-basis:400px">
+              <div class="card-img"><img src="/assets/redesign/img/mandato-grupo-tecnologico.webp" alt="Groupe technologique mexicain — expansion européenne à l'horizon 2030" loading="lazy"></div>
+              <div class="card-body">
+                <div class="card-kicker">Architecture Horizon Europe™ · Secteur technologique</div>
+                <h3 class="card-title">Groupe technologique mexicain — expansion européenne à l'horizon 2030.</h3>
+                <p class="card-desc">Société mère aux Pays-Bas pour centraliser la propriété intellectuelle, la technologie et les licences avec accès aux 27 pays de l'UE ; filiales opérationnelles en Espagne et au Royaume-Uni ; trésorerie au Luxembourg.</p>
+                <p class="card-result"><strong>Architecture résultante :</strong> le groupe opère aujourd'hui depuis les Pays-Bas, avec des filiales actives en Espagne et au Royaume-Uni et une trésorerie prête à recevoir du capital privé.</p>
+              </div>
+            </div>
+            <div class="card" style="flex-basis:400px">
+              <div class="card-img"><img src="/assets/redesign/img/mandato-dividendos-latam.webp" alt="Dividendes LATAM sans double imposition pour un investissement immobilier en Espagne" loading="lazy"></div>
+              <div class="card-body">
+                <div class="card-kicker">Modèle de Préservation Patrimoniale Multijuridictionnelle™ · Investissement immobilier</div>
+                <h3 class="card-title">Dividendes LATAM sans double imposition pour un investissement immobilier en Espagne.</h3>
+                <p class="card-desc">Société espagnole sous le régime E.T.V.E. — qui exonère d'impôt les dividendes et plus-values de source extérieure à l'Espagne —, afin que les associés non-résidents perçoivent leurs distributions sans retenue à la source espagnole. Le capital est destiné à l'immobilier en Espagne.</p>
+                <p class="card-result"><strong>Architecture résultante :</strong> ils perçoivent des revenus immobiliers en Espagne sans la friction de la double imposition.</p>
+              </div>
+            </div>
+            <div class="card" style="flex-basis:400px">
+              <div class="card-img"><img src="/assets/redesign/img/mandato-klinkapp.webp" alt="KlinkApp — accès au capital institutionnel européen" loading="lazy"></div>
+              <div class="card-body">
+                <div class="card-kicker">Architecture Horizon Europe™ · Capital de croissance</div>
+                <h3 class="card-title">KlinkApp — accès au capital institutionnel européen pour des investisseurs latino-américains.</h3>
+                <p class="card-desc">Société néerlandaise comme véhicule de coinvestissement pour réunir du capital latino-américain dans une levée de croissance européenne, avec un accord de coinvestissement clair, une cap table propre et une substance économique documentée dès la constitution. Ouverture bancaire incluse.</p>
+                <p class="card-result"><strong>Architecture résultante :</strong> le capital entre dans la levée via une structure que l'investisseur institutionnel reconnaît et approuve sans friction.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 09 · AVEC QUI NOUS TRAVAILLONS — galerie horizontale -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="gallery-head">
+            <div>
+              <div class="label">Avec Qui Nous Travaillons</div>
+              <h2 class="h2-display compact" style="max-width:620px">Des groupes qui se développent. <em>Des familles qui construisent l'avenir.</em></h2>
+            </div>
+            <div class="gallery-nav" data-gallery="perfiles">
+              <button type="button" data-scroll="prev" aria-label="Précédent">‹</button>
+              <button type="button" data-scroll="next" aria-label="Suivant">›</button>
+            </div>
+          </div>
+          <div class="gallery" data-gallery-track="perfiles">
+            <div class="card">
+              <div class="card-img"><img src="/assets/redesign/img/perfil-empresario.webp" alt="L'entrepreneur qui fait ses premiers pas en Europe" loading="lazy"></div>
+              <div class="card-body"><h3 class="card-title">L'entrepreneur qui fait ses premiers pas en Europe</h3><p class="card-desc">Première structure : holding constitué, compte opérationnel, patrimoine organisé avec efficacité fiscale dès le premier jour.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-img"><img src="/assets/redesign/img/perfil-grupo-familiar.webp" alt="Le groupe familial transfrontalier" loading="lazy"></div>
+              <div class="card-body"><h3 class="card-title">Le groupe familial transfrontalier</h3><p class="card-desc">Des actifs répartis dans plusieurs pays réunis sous une structure cohérente et durable, avec une succession planifiée dès la constitution.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-img"><img src="/assets/redesign/img/perfil-family-office.webp" alt="Le family office générationnel" loading="lazy"></div>
+              <div class="card-body"><h3 class="card-title">Le family office générationnel</h3><p class="card-desc">Un patrimoine structuré pour durer : discrétion, succession et accès au marché privé européen.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-img"><img src="/assets/redesign/img/perfil-latam-uk.webp" alt="Capital latino-américain à destination de l'Europe" loading="lazy"></div>
+              <div class="card-body"><h3 class="card-title">Capital latino-américain à destination de l'Europe</h3><p class="card-desc">Nous accompagnons des groupes basés au Mexique, aux États-Unis et en République dominicaine dans leur transition vers une architecture internationale.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 · COUVERTURE -->
+      <div class="pin-layer slide">
+        <div class="slide-inner">
+          <div class="gallery-piece reverse">
+            <div class="gallery-piece-text">
+              <div class="label">Couverture</div>
+              <div class="foco-list compact">
+                <div class="foco-item"><div class="t">Priorité principale.</div><p>Europe continentale —Pays-Bas, Luxembourg, Suisse, Espagne et France—: des structures solides et un accès bancaire réel.</p></div>
+                <div class="foco-item"><div class="t">Juridictions complémentaires.</div><p>République dominicaine, États-Unis et Royaume-Uni, avec aujourd'hui un accent particulier sur le marché britannique.</p></div>
+                <div class="foco-item"><div class="t">Origine du capital.</div><p>Mexique, États-Unis et République dominicaine.</p></div>
+              </div>
+              <h2 class="h2-display compact" style="margin-top:22px">Madrid n'est pas seulement un atout. <em>C'est une adresse.</em></h2>
+              <p class="body-text" style="margin-top:12px">Même langue, même culture juridique, et un passeport réglementaire vers les 27 pays de l'Union européenne.</p>
+            </div>
+            <figure class="gallery-piece-frame">
+              <img src="/assets/redesign/img/madrid.webp" alt="Edificio Canalejas, Madrid" loading="lazy">
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11 · DOSSIER -->
+      <div class="pin-layer slide" style="background:var(--marfil-2)">
+        <div class="slide-inner dossier-slide">
+          <div>
+            <div class="label on-dark">Dossier Corporatif</div>
+            <h2 class="h2-display on-dark compact">Téléchargez notre dossier. <em>Trois langues. Un seul standard.</em></h2>
+            <p class="dossier-sub">Cabinet, valeurs, méthode CBCA, couverture et mandats représentatifs. En espagnol, anglais et français.</p>
+          </div>
+          <div class="dossier-btns">
+            <a href="/assets/pdf/Luxpont_Dossier_ES.pdf" download class="dossier-btn"><span class="db-flag">🇪🇸</span><span class="db-text">Descargar en Español</span><span class="db-arrow">↓</span></a>
+            <a href="/assets/pdf/Luxpont_Dossier_EN.pdf" download class="dossier-btn"><span class="db-flag">🇬🇧</span><span class="db-text">Download in English</span><span class="db-arrow">↓</span></a>
+            <a href="/assets/pdf/Luxpont_Dossier_FR.pdf" download class="dossier-btn"><span class="db-flag">🇫🇷</span><span class="db-text">Télécharger en Français</span><span class="db-arrow">↓</span></a>
+            <div class="dossier-note">Document confidentiel · Usage restreint aux destinataires autorisés</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 · CONTACT -->
+      <div class="pin-layer slide">
+        <div class="slide-inner contacto-slide">
+          <div>
+            <div class="label">Contact</div>
+            <h2 class="ct-h2 compact">Un premier entretien.</h2>
+            <p class="ct-sub">Toute structure solide commence par comprendre le patrimoine à protéger. Nous ne cherchons pas à vendre une structure : nous cherchons à déterminer si CBCA est l'architecture adaptée à la vôtre.</p>
+            <div class="ct-detail">
+              <div class="ct-row"><span class="ct-lbl">E-mail</span><span class="ct-val"><a href="mailto:questions@luxpont.com">questions@luxpont.com</a></span></div>
+              <div class="ct-row"><span class="ct-lbl">Adresse</span><span class="ct-val">Plaza de las Cortes, 5, P.5 · Madrid</span></div>
+              <div class="ct-row"><span class="ct-lbl">Téléphone</span><span class="ct-val">+34 711 287 097</span></div>
+            </div>
+          </div>
+          <div>
+            <form class="ct-form compact" id="contact-form" method="POST" data-gdpr-alert="Merci d'accepter la Politique de Confidentialité pour envoyer le formulaire.">
+              <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+              <input type="hidden" name="_subject" value="Nouvelle demande — Luxpont">
+              <input type="hidden" name="_language" value="fr">
+              <div>
+                <label class="f-lbl" for="f-nombre">Nom complet</label>
+                <input class="f-in" type="text" id="f-nombre" name="name" placeholder="Prénom et nom" autocomplete="name">
+              </div>
+              <div>
+                <label class="f-lbl" for="f-email">E-mail</label>
+                <input class="f-in" type="email" id="f-email" name="email" placeholder="nom@entreprise.com" autocomplete="email">
+              </div>
+              <div>
+                <label class="f-lbl" for="f-empresa">Entreprise / Groupe</label>
+                <input class="f-in" type="text" id="f-empresa" name="company" placeholder="Nom de votre entreprise ou groupe" autocomplete="organization">
+              </div>
+              <label class="f-consent">
+                <input type="checkbox" id="f-gdpr" required>
+                <span class="f-consent-lbl">J'ai lu et j'accepte la <a href="#" class="js-open-privacy">Politique de Confidentialité</a>. Je consens au traitement de mes données pour traiter ma demande.</span>
+              </label>
+              <div class="f-note">Responsable du traitement : Luxpont Strategy &amp; Capital, S.L. · Finalité : traitement des demandes de contact · Droits : questions@luxpont.com</div>
+              <button class="f-btn" type="submit" id="submit-btn" data-sending="Envoi en cours..." data-sent="Message envoyé">
+                <span id="btn-text" style="color:inherit">Demander un premier entretien</span>
+                <span id="btn-arrow">→</span>
+              </button>
+              <p id="form-success" style="display:none;font-family:var(--sans);font-size:12px;color:var(--gold);margin-top:8px;letter-spacing:0.04em">Message reçu. Nous vous recontacterons sous 48 heures maximum.</p>
+              <p id="form-error" style="display:none;font-family:var(--sans);font-size:12px;color:#c0392b;margin-top:8px">Une erreur s'est produite. Merci d'écrire directement à questions@luxpont.com</p>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
-
-  <!-- ══ QUOTE — bateaux ══ -->
-  <section id="bespoke">
-    <div class="bespoke-bg" style="background-image:url('/assets/redesign/img/bespoke.webp')"></div>
-    <div class="bespoke-overlay"></div>
-    <div class="bespoke-inner reveal">
-      <div class="bespoke-attr">Luxpont Strategy &amp; Capital</div>
-      <blockquote class="bespoke-q">« Les visionnaires qui franchissent les frontières ont besoin de structures solides et de conseillers qui assument la responsabilité de <em>les construire.</em> »</blockquote>
-      <div class="bespoke-rule"></div>
-    </div>
-  </section>
-
-  <!-- ══ VALEURS FONDAMENTALES — galerie horizontale, fond sombre ══ -->
-  <section class="section bg-light border-t gallery-section">
-    <div class="gallery-head reveal">
-      <div>
-        <div class="label">Valeurs Fondamentales</div>
-        <h2 class="h2-display" style="max-width:620px">Ce que nous ne négocions pas. <em>Sur aucun mandat.</em></h2>
-      </div>
-      <div class="gallery-nav" data-gallery="valores">
-        <button type="button" data-scroll="prev" aria-label="Précédent">‹</button>
-        <button type="button" data-scroll="next" aria-label="Suivant">›</button>
-      </div>
-    </div>
-    <div class="gallery" data-gallery-track="valores">
-      <div class="card value-card reveal"><div class="card-body"><div class="card-num">01</div><h3 class="card-title">Intégrité sans compromis.</h3><p class="card-desc">Nous ne promettons que ce que nous pouvons garantir. Nous concevons chaque structure avec une honnêteté technique totale — limites, risques et conditions inclus — parce que votre confiance vaut plus que le mandat.</p></div></div>
-      <div class="card value-card reveal"><div class="card-body"><div class="card-num">02</div><h3 class="card-title">La discrétion comme principe.</h3><p class="card-desc">Vous n'avez jamais à vous demander où s'arrête cette information. Ce que vous nous confiez n'existe pas en dehors de cet espace.</p></div></div>
-      <div class="card value-card reveal"><div class="card-body"><div class="card-num">03</div><h3 class="card-title">Précision technique.</h3><p class="card-desc">La profondeur avant la vitesse. Chaque architecture est validée au regard de la réglementation en vigueur, des conventions de double imposition applicables et des exigences bancaires de chaque juridiction.</p></div></div>
-      <div class="card value-card reveal"><div class="card-body"><div class="card-num">04</div><h3 class="card-title">Exécution complète.</h3><p class="card-desc">Le mandat s'achève lorsque votre capital est opérationnel. Nous ne livrons pas des plans : nous livrons des structures en fonctionnement, avec le compte actif et le premier mouvement exécuté.</p></div></div>
-      <div class="card value-card reveal"><div class="card-body"><div class="card-num">05</div><h3 class="card-title">Sélectivité délibérée.</h3><p class="card-desc">Peu de clients. Une profondeur maximale. Nous travaillons avec un nombre limité de mandats à la fois : c'est la condition pour que la qualité reste durable.</p></div></div>
-      <div class="card value-card reveal"><div class="card-body"><div class="card-num">06</div><h3 class="card-title">Responsabilité assumée.</h3><p class="card-desc">Il n'existe pas de conseiller qui conçoit et délègue l'exécution à un tiers. Nous assumons la responsabilité technique et opérationnelle de bout en bout. Si quelque chose ne fonctionne pas, c'est notre problème — pas le vôtre.</p></div></div>
-    </div>
-  </section>
-
-  <!-- ══ MÉTHODE CBCA ══ -->
-  <section id="metodo" class="section border-t">
-    <div class="reveal">
-      <div class="label">Méthode CBCA</div>
-      <h2 class="h2-display" style="max-width:820px">Les structures changent. Les pays changent. Les lois changent. <em>Une architecture bien conçue demeure.</em></h2>
-      <p class="body-text" style="max-width:680px;margin-top:20px">C'est pourquoi nous appliquons Cross Border Capital Architecture (CBCA). Vous ne commandez pas des démarches séparées : vous appliquez une méthode qui répond toujours aux six mêmes questions. Faites défiler pour les parcourir une à une.</p>
-    </div>
-
-    <p style="font-family:var(--sans);font-size:14px;font-weight:600;color:var(--black);margin-top:52px">Toute architecture CBCA répond toujours à six questions :</p>
-    <div class="preguntas-track" id="preguntasTrack">
-      <div class="preguntas-sticky">
-        <div class="preguntas-progress" id="preguntasProgress">01 / 06</div>
-        <div class="preguntas-stack">
-          <div class="pregunta-item active" data-index="0"><span class="pregunta-num">01</span><p>Qui contrôle réellement le patrimoine ?</p></div>
-          <div class="pregunta-item" data-index="1"><span class="pregunta-num">02</span><p>Où chaque actif doit-il résider juridiquement ?</p></div>
-          <div class="pregunta-item" data-index="2"><span class="pregunta-num">03</span><p>Comment le capital circule-t-il entre les juridictions ?</p></div>
-          <div class="pregunta-item" data-index="3"><span class="pregunta-num">04</span><p>Quelles preuves soutiennent la structure ?</p></div>
-          <div class="pregunta-item" data-index="4"><span class="pregunta-num">05</span><p>Quelle substance économique la sous-tend ?</p></div>
-          <div class="pregunta-item" data-index="5"><span class="pregunta-num">06</span><p>Comment sa continuité générationnelle est-elle garantie ?</p></div>
-        </div>
-        <div class="preguntas-dots">
-          <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </div>
-      </div>
-    </div>
-
-    <p class="body-text" style="margin:40px 0 -8px">La méthodologie CBCA se déploie en quatre modules.</p>
-    <div class="modulos-list">
-      <div class="modulo-row reveal">
-        <div class="n">01</div>
-        <div>
-          <div class="tag">Tout commence ici</div>
-          <h3>Architecture Horizon Europe™</h3>
-          <p>La cartographie juridique complète de votre groupe en Europe, établie avant la signature du premier acte. Nous définissons la titularité et le contrôle réels, les flux de dividendes et le rôle de chaque entité ; nous constituons les véhicules d'investissement (SPV) et les sociétés dans la juridiction adéquate. Vous ne gérez pas de démarches : vous recevez une architecture complète et opérationnelle aux Pays-Bas, au Luxembourg, en Espagne ou en France.</p>
-        </div>
-      </div>
-      <div class="modulo-row reveal">
-        <div class="n">02</div>
-        <div>
-          <h3>Modèle de Préservation Patrimoniale Multijuridictionnelle™</h3>
-          <p>Votre patrimoine protégé pour durer, pas seulement pour payer moins d'impôts cette année. Nous plaçons chaque actif dans l'entité et la juridiction adéquates, en planifiant dès aujourd'hui la transmission générationnelle, et nous appliquons les conventions qui évitent la double imposition entre le Mexique, les Pays-Bas, le Luxembourg, la France et l'Espagne. Une architecture bien conçue ne se contente pas de protéger : elle maintient le capital actif et productif. L'objectif final n'est pas de conserver le capital, mais de lui permettre de continuer à créer du patrimoine.</p>
-        </div>
-      </div>
-      <div class="modulo-row reveal">
-        <div class="n">03</div>
-        <div>
-          <h3>Activation Opérationnelle Internationale™</h3>
-          <p>L'étape qui transforme une structure juridique en un groupe véritablement opérationnel. Nous ouvrons les comptes bancaires d'entreprise auprès de banques européennes pour des entités nouvellement constituées à actionnariat étranger. Sans cela, l'architecture reste sur le papier ; avec cela, votre capital circule.</p>
-        </div>
-      </div>
-      <div class="modulo-row reveal">
-        <div class="n">04</div>
-        <div>
-          <h3>Protocole de Preuve CBCA™</h3>
-          <p>Pour que votre structure résiste à tout contrôle fiscal, chaque année où elle opère. Nous documentons et conservons la preuve que vos sociétés opèrent réellement là où elles le prétendent — bureau, personnel, activité réelle — comme l'exige la réglementation européenne anti-abus.</p>
-        </div>
-      </div>
-    </div>
-    <p class="body-text" style="margin-top:32px;max-width:680px">Les trois autres modules existent parce que l'Architecture Horizon Europe™ existe en premier. Ensemble, ils constituent l'application pratique de la méthode à votre mandat.</p>
-  </section>
-
-  <!-- ══ COMPTE PATRIMONIAL EN LIVRES STERLING (GBP) — service complémentaire ══ -->
-  <section class="section bg-light border-t split">
-    <div class="split-text reveal">
-      <div class="label">Un Service de Luxpont</div>
-      <h2 class="h2-display">Compte Patrimonial en Livres Sterling (GBP)</h2>
-      <div class="pull-quote" style="margin-top:28px">
-        <p>Votre patrimoine à l'abri dans l'une des monnaies les plus stables au monde. Et mis au travail.</p>
-      </div>
-      <p class="body-text" style="margin-top:20px">Nous ouvrons un compte d'investissement au Royaume-Uni, en livres sterling, avec accès à un portefeuille obligataire de qualité investment grade — noté A ou supérieur — et à des actions sélectionnées, pour un rendement net de référence de l'ordre de 10 % par an. Votre capital reste disponible et en livres sterling : protégé de la volatilité de votre devise d'origine et des environnements politiques ou fiscaux hostiles. Rendement et réserve de valeur, à la fois.</p>
-    </div>
-    <div class="split-media reveal">
-      <img src="/assets/redesign/img/uk.webp" alt="Palais de Westminster, Londres" loading="lazy">
-    </div>
-  </section>
-
-  <!-- ══ MANDATS REPRÉSENTATIFS — galerie horizontale ══ -->
-  <section id="mandatos" class="section border-t gallery-section">
-    <div class="gallery-head reveal">
-      <div>
-        <div class="label">Mandats Représentatifs</div>
-        <h2 class="h2-display" style="max-width:600px">Chaque mandat a <em>sa propre architecture.</em></h2>
-      </div>
-      <div class="gallery-nav" data-gallery="mandatos">
-        <button type="button" data-scroll="prev" aria-label="Précédent">‹</button>
-        <button type="button" data-scroll="next" aria-label="Suivant">›</button>
-      </div>
-    </div>
-    <p class="gallery-note">Trois mandats réels, chacun avec le module CBCA appliqué. Les données identifiantes ont été omises par souci de confidentialité ; les références sont vérifiables sous NDA.</p>
-    <div class="gallery" data-gallery-track="mandatos" style="margin-top:34px">
-      <div class="card reveal" style="flex-basis:400px">
-        <div class="card-img"><img src="/assets/redesign/img/mandato-grupo-tecnologico.webp" alt="Groupe technologique mexicain — expansion européenne à l'horizon 2030" loading="lazy"></div>
-        <div class="card-body">
-          <div class="card-kicker">Architecture Horizon Europe™ · Secteur technologique</div>
-          <h3 class="card-title">Groupe technologique mexicain — expansion européenne à l'horizon 2030.</h3>
-          <p class="card-desc">Société mère aux Pays-Bas pour centraliser la propriété intellectuelle, la technologie et les licences avec accès aux 27 pays de l'UE ; filiales opérationnelles en Espagne et au Royaume-Uni ; trésorerie au Luxembourg.</p>
-          <p class="card-result"><strong>Architecture résultante :</strong> le groupe opère aujourd'hui depuis les Pays-Bas, avec des filiales actives en Espagne et au Royaume-Uni et une trésorerie prête à recevoir du capital privé.</p>
-        </div>
-      </div>
-      <div class="card reveal" style="flex-basis:400px">
-        <div class="card-img"><img src="/assets/redesign/img/mandato-dividendos-latam.webp" alt="Dividendes LATAM sans double imposition pour un investissement immobilier en Espagne" loading="lazy"></div>
-        <div class="card-body">
-          <div class="card-kicker">Modèle de Préservation Patrimoniale Multijuridictionnelle™ · Investissement immobilier</div>
-          <h3 class="card-title">Dividendes LATAM sans double imposition pour un investissement immobilier en Espagne.</h3>
-          <p class="card-desc">Société espagnole sous le régime E.T.V.E. — qui exonère d'impôt les dividendes et plus-values de source extérieure à l'Espagne —, afin que les associés non-résidents perçoivent leurs distributions sans retenue à la source espagnole. Le capital est destiné à l'immobilier en Espagne.</p>
-          <p class="card-result"><strong>Architecture résultante :</strong> ils perçoivent des revenus immobiliers en Espagne sans la friction de la double imposition.</p>
-        </div>
-      </div>
-      <div class="card reveal" style="flex-basis:400px">
-        <div class="card-img"><img src="/assets/redesign/img/mandato-klinkapp.webp" alt="KlinkApp — accès au capital institutionnel européen" loading="lazy"></div>
-        <div class="card-body">
-          <div class="card-kicker">Architecture Horizon Europe™ · Capital de croissance</div>
-          <h3 class="card-title">KlinkApp — accès au capital institutionnel européen pour des investisseurs latino-américains.</h3>
-          <p class="card-desc">Société néerlandaise comme véhicule de coinvestissement pour réunir du capital latino-américain dans une levée de croissance européenne, avec un accord de coinvestissement clair, une cap table propre et une substance économique documentée dès la constitution. Ouverture bancaire incluse.</p>
-          <p class="card-result"><strong>Architecture résultante :</strong> le capital entre dans la levée via une structure que l'investisseur institutionnel reconnaît et approuve sans friction.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══ AVEC QUI NOUS TRAVAILLONS — galerie horizontale, fond clair ══ -->
-  <section class="section bg-light border-t gallery-section">
-    <div class="gallery-head reveal">
-      <div>
-        <div class="label">Avec Qui Nous Travaillons</div>
-        <h2 class="h2-display" style="max-width:620px">Des groupes qui se développent. <em>Des familles qui construisent l'avenir.</em></h2>
-      </div>
-      <div class="gallery-nav" data-gallery="perfiles">
-        <button type="button" data-scroll="prev" aria-label="Précédent">‹</button>
-        <button type="button" data-scroll="next" aria-label="Suivant">›</button>
-      </div>
-    </div>
-    <div class="gallery" data-gallery-track="perfiles">
-      <div class="card reveal">
-        <div class="card-img"><img src="/assets/redesign/img/perfil-empresario.webp" alt="L'entrepreneur qui fait ses premiers pas en Europe" loading="lazy"></div>
-        <div class="card-body"><h3 class="card-title">L'entrepreneur qui fait ses premiers pas en Europe</h3><p class="card-desc">Première structure : holding constitué, compte opérationnel, patrimoine organisé avec efficacité fiscale dès le premier jour.</p></div>
-      </div>
-      <div class="card reveal">
-        <div class="card-img"><img src="/assets/redesign/img/perfil-grupo-familiar.webp" alt="Le groupe familial transfrontalier" loading="lazy"></div>
-        <div class="card-body"><h3 class="card-title">Le groupe familial transfrontalier</h3><p class="card-desc">Des actifs répartis dans plusieurs pays réunis sous une structure cohérente et durable, avec une succession planifiée dès la constitution.</p></div>
-      </div>
-      <div class="card reveal">
-        <div class="card-img"><img src="/assets/redesign/img/perfil-family-office.webp" alt="Le family office générationnel" loading="lazy"></div>
-        <div class="card-body"><h3 class="card-title">Le family office générationnel</h3><p class="card-desc">Un patrimoine structuré pour durer : discrétion, succession et accès au marché privé européen.</p></div>
-      </div>
-      <div class="card reveal">
-        <div class="card-img"><img src="/assets/redesign/img/perfil-latam-uk.webp" alt="Capital latino-américain à destination de l'Europe" loading="lazy"></div>
-        <div class="card-body"><h3 class="card-title">Capital latino-américain à destination de l'Europe</h3><p class="card-desc">Nous accompagnons des groupes basés au Mexique, aux États-Unis et en République dominicaine dans leur transition vers une architecture internationale.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══ COUVERTURE ══ -->
-  <section id="cobertura" class="section bg-light border-t split">
-    <div class="split-media reveal">
-      <img src="/assets/redesign/img/madrid.webp" alt="Edificio Canalejas, Madrid" loading="lazy">
-    </div>
-    <div class="split-text reveal">
-      <div class="label">Couverture</div>
-      <div class="foco-list">
-        <div class="foco-item"><div class="t">Priorité principale.</div><p>Europe continentale — Pays-Bas, Luxembourg, Suisse, Espagne et France — : des structures solides, une efficacité fiscale et un accès bancaire réel.</p></div>
-        <div class="foco-item"><div class="t">Juridictions complémentaires.</div><p>République dominicaine, États-Unis et Royaume-Uni, pour des structures diversifiées, des SPV et un accès aux marchés obligataires et actions, avec aujourd'hui un accent particulier sur le marché britannique.</p></div>
-        <div class="foco-item"><div class="t">Origine du capital.</div><p>Mexique, États-Unis et République dominicaine.</p></div>
-      </div>
-      <h2 class="h2-display" style="margin-top:36px">Madrid n'est pas seulement un atout. <em>C'est une adresse.</em></h2>
-      <p class="body-text" style="margin-top:20px">Même langue, même culture juridique, et un passeport réglementaire vers les 27 pays de l'Union européenne. Pour Luxpont, Madrid est le pont entre votre capital latino-américain et l'architecture européenne qui le protège.</p>
-    </div>
-  </section>
-
-  <!-- ══ DOSSIER ══ -->
-  <section id="dossier" class="section bg-black">
-    <div class="reveal">
-      <div class="label on-dark">Dossier Corporatif</div>
-      <h2 class="h2-display on-dark">Téléchargez notre dossier. <em>Trois langues. Un seul standard.</em></h2>
-      <p class="dossier-sub">Cabinet, valeurs, méthode CBCA, couverture et mandats représentatifs. En espagnol, anglais et français.</p>
-    </div>
-    <div class="dossier-btns reveal">
-      <a href="/assets/pdf/Luxpont_Dossier_ES.pdf" download class="dossier-btn"><span class="db-flag">🇪🇸</span><span class="db-text">Descargar en Español</span><span class="db-arrow">↓</span></a>
-      <a href="/assets/pdf/Luxpont_Dossier_EN.pdf" download class="dossier-btn"><span class="db-flag">🇬🇧</span><span class="db-text">Download in English</span><span class="db-arrow">↓</span></a>
-      <a href="/assets/pdf/Luxpont_Dossier_FR.pdf" download class="dossier-btn"><span class="db-flag">🇫🇷</span><span class="db-text">Télécharger en Français</span><span class="db-arrow">↓</span></a>
-      <div class="dossier-note">Document confidentiel · Usage restreint aux destinataires autorisés</div>
-    </div>
-  </section>
-
-  <!-- ══ CONTACT ══ -->
-  <section id="contacto" class="section border-t grid-2" style="align-items:start">
-    <div class="reveal">
-      <div class="label">Contact</div>
-      <h2 class="ct-h2">Un premier entretien.</h2>
-      <p class="ct-sub">Toute structure solide commence bien avant la constitution de la première société. Elle commence par comprendre le patrimoine à protéger.</p>
-      <p class="ct-sub">Avant de vous proposer une structure, nous devons comprendre la vôtre. Le premier entretien ne vise pas à vendre une structure : il vise à déterminer si CBCA est l'architecture adaptée à votre patrimoine.</p>
-      <div class="ct-detail">
-        <div class="ct-row"><span class="ct-lbl">E-mail</span><span class="ct-val"><a href="mailto:questions@luxpont.com">questions@luxpont.com</a></span></div>
-        <div class="ct-row"><span class="ct-lbl">Adresse</span><span class="ct-val">Plaza de las Cortes, 5, P.5 · Madrid</span></div>
-        <div class="ct-row"><span class="ct-lbl">Téléphone</span><span class="ct-val">+34 711 287 097</span></div>
-      </div>
-    </div>
-    <div class="reveal">
-      <form class="ct-form" id="contact-form" method="POST" data-gdpr-alert="Merci d'accepter la Politique de Confidentialité pour envoyer le formulaire.">
-        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
-        <input type="hidden" name="_subject" value="Nouvelle demande — Luxpont">
-        <input type="hidden" name="_language" value="fr">
-        <div>
-          <label class="f-lbl" for="f-nombre">Nom complet</label>
-          <input class="f-in" type="text" id="f-nombre" name="name" placeholder="Prénom et nom" autocomplete="name">
-        </div>
-        <div>
-          <label class="f-lbl" for="f-email">E-mail</label>
-          <input class="f-in" type="email" id="f-email" name="email" placeholder="nom@entreprise.com" autocomplete="email">
-        </div>
-        <div>
-          <label class="f-lbl" for="f-empresa">Entreprise / Groupe</label>
-          <input class="f-in" type="text" id="f-empresa" name="company" placeholder="Nom de votre entreprise ou groupe" autocomplete="organization">
-        </div>
-        <label class="f-consent">
-          <input type="checkbox" id="f-gdpr" required>
-          <span class="f-consent-lbl">J'ai lu et j'accepte la <a href="#" class="js-open-privacy">Politique de Confidentialité</a>. Je consens au traitement de mes données pour traiter ma demande.</span>
-        </label>
-        <div class="f-note">Responsable du traitement : Luxpont Strategy &amp; Capital, S.L. · Finalité : traitement des demandes de contact · Droits : questions@luxpont.com</div>
-        <button class="f-btn" type="submit" id="submit-btn" data-sending="Envoi en cours..." data-sent="Message envoyé">
-          <span id="btn-text" style="color:inherit">Demander un premier entretien</span>
-          <span id="btn-arrow">→</span>
-        </button>
-        <p id="form-success" style="display:none;font-family:var(--sans);font-size:12px;color:var(--gold);margin-top:8px;letter-spacing:0.04em">Message reçu. Nous vous recontacterons sous 48 heures maximum.</p>
-        <p id="form-error" style="display:none;font-family:var(--sans);font-size:12px;color:#c0392b;margin-top:8px">Une erreur s'est produite. Merci d'écrire directement à questions@luxpont.com</p>
-      </form>
-    </div>
-  </section>
-
 </main>
+
 
 <!-- ══ FOOTER ══ -->
 <footer>

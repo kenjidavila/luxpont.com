@@ -1,17 +1,18 @@
-// ── NAV SCROLL STATE + HERO/FIRMA CROSSFADE + METODO SCROLL-REVEAL (single rAF loop) ─
+// ── NAV SCROLL STATE + PINNED SLIDE SEQUENCE (single rAF loop) ───────────────
+// The whole page, from the hero through the contact form, lives inside one
+// #hero-track: a single sticky .pin-wrapper holds every section as a full
+// .pin-layer stacked on top of the others. Scrolling through the track
+// crossfades one layer into the next in the exact same screen position —
+// nothing slides up from below, so no scroll is perceived. The track's
+// height (set in CSS) divided by (layer count - 1) is what paces each
+// transition; this loop only needs to know how many layers there are.
 const nav = document.getElementById('nav');
 const heroTrack = document.getElementById('hero-track');
 const pinWrapper = document.querySelector('.pin-wrapper');
+const pinLayers = pinWrapper ? Array.from(pinWrapper.querySelectorAll('.pin-layer')) : [];
 const heroWhiteout = document.querySelector('.hero-whiteout');
 const heroBgImg = document.querySelector('.hero-bg img');
-const heroContentEl = document.querySelector('.hero-content');
-const firmaPanel = document.getElementById('firma-panel');
 const scrollHint = document.getElementById('heroScrollHint');
-const preguntasTrack = document.getElementById('preguntasTrack');
-const preguntasItems = preguntasTrack ? Array.from(preguntasTrack.querySelectorAll('.pregunta-item')) : [];
-const preguntasDots = preguntasTrack ? Array.from(preguntasTrack.querySelectorAll('.dot')) : [];
-const preguntasProgress = document.getElementById('preguntasProgress');
-const preguntasSticky = preguntasTrack ? preguntasTrack.querySelector('.preguntas-sticky') : null;
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -23,59 +24,63 @@ function onScroll(){
     ticking = false;
     const y = window.scrollY || 0;
 
-    // Hero -> Firma pinned crossfade — #hero and #firma-panel are two full
-    // layers stacked on top of each other inside one sticky viewport-height
-    // wrapper. First half of the track: the hero photo whites out. Second
-    // half: the hero content fades out while the Firma panel fades in, in
-    // the exact same screen position, so it materializes instead of
-    // scrolling up from below. Only runs when the wrapper is actually
-    // pinned (desktop, motion allowed) — on mobile / reduced-motion the
-    // CSS un-pins everything into normal flow and this is skipped so it
-    // doesn't fight the resulting static layout with stale inline styles.
+    // Only runs when the wrapper is actually pinned (desktop, motion
+    // allowed) — on mobile / reduced-motion the CSS un-pins everything into
+    // normal flow and this is skipped so it doesn't fight the resulting
+    // static layout with stale inline styles.
     const pinned = pinWrapper && getComputedStyle(pinWrapper).position === 'sticky';
-    if (heroTrack && pinned && !reduceMotion) {
+    if (heroTrack && pinned && !reduceMotion && pinLayers.length > 1) {
       const trackRect = heroTrack.getBoundingClientRect();
       const total = Math.max(1, heroTrack.offsetHeight - window.innerHeight);
       const scrolled = -trackRect.top;
       const overall = Math.max(0, Math.min(1, scrolled / total));
 
-      const pWhite = Math.max(0, Math.min(1, overall / 0.5));
-      if (heroWhiteout) heroWhiteout.style.opacity = pWhite;
-      if (heroBgImg) heroBgImg.style.filter = `brightness(${1 + pWhite * 0.3}) blur(${pWhite * 3}px)`;
+      const n = pinLayers.length;
+      const floatIndex = overall * (n - 1);
+      const baseIdx = Math.min(n - 2, Math.floor(floatIndex));
+      const frac = Math.max(0, Math.min(1, floatIndex - baseIdx));
 
-      const pFirma = Math.max(0, Math.min(1, (overall - 0.5) / 0.5));
-      if (heroContentEl) heroContentEl.style.opacity = String(1 - pFirma);
-      if (firmaPanel) {
-        firmaPanel.style.opacity = String(pFirma);
-        firmaPanel.style.transform = `translateY(${(1 - pFirma) * 18}px) scale(${0.985 + pFirma * 0.015})`;
-        firmaPanel.classList.toggle('in-view', pFirma > 0.5);
+      pinLayers.forEach((layer, i) => {
+        let opacity = 0;
+        let transform = 'none';
+        if (i === baseIdx) {
+          opacity = 1 - frac;
+        } else if (i === baseIdx + 1) {
+          opacity = frac;
+          transform = `translateY(${(1 - frac) * 18}px) scale(${0.985 + frac * 0.015})`;
+        }
+        if (i === n - 1 && baseIdx === n - 2 && frac >= 0.999) opacity = 1;
+        layer.style.opacity = String(opacity);
+        layer.style.transform = transform;
+        layer.classList.toggle('in-view', opacity > 0.5);
+      });
+
+      // Hero-specific whiteout rides on its own outgoing fade (layer 0 -> 1);
+      // once we've moved past that first transition the image stays fully
+      // whitened underneath whichever layer is currently showing.
+      if (baseIdx === 0) {
+        if (heroWhiteout) heroWhiteout.style.opacity = String(frac);
+        if (heroBgImg) heroBgImg.style.filter = `brightness(${1 + frac * 0.3}) blur(${frac * 3}px)`;
+      } else {
+        if (heroWhiteout) heroWhiteout.style.opacity = '1';
+        if (heroBgImg) heroBgImg.style.filter = 'brightness(1.3) blur(3px)';
       }
     } else {
+      pinLayers.forEach((layer) => {
+        layer.style.opacity = '';
+        layer.style.transform = '';
+        layer.classList.remove('in-view');
+      });
       if (heroWhiteout) heroWhiteout.style.opacity = '';
       if (heroBgImg) heroBgImg.style.filter = '';
-      if (heroContentEl) heroContentEl.style.opacity = '';
-      if (firmaPanel) { firmaPanel.style.opacity = ''; firmaPanel.style.transform = ''; firmaPanel.classList.remove('in-view'); }
     }
 
-    // Nav only turns solid once the hero track has mostly scrolled past, so
-    // it never cuts a bar across the hero image while the hero is pinned.
+    // Nav only turns solid once the track has mostly scrolled past, so it
+    // never cuts a bar across a photo slide while the sequence is pinned.
     const navThreshold = heroTrack ? Math.max(80, heroTrack.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
 
     if (scrollHint) scrollHint.style.opacity = Math.max(0, 1 - y / 260);
-
-    // Método CBCA — interactive question reveal
-    if (preguntasTrack && preguntasSticky && !reduceMotion) {
-      const trackRect = preguntasTrack.getBoundingClientRect();
-      const stickyH = preguntasSticky.offsetHeight;
-      const total = Math.max(1, preguntasTrack.offsetHeight - stickyH);
-      const scrolled = -trackRect.top;
-      const qp = Math.max(0, Math.min(1, scrolled / total));
-      const idx = Math.min(preguntasItems.length - 1, Math.floor(qp * preguntasItems.length));
-      preguntasItems.forEach((el, i) => el.classList.toggle('active', i === idx));
-      preguntasDots.forEach((el, i) => el.classList.toggle('active', i === idx));
-      if (preguntasProgress) preguntasProgress.textContent = String(idx + 1).padStart(2,'0') + ' / 06';
-    }
   });
 }
 window.addEventListener('scroll', onScroll, { passive: true });
