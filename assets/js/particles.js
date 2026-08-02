@@ -87,7 +87,15 @@
     const left = Math.min(contentRight + 24, width * 0.7);
     const top = navBottom + 16;
     const rectW = Math.max(1, width - left);
-    const rectH = Math.max(1, height - top);
+    // A height-bound cover fit otherwise plants the shape's bounding box
+    // flush against the very bottom of the viewport with zero margin. The
+    // source scene isn't evenly dense along that edge (the tree's base is
+    // mostly sparse drifting dust, the building's base is solid stonework),
+    // so a flush-zero-margin bottom reads as an uneven, tilted ground line
+    // — the building crashing into the edge while the tree visibly floats
+    // above it. A small consistent bottom margin gives both sides the same
+    // breathing room instead.
+    const rectH = Math.max(1, height - top - 44);
     // "cover" fit: scale so the shape fills the whole target rect on
     // both axes (cropping whichever axis overflows), instead of
     // "contain" fit, which would letterbox to preserve the source

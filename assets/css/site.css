@@ -71,8 +71,8 @@ button { font-family:inherit; }
 ════════════════════════════════════════════════════════ */
 .label { font-family:var(--mono); font-size:9px; font-weight:400; letter-spacing:0.22em; text-transform:uppercase; color:var(--oro-texto); margin-bottom:14px; }
 .label.on-dark { color:var(--oro-texto); }
-.h2-display { font-family:var(--serif); font-size:clamp(var(--t-2xl),4vw,var(--t-3xl)); font-weight:300; line-height:1.18; color:var(--black); }
-.h2-display em { font-style:italic; color:var(--oro-texto); }
+.h2-display { font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:clamp(var(--t-2xl),4vw,var(--t-3xl)); font-weight:800; font-stretch:condensed; letter-spacing:-0.03em; line-height:1.12; color:var(--black); }
+.h2-display em { font-family:var(--serif); font-style:italic; font-weight:300; font-stretch:normal; letter-spacing:-0.01em; color:var(--oro-texto); }
 .h2-display.on-dark { color:var(--navy); }
 .body-text { font-family:var(--sans); font-size:var(--t-base); font-weight:300; line-height:1.85; color:var(--muted); }
 .body-text p { margin-bottom:16px; }
@@ -372,7 +372,8 @@ body.lang-banner-active #nav{ top:57px; }
 /* ════════════════════════════════════════════════════════
   CONTACTO
 ════════════════════════════════════════════════════════ */
-.ct-h2{ font-family:var(--serif); font-size:clamp(var(--t-2xl),3vw,var(--t-3xl)); font-weight:300; color:var(--black); margin-bottom:18px; line-height:1.14; }
+.ct-h2{ font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:clamp(var(--t-2xl),3vw,var(--t-3xl)); font-weight:800; font-stretch:condensed; letter-spacing:-0.03em; color:var(--black); margin-bottom:18px; line-height:1.1; }
+.ct-h2 em{ font-family:var(--serif); font-style:italic; font-weight:300; font-stretch:normal; letter-spacing:-0.01em; color:var(--oro-texto); }
 .ct-sub{ font-family:var(--sans); font-size:13px; font-weight:300; color:var(--muted); line-height:1.85; max-width:400px; margin-bottom:36px; }
 .ct-detail{ display:flex; flex-direction:column; }
 .ct-row{ display:flex; justify-content:space-between; align-items:baseline; padding:13px 0; border-bottom:1px solid var(--border); gap:16px; }
