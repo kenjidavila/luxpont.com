@@ -176,8 +176,8 @@ body.lang-banner-active #nav{ top:57px; }
 .pin-layer{ position:absolute; inset:0; opacity:0; pointer-events:none; transition:none; }
 .pin-layer:first-child{ opacity:1; pointer-events:auto; }
 .pin-layer.in-view{ pointer-events:auto; }
-#hero{ display:flex; align-items:center; justify-content:center; overflow:hidden; background:var(--marfil); }
-.hero-bg{ position:absolute; inset:0; z-index:0; overflow:hidden; background:var(--marfil); }
+#hero{ display:flex; align-items:center; justify-content:center; overflow:hidden; background:#fff; }
+.hero-bg{ position:absolute; inset:0; z-index:0; overflow:hidden; background:#fff; }
 .hero-bg canvas{ display:block; width:100%; height:100%; }
 .hero-whiteout{ position:absolute; inset:0; z-index:2; background:var(--marfil); opacity:0; pointer-events:none; }
 .hero-grain{ position:absolute; inset:0; z-index:3; opacity:0.02; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); }

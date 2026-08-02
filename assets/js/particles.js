@@ -3,8 +3,9 @@
 // elise-web): pure canvas 2D, additive ("lighter") glow blending, particles
 // bucketed by depth before painting. What's new here vs. ELISE's abstract
 // nucleus/wave: particles morph between fixed point-cloud TARGETS sampled
-// from real photos (see particle-shapes.js) instead of a procedural sphere,
-// and the palette is Luxpont's navy/oro/marfil instead of ELISE's blue/cyan.
+// from stipple illustrations (see particle-shapes.js) instead of a
+// procedural sphere, in ink-black/oro on pure white instead of ELISE's
+// blue/cyan — no blue in this palette at all, by request.
 (function () {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas || !window.LUXPONT_SHAPES) return;
@@ -33,8 +34,8 @@
   }
   const rand = mulberry32(42);
 
-  const NAVY = [22, 34, 63];
-  const NAVY2 = [15, 24, 48];
+  const INK = [28, 26, 24];
+  const INK2 = [10, 9, 8];
   const ORO = [183, 148, 78];
   const ORO_CLARO = [205, 176, 114];
   const GLOW = [246, 240, 224];
@@ -48,7 +49,7 @@
     const ct = rand();
     let color;
     let isGlow = false;
-    if (ct < 0.55) color = lerpColor(NAVY, NAVY2, rand());
+    if (ct < 0.55) color = lerpColor(INK, INK2, rand());
     else if (ct < 0.93) color = lerpColor(ORO, ORO_CLARO, rand());
     else { color = GLOW; isGlow = true; }
 
@@ -127,7 +128,7 @@
   window.addEventListener('resize', resize);
 
   function draw(time) {
-    ctx.fillStyle = '#f6f3ec';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
     const cx = width * 0.5;
