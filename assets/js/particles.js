@@ -98,21 +98,24 @@
   }
 
   function paintDot(g, x, y, size, r, gr, bl, opacity, isGlow, bright) {
+    // Radius deliberately small relative to the average spacing between
+    // neighbouring points: at the density this cloud renders at, dots
+    // sized to touch/overlap their neighbours merge into a smooth,
+    // photographic wash — indistinguishable from just showing the source
+    // image. Keeping every dot visibly separate (small radius, high
+    // opacity, no overlap-driven blending) is what makes the result read
+    // as particles that happen to reconstruct the image, not the image.
     if (isGlow) {
-      // additive "lighter" blend + a slightly bigger radius reads as a
-      // glow where dots overlap, without createRadialGradient's per-
-      // particle allocation cost — this source has far more bright
-      // pixels qualifying as "highlight" than an ink/gold palette would.
       g.globalCompositeOperation = 'lighter';
-      g.fillStyle = `rgba(${r},${gr},${bl},${Math.min(1, 0.55 * bright * opacity)})`;
+      g.fillStyle = `rgba(${r},${gr},${bl},${Math.min(1, 0.75 * bright * opacity)})`;
       g.beginPath();
-      g.arc(x, y, size * 1.5, 0, Math.PI * 2);
+      g.arc(x, y, size * 0.62, 0, Math.PI * 2);
       g.fill();
       g.globalCompositeOperation = 'source-over';
     } else {
-      g.fillStyle = `rgba(${r},${gr},${bl},${0.92 * opacity})`;
+      g.fillStyle = `rgba(${r},${gr},${bl},${0.95 * opacity})`;
       g.beginPath();
-      g.arc(x, y, size * 0.78, 0, Math.PI * 2);
+      g.arc(x, y, size * 0.4, 0, Math.PI * 2);
       g.fill();
     }
   }
