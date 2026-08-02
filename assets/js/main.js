@@ -1,8 +1,11 @@
-// ── NAV SCROLL STATE + HERO WHITEOUT + METODO SCROLL-REVEAL (single rAF loop) ─
+// ── NAV SCROLL STATE + HERO/FIRMA CROSSFADE + METODO SCROLL-REVEAL (single rAF loop) ─
 const nav = document.getElementById('nav');
 const heroTrack = document.getElementById('hero-track');
+const pinWrapper = document.querySelector('.pin-wrapper');
 const heroWhiteout = document.querySelector('.hero-whiteout');
 const heroBgImg = document.querySelector('.hero-bg img');
+const heroContentEl = document.querySelector('.hero-content');
+const firmaPanel = document.getElementById('firma-panel');
 const scrollHint = document.getElementById('heroScrollHint');
 const preguntasTrack = document.getElementById('preguntasTrack');
 const preguntasItems = preguntasTrack ? Array.from(preguntasTrack.querySelectorAll('.pregunta-item')) : [];
@@ -20,17 +23,38 @@ function onScroll(){
     ticking = false;
     const y = window.scrollY || 0;
 
-    // Hero whiteout — pinned #hero sits inside a tall #hero-track; the scroll
-    // fraction through that track (0..1) drives the marfil overlay opacity
-    // and a light brightness/blur lift on the photo, so the image "aclara"
-    // in lockstep with the scroll instead of on a timer.
-    if (heroTrack && !reduceMotion) {
+    // Hero -> Firma pinned crossfade — #hero and #firma-panel are two full
+    // layers stacked on top of each other inside one sticky viewport-height
+    // wrapper. First half of the track: the hero photo whites out. Second
+    // half: the hero content fades out while the Firma panel fades in, in
+    // the exact same screen position, so it materializes instead of
+    // scrolling up from below. Only runs when the wrapper is actually
+    // pinned (desktop, motion allowed) — on mobile / reduced-motion the
+    // CSS un-pins everything into normal flow and this is skipped so it
+    // doesn't fight the resulting static layout with stale inline styles.
+    const pinned = pinWrapper && getComputedStyle(pinWrapper).position === 'sticky';
+    if (heroTrack && pinned && !reduceMotion) {
       const trackRect = heroTrack.getBoundingClientRect();
       const total = Math.max(1, heroTrack.offsetHeight - window.innerHeight);
       const scrolled = -trackRect.top;
-      const p = Math.max(0, Math.min(1, scrolled / total));
-      if (heroWhiteout) heroWhiteout.style.opacity = p;
-      if (heroBgImg) heroBgImg.style.filter = `brightness(${1 + p * 0.3}) blur(${p * 3}px)`;
+      const overall = Math.max(0, Math.min(1, scrolled / total));
+
+      const pWhite = Math.max(0, Math.min(1, overall / 0.5));
+      if (heroWhiteout) heroWhiteout.style.opacity = pWhite;
+      if (heroBgImg) heroBgImg.style.filter = `brightness(${1 + pWhite * 0.3}) blur(${pWhite * 3}px)`;
+
+      const pFirma = Math.max(0, Math.min(1, (overall - 0.5) / 0.5));
+      if (heroContentEl) heroContentEl.style.opacity = String(1 - pFirma);
+      if (firmaPanel) {
+        firmaPanel.style.opacity = String(pFirma);
+        firmaPanel.style.transform = `translateY(${(1 - pFirma) * 18}px) scale(${0.985 + pFirma * 0.015})`;
+        firmaPanel.classList.toggle('in-view', pFirma > 0.5);
+      }
+    } else {
+      if (heroWhiteout) heroWhiteout.style.opacity = '';
+      if (heroBgImg) heroBgImg.style.filter = '';
+      if (heroContentEl) heroContentEl.style.opacity = '';
+      if (firmaPanel) { firmaPanel.style.opacity = ''; firmaPanel.style.transform = ''; firmaPanel.classList.remove('in-view'); }
     }
 
     // Nav only turns solid once the hero track has mostly scrolled past, so

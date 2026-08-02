@@ -228,54 +228,59 @@
 
 <main id="main">
 
-  <!-- ══ HERO — imagen 4K full-bleed, atrio con esfera armilar ══ -->
+  <!-- ══ HERO + FIRMA — secuencia fija: la imagen se aclara y Firma aparece en el mismo sitio, sin scroll perceptible ══ -->
   <div id="hero-track">
-    <div id="hero">
-      <div class="hero-bg">
-        <picture>
-          <source type="image/webp" srcset="/assets/redesign/img/hero-atrio-4k.webp">
-          <img src="/assets/redesign/img/hero-atrio-4k.jpg" alt="" width="2560" height="1707" fetchpriority="high">
-        </picture>
+    <div id="firma" class="pin-anchor" aria-hidden="true"></div>
+    <div class="pin-wrapper">
+      <div id="hero" class="pin-layer">
+        <div class="hero-bg">
+          <picture>
+            <source type="image/webp" srcset="/assets/redesign/img/hero-atrio-4k.webp">
+            <img src="/assets/redesign/img/hero-atrio-4k.jpg" alt="" width="2560" height="1707" fetchpriority="high">
+          </picture>
+        </div>
+        <div class="hero-scrim"></div>
+        <div class="hero-whiteout"></div>
+        <div class="hero-grain"></div>
+        <div class="hero-content">
+          <div class="hero-eyebrow">Cross Border Capital Architecture</div>
+          <h1 class="hero-h1">Expandir fronteras. Construir futuro.<br><em>Cuidar su legado, hacer que perdure.</em></h1>
+          <p class="hero-lead">La firma especializada en aplicar <em>Cross Border Capital Architecture</em>: la doctrina sobre la que diseñamos, construimos, activamos, preservamos y hacemos evolucionar estructuras patrimoniales transfronterizas.</p>
+          <div class="hero-actions">
+            <a href="#contacto" class="btn-solid">Solicitar una conversación</a>
+            <a href="#metodo" class="btn-outline">Conocer el método CBCA</a>
+          </div>
+        </div>
+        <div class="hero-scroll" id="heroScrollHint"><div class="hs-line"></div></div>
       </div>
-      <div class="hero-scrim"></div>
-      <div class="hero-whiteout"></div>
-      <div class="hero-grain"></div>
-      <div class="hero-content">
-        <div class="hero-eyebrow">Cross Border Capital Architecture</div>
-        <h1 class="hero-h1">Expandir fronteras. Construir futuro.<br><em>Cuidar su legado, hacer que perdure.</em></h1>
-        <p class="hero-lead">La firma especializada en aplicar <em>Cross Border Capital Architecture</em>: la doctrina sobre la que diseñamos, construimos, activamos, preservamos y hacemos evolucionar estructuras patrimoniales transfronterizas.</p>
-        <div class="hero-actions">
-          <a href="#contacto" class="btn-solid">Solicitar una conversación</a>
-          <a href="#metodo" class="btn-outline">Conocer el método CBCA</a>
+      <div id="firma-panel" class="pin-layer">
+        <div class="museum-inner">
+          <div class="museum-head">
+            <div class="label">Sobre Luxpont</div>
+            <h2 class="h2-display">El patrimonio que trasciende<br>generaciones <em>se estructura hoy.</em></h2>
+          </div>
+          <div class="museum-grid">
+            <figure class="museum-card">
+              <div class="museum-frame"><img src="/assets/redesign/img/about.webp" alt="Arquitectura clásica europea al atardecer" loading="lazy"></div>
+              <figcaption>
+                <span class="museum-num">01</span>
+                <h3>Cuando el patrimonio cruza fronteras</h3>
+                <p>Deja de ser un asunto legal o fiscal: se convierte en un problema de arquitectura. Cada jurisdicción añade una capa —propiedad, control, riesgo, fiscalidad, sucesión— y sin una estructura diseñada desde el principio, el patrimonio crece más rápido que lo que lo sostiene.</p>
+              </figcaption>
+            </figure>
+            <figure class="museum-card">
+              <div class="museum-frame"><img src="/assets/redesign/img/uk.webp" alt="Palacio de Westminster, Londres" loading="lazy"></div>
+              <figcaption>
+                <span class="museum-num">02</span>
+                <h3>Cross Border Capital Architecture</h3>
+                <p>La doctrina que aplicamos para grupos empresariales y familias que expanden su patrimonio hacia Europa y Reino Unido: diagnóstico, diseño, construcción, activación, evidencia y evolución.</p>
+              </figcaption>
+            </figure>
+          </div>
         </div>
       </div>
-      <div class="hero-scroll" id="heroScrollHint"><div class="hs-line"></div></div>
     </div>
   </div>
-
-  <!-- ══ SOBRE LUXPONT ══ -->
-  <section id="firma" class="section split">
-    <div class="split-text reveal">
-      <div class="label">Sobre Luxpont</div>
-      <h2 class="h2-display">El patrimonio que trasciende<br>generaciones <em>se estructura hoy.</em></h2>
-      <div class="body-text" style="margin-top:24px">
-        <p>Cuando un patrimonio cruza fronteras, deja de ser solo un asunto legal o fiscal: se convierte en un problema de arquitectura. Cada jurisdicción añade una capa nueva —propiedad, control, riesgo, fiscalidad, sucesión— y sin una estructura diseñada desde el principio, el patrimonio crece más rápido que lo que lo sostiene.</p>
-        <p>Luxpont es la firma especializada en aplicar <em>Cross Border Capital Architecture</em> (CBCA) para grupos empresariales y familias que expanden su patrimonio hacia Europa y Reino Unido.</p>
-        <p>Cada mandato sigue el mismo ciclo: diagnóstico, diseño, construcción, activación, evidencia y evolución. Desde el primer contacto hasta que su capital opera en Europa.</p>
-      </div>
-      <div class="pill-row">
-        <span class="pill">BV Neerlandesa</span>
-        <span class="pill">SOPARFI · LU</span>
-        <span class="pill">ETVE · ES</span>
-        <span class="pill">DAC6</span>
-        <span class="pill">BEPS</span>
-        <span class="pill">KYC</span>
-      </div>
-    </div>
-    <div class="split-media reveal">
-      <img src="/assets/redesign/img/about.webp" alt="Arquitectura clásica europea al atardecer" loading="lazy">
-    </div>
-  </section>
 
   <!-- ══ QUOTE — barcos ══ -->
   <section id="bespoke">
