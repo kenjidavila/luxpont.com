@@ -1,37 +1,39 @@
-// Hero particle field — Canvas2D, no WebGL. Two landmarks alternate in
-// the same hero: Coliseo (particles right, text left) and Metropolis
-// (particles left, text right) — each matched point-by-point against its
-// exact reference image (see particle-shapes.js header for the extraction
-// method). Every extracted point renders, every frame, for whichever
-// landmark is active — no thinning, no live-render budget. Rendering
-// that many points with individual ctx.arc()+fill() calls (what earlier
-// iterations of this file did) is too many draw calls for 60fps well
-// before reaching the full count, so this writes directly into a pixel
-// buffer (ImageData) each frame — one bounds-checked array write per
-// particle — and blits the whole buffer with a single putImageData()
-// call. That's what makes full density affordable at 60fps.
+// Hero particle field — Canvas2D, no WebGL. Three landmarks alternate in
+// the same hero, each with its own text alignment: Coliseo (particles
+// right, text left), Metropolis (particles left, text right), Castillo
+// (particles centered, covering almost the entire hero, text centered on
+// top). Each matched point-by-point against its exact reference image
+// (see particle-shapes.js header for the extraction method). Every
+// extracted point renders, every frame, for whichever landmark is active
+// — no thinning, no live-render budget. Rendering that many points with
+// individual ctx.arc()+fill() calls (what earlier iterations of this file
+// did) is too many draw calls for 60fps well before reaching the full
+// count, so this writes directly into a pixel buffer (ImageData) each
+// frame — one bounds-checked array write per particle — and blits the
+// whole buffer with a single putImageData() call. That's what makes full
+// density affordable at 60fps.
 //
-// Layout: on wide screens the field fully covers one side of the hero,
-// edge to edge, from the bottom of the nav pill down to the bottom of the
+// Layout: on wide screens the field covers a region of the hero, edge to
+// edge, from the bottom of the nav pill down to the bottom of the
 // viewport — a "cover" fit (like CSS background-size:cover) against the
-// real .hero-content DOM rect, not a fixed image aspect ratio. Which side
-// depends on which landmark is active: Coliseo covers the right (text
-// stays on the left), Metropolis covers the left (text moves right).
-// .hero-content itself is what physically slides sides — a slow CSS
-// `left` transition toggled by the .mirrored class — and this file
-// re-measures its live position every single frame (not just on resize)
-// so the particle field's cover region continuously tracks the text
-// while it's mid-slide. That continuous coupling is what makes the
-// landmark swap read as one organic motion instead of a jump cut: text
-// and particles move together, not text has jumped >> particles catch up.
-// On narrow screens there's no room for a side split, so it falls back to
-// centered, behind (centered) text, same for either landmark.
+// real .hero-content DOM rect (or, for the centered landmark, against the
+// full hero width), not a fixed image aspect ratio. .hero-content itself
+// is what physically moves — a slow CSS `left` transition toggled by an
+// align class (.mirrored / .centered / neither) — and this file
+// re-measures its live position every single frame while it's mid-move
+// (not the whole time — see the TRANSITION_WINDOW note below) so the
+// particle field's cover region continuously tracks the text instead of
+// jumping to a final value. That continuous coupling is what makes the
+// landmark swap read as one organic motion instead of a cut: text and
+// particles move together. On narrow screens there's no room for a side
+// split, so it falls back to centered, behind (centered) text, for all
+// three landmarks alike.
 //
 // One continuous cycle per landmark: build (particles fly in from the
-// nearest bottom corner and assemble), hold (steady), fade (each particle
-// detaches on its own stagger and drifts slowly downward as it dims, like
-// dust settling, inviting a scroll) — then the next landmark takes over
-// the same way, mirrored.
+// nearest bottom corner/center and assemble), hold (steady), fade (each
+// particle detaches on its own stagger and drifts slowly downward as it
+// dims, like dust settling, inviting a scroll) — then the next landmark
+// takes over the same way.
 (function () {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas || !window.LUXPONT_SHAPES || !window.LUXPONT_SHAPES.length) return;
@@ -43,10 +45,11 @@
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Coliseo builds on the right (text stays put on the left); Metropolis
-  // mirrors to the left (text slides right). Anything not listed defaults
-  // to the normal (non-mirrored) side.
-  const MIRRORED = { metropolis: true };
+  // Coliseo builds on the right (text stays left); Metropolis mirrors to
+  // the left (text slides right); Castillo builds centered, covering
+  // almost the entire hero (text moves to the middle). Anything not
+  // listed defaults to 'normal' (right side, non-mirrored).
+  const ALIGN = { metropolis: 'mirrored', castillo: 'centered' };
 
   function mulberry32(seed) {
     let s = seed;
@@ -104,7 +107,7 @@
       name: shapeData.name, points, colors, totalPts, order,
       shapeCx: (minX + maxX) / 2, shapeCy: (minY + maxY) / 2,
       xSpan: maxX - minX, ySpan: maxY - minY,
-      mirrored: !!MIRRORED[shapeData.name],
+      align: ALIGN[shapeData.name] || 'normal',
       depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle,
     };
   }
@@ -124,10 +127,15 @@
     const navBottom = navEl ? navEl.getBoundingClientRect().bottom : 90;
     const rect = heroContentEl ? heroContentEl.getBoundingClientRect() : null;
     let left, right;
-    if (shape.mirrored) {
+    if (shape.align === 'mirrored') {
       // particles cover the left side, up to the text block's live edge
       left = 0;
       right = rect ? Math.max(1, rect.left - 24) : width * 0.3;
+    } else if (shape.align === 'centered') {
+      // covers almost the entire hero — text sits centered on top of it,
+      // not beside it, so the region isn't carved around the text rect.
+      left = 24;
+      right = width - 24;
     } else {
       left = rect ? Math.min(rect.right + 24, width * 0.7) : width * 0.42;
       right = width;
@@ -200,7 +208,10 @@
 
     if (shapeIdx !== lastShapeIdx) {
       lastShapeIdx = shapeIdx;
-      if (heroContentEl) heroContentEl.classList.toggle('mirrored', shape.mirrored);
+      if (heroContentEl) {
+        heroContentEl.classList.toggle('mirrored', shape.align === 'mirrored');
+        heroContentEl.classList.toggle('centered', shape.align === 'centered');
+      }
       transitionEndsAt = time + TRANSITION_WINDOW;
     }
 
@@ -218,7 +229,14 @@
       needsLayoutRefresh = false;
     }
     const { cx, cy, scale } = cachedLayout;
-    const cornerX = shape.mirrored ? width * -0.02 : width * 1.02;
+    // Each landmark's particles originate from whichever bottom point is
+    // nearest its own build region: the left corner for the mirrored
+    // (left-side) landmark, bottom-center for the centered/full-bleed one
+    // (symmetric convergence suits a shape spanning the whole width), the
+    // right corner otherwise.
+    const cornerX = shape.align === 'mirrored' ? width * -0.02
+      : shape.align === 'centered' ? width * 0.5
+      : width * 1.02;
     const cornerY = height * 1.04;
 
     const { points, colors, order, totalPts } = shape;
