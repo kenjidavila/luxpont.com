@@ -7,16 +7,28 @@
 // method) — nothing cropped out of that reference, and every particle
 // carries the real RGB sampled from its source pixel.
 //
+// Layout: on wide screens the field fully covers the right side of the
+// hero, edge to edge, from the bottom of the nav pill down to the bottom
+// of the viewport — a "cover" fit (like CSS background-size:cover)
+// against the real nav/.hero-content DOM rects, not a fixed image aspect
+// ratio, so it stays full-bleed at any viewport size instead of
+// letterboxing. On narrow screens it falls back to centered, behind the
+// (centered) text.
+//
 // Two render paths, because the full extraction (188k real points) is far
 // more than 60fps allows to redraw every frame, but the resting silhouette
 // still needs every point to actually read as the reference instead of
 // sparse noise:
 //   - build/fade (particles moving): a thinned, animated subset — motion
 //     hides the lower density, and it needs to be cheap every frame.
-//   - hold (particles at rest, ~half the loop): the ENTIRE point cloud is
-//     rendered once to an offscreen canvas the moment it's needed, then
-//     every frame during hold is just one drawImage() blit of that bitmap.
-//     Full fidelity, effectively free per frame.
+//   - hold (particles at rest, the majority of the loop): the ENTIRE point
+//     cloud is rendered once to an offscreen canvas the moment it's
+//     needed, then every frame during hold is just one drawImage() blit
+//     of that bitmap. Full fidelity, effectively free per frame.
+//
+// Fade: particles don't just dim in place — each detaches on its own
+// stagger and drifts slowly downward as it fades, like dust falling away,
+// a deliberate cue inviting the user to scroll down the page.
 (function () {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas || !window.LUXPONT_SHAPES) return;
@@ -26,8 +38,10 @@
   const shapeData = window.LUXPONT_SHAPES[0];
   if (!shapeData) return;
 
+  const navEl = document.getElementById('nav');
+  const heroContentEl = document.querySelector('.hero-content');
+
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isSmall = window.innerWidth < 760;
 
   function mulberry32(seed) {
     let s = seed;
@@ -42,16 +56,44 @@
   function lerp(a, b, t) { return a + (b - a) * t; }
   function smooth(t) { const k = Math.max(0, Math.min(1, t)); return k * k * (3 - 2 * k); }
 
-  // This shape is the whole reference scene (aspect ~1.5, x-range roughly
-  // [-1,1], y-range roughly [-0.62,0.67]) — wide (tree-to-ground), so
-  // cx/scale are tuned so its full width fits inside the viewport with
-  // margin on both sides instead of clipping off the right edge.
-  function layout(width, height) {
+  // Real extent of the point cloud in its own normalized units (computed
+  // once from the actual data instead of assumed, so this keeps working
+  // if the extraction ever changes).
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (let i = 0; i < shapeData.points.length; i += 2) {
+    const x = shapeData.points[i], y = shapeData.points[i + 1];
+    if (x < minX) minX = x; if (x > maxX) maxX = x;
+    if (y < minY) minY = y; if (y > maxY) maxY = y;
+  }
+  const shapeCx = (minX + maxX) / 2;
+  const shapeCy = (minY + maxY) / 2;
+  const xSpan = maxX - minX;
+  const ySpan = maxY - minY;
+
+  function computeLayout(width, height) {
     const small = width < 760;
+    if (small) {
+      return {
+        cx: width * 0.5 - shapeCx * (Math.min(width, height) * 0.42),
+        cy: height * 0.56 - shapeCy * (Math.min(width, height) * 0.42),
+        scale: Math.min(width, height) * 0.42,
+      };
+    }
+    const navBottom = navEl ? navEl.getBoundingClientRect().bottom : 90;
+    const contentRight = heroContentEl ? heroContentEl.getBoundingClientRect().right : width * 0.42;
+    const left = Math.min(contentRight + 24, width * 0.7);
+    const top = navBottom + 16;
+    const rectW = Math.max(1, width - left);
+    const rectH = Math.max(1, height - top);
+    // "cover" fit: scale so the shape fills the whole target rect on
+    // both axes (cropping whichever axis overflows), instead of
+    // "contain" fit, which would letterbox to preserve the source
+    // image's own aspect ratio.
+    const scale = Math.max(rectW / xSpan, rectH / ySpan);
     return {
-      cx: small ? width * 0.5 : width * 0.66,
-      cy: small ? height * 0.56 : height * 0.52,
-      scale: Math.min(width, height) * (small ? 0.42 : 0.5),
+      cx: left + rectW / 2 - shapeCx * scale,
+      cy: top + rectH / 2 - shapeCy * scale,
+      scale,
     };
   }
 
@@ -81,7 +123,8 @@
   // Fisher-Yates pick (not a regular stride: a fixed interval can
   // over/under-sample in bursts where the source array is locally dense —
   // a shuffled pick keeps the thin spatially unbiased).
-  const LIVE_TARGET = isSmall ? 12000 : 26000;
+  const isSmallInit = window.innerWidth < 760;
+  const LIVE_TARGET = isSmallInit ? 8000 : 10000;
   function pickIndices(totalPts, target, rand) {
     const n = Math.min(target, totalPts);
     const idx = new Array(totalPts);
@@ -113,7 +156,8 @@
         size: (0.9 + rand() * 1.9) * (0.6 + depth * 0.7),
         color: [r, g, b],
         isGlow,
-        delay: rand() * 0.6,
+        buildDelay: rand() * 0.6,
+        fallDelay: rand() * 0.55,
         twinkle: rand() * Math.PI * 2,
       });
     }
@@ -127,10 +171,12 @@
 
   const BUILD = 3.8;  // seconds to fly in from the corner and assemble
   const HOLD = 4.6;   // seconds fully formed
-  const FADE = 1.6;   // seconds dissolving before it rebuilds
+  const FADE = 5.5;   // seconds — slow: each particle detaches on its own
+                       // stagger and drifts down as it fades, not a flat dim
   const TOTAL = BUILD + HOLD + FADE;
 
   let width = 0, height = 0, dpr = 1;
+  let currentLayout = { cx: 0, cy: 0, scale: 1 };
 
   // ---- full-fidelity static bitmap for the hold phase ----
   let holdCanvas = null;
@@ -145,7 +191,7 @@
     octx.fillStyle = '#ffffff';
     octx.fillRect(0, 0, width, height);
 
-    const { cx, cy, scale } = layout(width, height);
+    const { cx, cy, scale } = currentLayout;
     const pts = shapeData.points;
     const cols = shapeData.colors;
     const totalPts = pts.length / 2;
@@ -175,6 +221,7 @@
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    currentLayout = computeLayout(width, height);
     // the 188k-point hold bitmap takes ~150ms to redraw synchronously —
     // fine once, but a window being dragged fires resize continuously, so
     // debounce the expensive part and let the canvas pixel size itself
@@ -209,7 +256,7 @@
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
-    const { cx, cy, scale } = layout(width, height);
+    const { cx, cy, scale } = currentLayout;
     const cornerX = width * 1.02;
     const cornerY = height * 1.04;
 
@@ -221,7 +268,7 @@
 
       let buildBlend = 1;
       if (phase === 'build') {
-        const staggered = Math.max(0, Math.min(1, (phaseLocal - p.delay) / (1 - p.delay)));
+        const staggered = Math.max(0, Math.min(1, (phaseLocal - p.buildDelay) / (1 - p.buildDelay)));
         buildBlend = smooth(staggered * 2.1);
       }
 
@@ -234,7 +281,14 @@
       y += Math.cos(ph * 1.17) * wob;
 
       let opacity = Math.min(1, buildBlend * 3); // soft pop-in as each particle starts moving
-      if (phase === 'fade') opacity *= 1 - smooth(phaseLocal);
+
+      if (phase === 'fade') {
+        // each particle detaches on its own stagger, then drifts slowly
+        // down and out as it dims — not a uniform fade in place.
+        const fallLocal = Math.max(0, Math.min(1, (phaseLocal - p.fallDelay) / (1 - p.fallDelay)));
+        y += fallLocal * fallLocal * height * 0.55;
+        opacity *= 1 - smooth(fallLocal);
+      }
       if (opacity <= 0.015) continue;
 
       if (x < -60 || x > width + 60 || y < -60 || y > height + 60) continue;
