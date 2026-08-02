@@ -15,20 +15,12 @@
 // letterboxing. On narrow screens it falls back to centered, behind the
 // (centered) text.
 //
-// Two render paths, because the full extraction (188k real points) is far
-// more than 60fps allows to redraw every frame, but the resting silhouette
-// still needs every point to actually read as the reference instead of
-// sparse noise:
-//   - build/fade (particles moving): a thinned, animated subset — motion
-//     hides the lower density, and it needs to be cheap every frame.
-//   - hold (particles at rest, the majority of the loop): the ENTIRE point
-//     cloud is rendered once to an offscreen canvas the moment it's
-//     needed, then every frame during hold is just one drawImage() blit
-//     of that bitmap. Full fidelity, effectively free per frame.
-//
-// Fade: particles don't just dim in place — each detaches on its own
-// stagger and drifts slowly downward as it fades, like dust falling away,
-// a deliberate cue inviting the user to scroll down the page.
+// One continuous cycle, one particle set throughout — deliberately not
+// three separate visual states. Build (particles fly in and assemble),
+// hold (steady), and fade (particles detach and drift slowly downward,
+// like dust settling, inviting a scroll) are just three windows of the
+// same smooth position/opacity curve applied to the same array every
+// frame, so there is no cut, swap, or density jump between them.
 (function () {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas || !window.LUXPONT_SHAPES) return;
@@ -97,7 +89,7 @@
     };
   }
 
-  function paintDot(g, x, y, size, r, gr, bl, opacity, isGlow, bright) {
+  function paintDot(x, y, size, r, gr, bl, opacity, isGlow, bright) {
     // Radius deliberately small relative to the average spacing between
     // neighbouring points: at the density this cloud renders at, dots
     // sized to touch/overlap their neighbours merge into a smooth,
@@ -106,28 +98,28 @@
     // opacity, no overlap-driven blending) is what makes the result read
     // as particles that happen to reconstruct the image, not the image.
     if (isGlow) {
-      g.globalCompositeOperation = 'lighter';
-      g.fillStyle = `rgba(${r},${gr},${bl},${Math.min(1, 0.75 * bright * opacity)})`;
-      g.beginPath();
-      g.arc(x, y, size * 0.62, 0, Math.PI * 2);
-      g.fill();
-      g.globalCompositeOperation = 'source-over';
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(${r},${gr},${bl},${Math.min(1, 0.75 * bright * opacity)})`;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 0.62, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
     } else {
-      g.fillStyle = `rgba(${r},${gr},${bl},${0.95 * opacity})`;
-      g.beginPath();
-      g.arc(x, y, size * 0.4, 0, Math.PI * 2);
-      g.fill();
+      ctx.fillStyle = `rgba(${r},${gr},${bl},${0.95 * opacity})`;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
-  // ---- animated (build/fade) particle set: thinned for frame budget ----
-  // Rendering all ~188k real points every frame is too many canvas draw
-  // calls for a steady 60fps, so this pool is thinned via a partial
-  // Fisher-Yates pick (not a regular stride: a fixed interval can
-  // over/under-sample in bursts where the source array is locally dense —
-  // a shuffled pick keeps the thin spatially unbiased).
+  // Single particle pool used for the entire cycle (build, hold, and
+  // fade all read from the same array) — thinned from the ~188k-point
+  // extraction to a live-render budget via a partial Fisher-Yates pick
+  // (not a regular stride: a fixed interval can over/under-sample in
+  // bursts where the source array is locally dense — a shuffled pick
+  // keeps the thin spatially unbiased).
   const isSmallInit = window.innerWidth < 760;
-  const LIVE_TARGET = isSmallInit ? 8000 : 10000;
+  const LIVE_TARGET = isSmallInit ? 16000 : 20000;
   function pickIndices(totalPts, target, rand) {
     const n = Math.min(target, totalPts);
     const idx = new Array(totalPts);
@@ -139,7 +131,7 @@
     return idx.slice(totalPts - n);
   }
 
-  function buildAnimatedParticles(s, seed) {
+  function buildParticles(s, seed) {
     const totalPts = s.points.length / 2;
     const rand = mulberry32(seed);
     const indices = pickIndices(totalPts, LIVE_TARGET, rand);
@@ -156,7 +148,7 @@
         phase: rand() * Math.PI * 2,
         speed: 0.12 + rand() * 0.3,
         wobble: 0.01 + rand() * 0.026,
-        size: (0.9 + rand() * 1.9) * (0.6 + depth * 0.7),
+        size: (0.75 + rand() * 1.6) * (0.6 + depth * 0.7),
         color: [r, g, b],
         isGlow,
         buildDelay: rand() * 0.6,
@@ -170,51 +162,17 @@
     return list;
   }
 
-  const particles = buildAnimatedParticles(shapeData, 101);
+  const particles = buildParticles(shapeData, 101);
 
-  const BUILD = 3.8;  // seconds to fly in from the corner and assemble
-  const HOLD = 4.6;   // seconds fully formed
-  const FADE = 5.5;   // seconds — slow: each particle detaches on its own
+  const BUILD = 4.2;  // seconds to fly in from the corner and assemble
+  const HOLD = 4.4;   // seconds fully formed
+  const FADE = 5.8;   // seconds — slow: each particle detaches on its own
                        // stagger and drifts down as it fades, not a flat dim
   const TOTAL = BUILD + HOLD + FADE;
 
   let width = 0, height = 0, dpr = 1;
   let currentLayout = { cx: 0, cy: 0, scale: 1 };
 
-  // ---- full-fidelity static bitmap for the hold phase ----
-  let holdCanvas = null;
-  let holdKey = '';
-  function renderHoldCanvas() {
-    if (!width || !height) return;
-    const off = document.createElement('canvas');
-    off.width = canvas.width;
-    off.height = canvas.height;
-    const octx = off.getContext('2d', { alpha: false });
-    octx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    octx.fillStyle = '#ffffff';
-    octx.fillRect(0, 0, width, height);
-
-    const { cx, cy, scale } = currentLayout;
-    const pts = shapeData.points;
-    const cols = shapeData.colors;
-    const totalPts = pts.length / 2;
-    const rand = mulberry32(303);
-    octx.globalCompositeOperation = 'source-over';
-    for (let i = 0; i < totalPts; i++) {
-      const x = cx + pts[i * 2] * scale;
-      const y = cy + pts[i * 2 + 1] * scale;
-      const depth = rand();
-      if (x < -5 || x > width + 5 || y < -5 || y > height + 5) continue;
-      const r = cols[i * 3], g = cols[i * 3 + 1], bl = cols[i * 3 + 2];
-      const size = (0.55 + rand() * 1.3) * (0.6 + depth * 0.7);
-      const isGlow = r > 232 && g > 220 && bl > 195 && depth < 0.35;
-      paintDot(octx, x, y, size, r, g, bl, 1, isGlow, 0.85);
-    }
-    holdCanvas = off;
-    holdKey = width + 'x' + height + 'x' + dpr;
-  }
-
-  let resizeTimer = 0;
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     width = window.innerWidth;
@@ -225,15 +183,8 @@
     canvas.style.height = height + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     currentLayout = computeLayout(width, height);
-    // the 188k-point hold bitmap takes ~150ms to redraw synchronously —
-    // fine once, but a window being dragged fires resize continuously, so
-    // debounce the expensive part and let the canvas pixel size itself
-    // update immediately (no visual stretch either way).
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(renderHoldCanvas, 150);
   }
   resize();
-  renderHoldCanvas();
   window.addEventListener('resize', resize);
 
   function draw(time) {
@@ -247,14 +198,6 @@
     if (localT < BUILD) { phase = 'build'; phaseLocal = localT / BUILD; }
     else if (localT < BUILD + HOLD) { phase = 'hold'; phaseLocal = 1; }
     else { phase = 'fade'; phaseLocal = (localT - BUILD - HOLD) / FADE; }
-
-    const key = width + 'x' + height + 'x' + dpr;
-    if (phase === 'hold' && holdCanvas && holdKey === key) {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.drawImage(holdCanvas, 0, 0);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return;
-    }
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
@@ -298,12 +241,12 @@
 
       const r = p.color[0] | 0, g = p.color[1] | 0, bl = p.color[2] | 0;
       const bright = reduceMotion ? 0.85 : 0.6 + 0.4 * Math.sin(time * 2.2 + p.twinkle);
-      paintDot(ctx, x, y, p.size, r, g, bl, opacity, p.isGlow, bright);
+      paintDot(x, y, p.size, r, g, bl, opacity, p.isGlow, bright);
     }
   }
 
   if (reduceMotion) {
-    draw(BUILD + HOLD * 0.5); // static frame: fully assembled, full-fidelity bitmap
+    draw(BUILD + HOLD * 0.5); // static frame: fully assembled
     return;
   }
 
