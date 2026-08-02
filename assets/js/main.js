@@ -11,7 +11,6 @@ const heroTrack = document.getElementById('hero-track');
 const pinWrapper = document.querySelector('.pin-wrapper');
 const pinLayers = pinWrapper ? Array.from(pinWrapper.querySelectorAll('.pin-layer')) : [];
 const heroWhiteout = document.querySelector('.hero-whiteout');
-const heroBgImg = document.querySelector('.hero-bg img');
 const scrollHint = document.getElementById('heroScrollHint');
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -56,14 +55,12 @@ function onScroll(){
       });
 
       // Hero-specific whiteout rides on its own outgoing fade (layer 0 -> 1);
-      // once we've moved past that first transition the image stays fully
-      // whitened underneath whichever layer is currently showing.
+      // once we've moved past that first transition the particle canvas
+      // stays fully whitened underneath whichever layer is currently showing.
       if (baseIdx === 0) {
         if (heroWhiteout) heroWhiteout.style.opacity = String(frac);
-        if (heroBgImg) heroBgImg.style.filter = `brightness(${1 + frac * 0.3}) blur(${frac * 3}px)`;
       } else {
         if (heroWhiteout) heroWhiteout.style.opacity = '1';
-        if (heroBgImg) heroBgImg.style.filter = 'brightness(1.3) blur(3px)';
       }
     } else {
       pinLayers.forEach((layer) => {
@@ -72,7 +69,6 @@ function onScroll(){
         layer.classList.remove('in-view');
       });
       if (heroWhiteout) heroWhiteout.style.opacity = '';
-      if (heroBgImg) heroBgImg.style.filter = '';
     }
 
     // Nav only turns solid once the track has mostly scrolled past, so it

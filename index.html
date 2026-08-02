@@ -170,7 +170,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="/assets/css/site.css">
-<link rel="preload" as="image" href="/assets/redesign/img/hero-atrio-4k.webp" fetchpriority="high">
+<link rel="preload" as="script" href="/assets/js/particle-shapes.js">
 </head>
 <body>
 
@@ -242,12 +242,8 @@
       <!-- 01 · HERO -->
       <div id="hero" class="pin-layer">
         <div class="hero-bg">
-          <picture>
-            <source type="image/webp" srcset="/assets/redesign/img/hero-atrio-4k.webp">
-            <img src="/assets/redesign/img/hero-atrio-4k.jpg" alt="" width="2560" height="1707" fetchpriority="high">
-          </picture>
+          <canvas id="particle-canvas" aria-hidden="true"></canvas>
         </div>
-        <div class="hero-scrim"></div>
         <div class="hero-whiteout"></div>
         <div class="hero-grain"></div>
         <div class="hero-content">
@@ -595,6 +591,8 @@
   </div>
 </div>
 
+<script src="/assets/js/particle-shapes.js"></script>
+<script src="/assets/js/particles.js"></script>
 <script src="/assets/js/main.js"></script>
 </body>
 </html>
