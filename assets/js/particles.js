@@ -140,7 +140,13 @@
       left = rect ? Math.min(rect.right + 24, width * 0.7) : width * 0.42;
       right = width;
     }
-    const top = navBottom + 16;
+    // Extra headroom below the nav: the top of a shape's bounding box is
+    // often its sparsest region (a statue's raised arm, a spire's finial —
+    // a handful of faint points), so a tight margin reads as if the shape
+    // is crowding/clipping into the nav even though nothing is actually
+    // being cut off. More breathing room keeps that sparse detail visually
+    // separated from the nav pill.
+    const top = navBottom + 40;
     const rectW = Math.max(1, right - left);
     // Bottom margin so the shape's bounding box doesn't sit flush against
     // the very edge of the viewport — the source scenes aren't evenly
