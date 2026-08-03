@@ -46,7 +46,7 @@
 
  --section: 108px;
  --gutter: 8vw;
- --hero-edge: clamp(32px, 4vw, 64px);
+ --hero-edge: clamp(20px, 2.2vw, 40px);
  --ease: cubic-bezier(0.16,1,0.3,1);
  --ease-snap: cubic-bezier(0.2,0.8,0.2,1);
 }
@@ -207,7 +207,13 @@ body.lang-banner-active #nav{ top:57px; }
    particles.js toggles the align class and re-measures this element's live
    position every frame while it's moving, so the particle field's own
    "cover" region tracks the text continuously as it slides. Scoped to
-   width>760px — mobile has no room for a side split and stays centered. */
+   width>1100px: a 780px text column plus a legible particle region plus
+   margins needs roughly that much room to not crowd together — verified
+   this was a real bug at 1024px (iPad landscape), where the split layout
+   left text and dense particles directly overlapping and unreadable.
+   Below the threshold there's no room for a side split, so it falls back
+   to centered — mobile AND tablets both get that fallback now, not just
+   phones. */
 /* --hero-edge (defined in :root above, not here — a custom property
    declared directly inside a bare @media block with no selector is
    invalid CSS and gets silently dropped, which briefly broke this exact
@@ -219,7 +225,7 @@ body.lang-banner-active #nav{ top:57px; }
    edge) much wider than the inner one (text-to-particles, 24px in
    particles.js), so the text read as pinned off to one side with a big
    imbalanced gap instead of sitting evenly framed. */
-@media(min-width:761px){
+@media(min-width:1101px){
   .hero-content{
     position:absolute; top:50%; left:var(--hero-edge); right:auto;
     transform:translateY(-50%);
@@ -248,11 +254,19 @@ body.lang-banner-active #nav{ top:57px; }
     background:radial-gradient(ellipse at center, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%);
   }
 }
-@media(max-width:760px){
-  .hero-content{ max-width:100%; text-align:center; }
+@media(max-width:1100px){
+  .hero-content{ max-width:100%; text-align:center; position:relative; }
   .hero-h1{ margin:0 auto 24px; max-width:100%; }
   .hero-lead{ margin:0 auto 44px; }
   .hero-actions{ justify-content:center; }
+  /* Below the split-layout threshold the particles centre themselves
+     behind the (also centred) text — the same overlap Castillo had at
+     desktop sizes, here for whichever landmark is active. Same fix: a
+     soft glow behind the text instead of a full opaque panel. */
+  .hero-content::before{
+    content:''; position:absolute; inset:-28px -20px; z-index:-1;
+    background:radial-gradient(ellipse at center, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%);
+  }
 }
 .btn-solid{ font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--marfil); background:var(--navy); border:1px solid var(--navy); border-radius:999px; padding:14px 36px; box-shadow:0 1px 2px rgba(22,34,63,0.08); transition:background 0.25s var(--ease-snap), border-color 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.15s var(--ease-snap); cursor:pointer; }
 .btn-solid:hover{ background:var(--navy-2); border-color:var(--navy-2); box-shadow:0 10px 24px rgba(22,34,63,0.22); transform:translateY(-1px); }
@@ -278,11 +292,11 @@ body.lang-banner-active #nav{ top:57px; }
 .gallery-piece{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,5vw,64px); align-items:center; }
 .gallery-piece.reverse .gallery-piece-frame{ order:-1; }
 .gallery-piece-copy p{ font-size:12.5px; line-height:1.65; margin-bottom:12px; }
-.gallery-piece-frame{ margin:0; border:1px solid var(--linea); background:var(--marfil-2); padding:10px; height:clamp(280px,54vh,460px); }
+.gallery-piece-frame{ margin:0; height:clamp(440px,72vh,680px); border-radius:16px; overflow:hidden; }
 .gallery-piece-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
 @media(max-width:960px){
   .gallery-piece, .gallery-piece.reverse{ grid-template-columns:1fr; }
-  .gallery-piece-frame{ height:clamp(200px,32vh,320px); order:-1; }
+  .gallery-piece-frame{ height:clamp(320px,52vh,460px); order:-1; }
 }
 
 /* Método CBCA — seis preguntas en una sola pantalla, sin scroll propio */

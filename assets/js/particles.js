@@ -105,6 +105,7 @@
 
     return {
       name: shapeData.name, points, colors, totalPts, order,
+      minX, maxX, minY, maxY,
       shapeCx: (minX + maxX) / 2, shapeCy: (minY + maxY) / 2,
       xSpan: maxX - minX, ySpan: maxY - minY,
       align: ALIGN[shapeData.name] || 'normal',
@@ -115,7 +116,12 @@
   const shapeStates = window.LUXPONT_SHAPES.map((s, idx) => buildShapeState(s, 101 + idx * 37));
 
   function computeLayout(width, height, shape) {
-    const small = width < 760;
+    // Matches the CSS breakpoint (site.css, hero-content rules): below
+    // 1100px there isn't room for a text column + a legible particle
+    // region side by side without them crowding — verified as a real bug
+    // at 1024px (iPad landscape), where the split layout put dense
+    // particles directly behind the text.
+    const small = width < 1101;
     if (small) {
       const s = Math.min(width, height) * 0.42;
       return {
@@ -155,11 +161,30 @@
     // tilted ground line.
     const rectH = Math.max(1, height - top - 44);
     const scale = Math.max(rectW / shape.xSpan, rectH / shape.ySpan);
-    return {
-      cx: left + rectW / 2 - shape.shapeCx * scale,
-      cy: top + rectH / 2 - shape.shapeCy * scale,
-      scale,
-    };
+
+    // Centering the shape inside its region only fills the region on
+    // whichever axis is the *binding* one for the cover-fit scale — the
+    // other axis comes out narrower than the region and, centered, leaves
+    // equal empty space on both sides of it. For 'mirrored' that showed up
+    // as Metropolis not actually reaching the true left edge; for 'normal'
+    // the equivalent would be not reaching the right edge. Anchoring the
+    // shape's own bounding-box edge to the region's edge (instead of
+    // centering) guarantees it's flush on the side that's supposed to be
+    // flush, and lets any slack fall on the side that already has room
+    // (toward the text) — same idea for the top edge, so it's flush below
+    // the nav instead of an equal top/bottom gap hiding that.
+    let cx, cy;
+    if (shape.align === 'mirrored') {
+      cx = left - shape.minX * scale;
+      cy = top - shape.minY * scale;
+    } else if (shape.align === 'centered') {
+      cx = left + rectW / 2 - shape.shapeCx * scale;
+      cy = top + rectH / 2 - shape.shapeCy * scale;
+    } else {
+      cx = right - shape.maxX * scale;
+      cy = top - shape.minY * scale;
+    }
+    return { cx, cy, scale };
   }
 
   const BUILD = 4.2;  // seconds to fly in from the corner and assemble
