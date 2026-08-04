@@ -79,8 +79,12 @@ button { font-family:inherit; }
 ════════════════════════════════════════════════════════ */
 .label { font-family:var(--mono); font-size:9px; font-weight:400; letter-spacing:0.22em; text-transform:uppercase; color:var(--oro-texto); margin-bottom:14px; }
 .label.on-dark { color:var(--oro-texto); }
-.h2-display { font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:clamp(var(--t-2xl),4vw,var(--t-3xl)); font-weight:800; font-stretch:condensed; letter-spacing:-0.03em; line-height:1.12; color:var(--black); }
-.h2-display em { font-family:var(--serif); font-style:italic; font-weight:300; font-stretch:normal; letter-spacing:-0.01em; color:var(--oro-texto); }
+.h2-display { font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:clamp(var(--t-2xl),4vw,var(--t-3xl)); font-weight:800; font-stretch:condensed; letter-spacing:-0.03em; line-height:1.12; color:var(--black); margin:0 0 clamp(18px,2.2vw,30px); }
+/* The accent phrase stays in the same display face as the rest of the heading
+   — set apart by the gold colour alone, not a second (serif) typeface. Mixing
+   the heavy condensed sans with a light serif italic mid-line read as a clash;
+   one face + one accent colour keeps each heading coherent. */
+.h2-display em { font-family:inherit; font-style:normal; font-weight:inherit; font-stretch:inherit; letter-spacing:inherit; color:var(--oro-texto); }
 .h2-display.on-dark { color:var(--navy); }
 .body-text { font-family:var(--sans); font-size:var(--t-base); font-weight:300; line-height:1.85; color:var(--muted); }
 .body-text p { margin-bottom:16px; }
@@ -299,35 +303,23 @@ body.lang-banner-active #nav{ top:57px; }
     background:radial-gradient(ellipse at center, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%);
   }
 }
-/* "Liquid glass": translucent instead of flat-opaque, with backdrop-
-   filter doing real work here since this sits directly over the hero's
-   particle canvas — it blurs the moving field behind the pill rather
-   than just sitting on top of it. Inset highlight/shadow pair simulates
-   light catching the top edge of the glass and falling off at the
-   bottom, the way Apple's material does it. */
+/* Primary hero CTA — a clean, fully solid navy pill. The earlier liquid-glass
+   treatment read as muddy/opaque over the particle field, so it's gone: no
+   backdrop-filter, no translucency, no inset specular edges. Just a crisp
+   solid button with a soft drop shadow. */
 .btn-solid{
-  font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase;
+  font-family:var(--sans); font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase;
   color:var(--marfil);
-  background:linear-gradient(180deg, rgba(22,34,63,0.5) 0%, rgba(15,24,48,0.46) 100%);
-  border:1px solid rgba(255,255,255,0.22);
-  border-radius:999px; padding:14px 36px;
-  backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.28),
-    inset 0 -1px 0 rgba(0,0,0,0.12),
-    0 1px 2px rgba(22,34,63,0.1),
-    0 10px 26px rgba(22,34,63,0.16);
-  text-shadow:0 1px 3px rgba(10,16,32,0.55);
-  transition:background 0.3s var(--ease-snap), border-color 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap), transform 0.15s var(--ease-snap);
+  background:var(--navy);
+  border:1px solid var(--navy);
+  border-radius:999px; padding:15px 36px;
+  box-shadow:0 8px 22px rgba(22,34,63,0.22);
+  transition:background 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap), transform 0.15s var(--ease-snap);
   cursor:pointer;
 }
 .btn-solid:hover{
-  background:linear-gradient(180deg, rgba(15,24,48,0.62) 0%, rgba(10,17,35,0.58) 100%);
-  border-color:rgba(255,255,255,0.34);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.34),
-    inset 0 -1px 0 rgba(0,0,0,0.12),
-    0 14px 34px rgba(22,34,63,0.26);
+  background:var(--navy-2);
+  box-shadow:0 12px 30px rgba(22,34,63,0.3);
   transform:translateY(-1px);
 }
 .btn-solid:active{ transform:scale(0.97); transition-duration:0.1s; }
@@ -631,3 +623,84 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 
 @media(max-width:960px){ :root{ --section:72px; --gutter:6vw; } }
 @media(max-width:600px){ :root{ --t-hero:clamp(38px,11vw,52px); } .grid-2{ gap:36px; } .section{ padding-left:6vw; padding-right:6vw; } }
+
+/* ══ INTRO SPLASH ══
+   Brand lockup shown on entry, over a plain black or white field (per the
+   viewer's OS colour scheme), then fades out SLOWLY so the eye has a couple
+   of seconds to watch the Luxpont hero emerge underneath. Self-contained:
+   removed from the layout by a small script once the fade-out ends. */
+#intro-splash{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  background:#ffffff;
+  animation:introSplashOut 2.2s var(--ease) 2s forwards;
+  will-change:opacity;
+}
+@media (prefers-color-scheme: dark){ #intro-splash{ background:#000000; } }
+.intro-splash-logo{
+  width:min(80vw, 560px); height:auto; display:block;
+  opacity:0;
+  animation:introLogoIn 1.2s var(--ease) 0.2s forwards;
+  will-change:opacity, transform;
+}
+@keyframes introLogoIn{
+  0%{ opacity:0; transform:translateY(12px) scale(0.975); }
+  100%{ opacity:1; transform:none; }
+}
+@keyframes introSplashOut{
+  0%{ opacity:1; visibility:visible; }
+  99%{ visibility:visible; }
+  100%{ opacity:0; visibility:hidden; }
+}
+@media(max-width:600px){ .intro-splash-logo{ width:min(86vw, 420px); } }
+
+/* ══ SPLIT GALLERY (Valores Centrales · Método CBCA) ══
+   A big, left-aligned heading holds the left column; the cards live in a
+   horizontal-scroll track on the right, taller/portrait, rendered as iOS-style
+   "liquid glass" — translucent frosted panels with a specular top edge. */
+.gallery-split{ display:grid; grid-template-columns:minmax(300px, 38%) 1fr; gap:clamp(28px,4vw,60px); align-items:center; }
+.gallery-split-head{ align-self:center; min-width:0; }
+.gallery-split-head .h2-display{ font-size:clamp(30px,3.8vw,54px); text-align:left; max-width:none; margin-bottom:clamp(14px,1.8vw,22px); }
+.gallery-split-head .body-text{ margin-bottom:0; }
+.gallery-split-head .gallery-nav{ margin-top:28px; }
+.gallery-split .gallery{ min-width:0; align-items:stretch; padding-top:8px; padding-bottom:20px; }
+
+/* Liquid-glass cards — translucent, frosted, portrait */
+.gallery-glass .card,
+.gallery-glass .pregunta-chip{
+  flex:0 0 clamp(230px, 25vw, 290px);
+  min-height:clamp(360px, 54vh, 470px);
+  display:flex; flex-direction:column;
+  background:linear-gradient(160deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.34) 100%);
+  backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.7);
+  border-radius:24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.85),
+    inset 0 -1px 0 rgba(255,255,255,0.25),
+    0 18px 46px rgba(22,34,63,0.13);
+  scroll-snap-align:start;
+  transition:transform 0.4s var(--ease-snap), box-shadow 0.4s var(--ease-snap), background 0.4s var(--ease-snap);
+}
+.gallery-glass .card:hover,
+.gallery-glass .pregunta-chip:hover{
+  transform:translateY(-6px);
+  background:linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.44) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(255,255,255,0.3),
+    0 28px 62px rgba(22,34,63,0.2);
+}
+/* content flows top→bottom; the index sits at the top, the text anchors low */
+.gallery-glass .card .card-body{ padding:34px 30px; flex:1; display:flex; flex-direction:column; }
+.gallery-glass .card.value-card .card-num{ font-size:13px; margin:0 0 auto; }
+.gallery-glass .card.value-card .card-title{ font-size:17px; margin-top:24px; }
+.gallery-glass .pregunta-chip{ padding:34px 30px; justify-content:flex-start; }
+.gallery-glass .pregunta-chip .pregunta-num{ font-size:15px; margin-bottom:auto; }
+.gallery-glass .pregunta-chip p{ font-size:clamp(15px,1.3vw,19px); margin-top:24px; line-height:1.42; }
+
+@media(max-width:900px){
+  .gallery-split{ grid-template-columns:1fr; gap:22px; align-items:start; }
+  .gallery-split-head .h2-display{ font-size:clamp(26px,7vw,40px); }
+  .gallery-glass .card, .gallery-glass .pregunta-chip{ min-height:clamp(300px, 48vh, 400px); }
+}

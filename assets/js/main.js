@@ -15,6 +15,21 @@ const scrollHint = document.getElementById('heroScrollHint');
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// ── INTRO SPLASH ────────────────────────────────────────────────────────────
+// The brand lockup covers the viewport on entry (CSS animates it in, holds,
+// then fades out). Once the fade-out keyframe ends we pull the overlay out of
+// the layout so it can never trap clicks. A timeout backs it up in case the
+// animationend never fires (e.g. reduced-motion collapses the timings).
+(function initIntroSplash(){
+  const splash = document.getElementById('intro-splash');
+  if (!splash) return;
+  const remove = () => { splash.style.display = 'none'; };
+  splash.addEventListener('animationend', (e) => {
+    if (e.target === splash && e.animationName === 'introSplashOut') remove();
+  });
+  setTimeout(remove, 6000); // fallback only — must outlast the slow fade-out so it never cuts it short
+})();
+
 let ticking = false;
 function onScroll(){
   if (ticking) return;
@@ -100,7 +115,7 @@ document.querySelectorAll('[data-gallery]').forEach(navEl => {
   if (!track) return;
   navEl.querySelectorAll('[data-scroll]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const card = track.querySelector('.card');
+      const card = track.querySelector('.card, .pregunta-chip');
       const step = card ? card.getBoundingClientRect().width + 20 : 340;
       track.scrollBy({ left: btn.getAttribute('data-scroll') === 'next' ? step : -step, behavior: 'smooth' });
     });
