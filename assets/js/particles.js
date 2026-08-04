@@ -174,7 +174,14 @@
     // stonework on the other), so a zero-margin crop reads as an uneven,
     // tilted ground line.
     const rectH = Math.max(1, height - top - 44);
-    const scale = Math.max(rectW / shape.xSpan, rectH / shape.ySpan);
+    // Cover fills the region (cropping overflow); contain fits the whole shape
+    // inside it (leaving air). The Coliseo is a wide, landscape scene — cover-
+    // cropping blew it up to full height and bled it under the text with no
+    // breathing room, so it's fitted (contain, lightly enlarged) and centred to
+    // sit with clear air around it. Metropolis / centered keep the flush cover.
+    const coverScale = Math.max(rectW / shape.xSpan, rectH / shape.ySpan);
+    const containScale = Math.min(rectW / shape.xSpan, rectH / shape.ySpan);
+    const scale = shape.align === 'normal' ? containScale * 1.15 : coverScale;
 
     // Centering the shape inside its region only fills the region on
     // whichever axis is the *binding* one for the cover-fit scale — the
@@ -195,8 +202,10 @@
       cx = left + rectW / 2 - shape.shapeCx * scale;
       cy = top + rectH / 2 - shape.shapeCy * scale;
     } else {
-      cx = right - shape.maxX * scale;
-      cy = top - shape.minY * scale;
+      // Coliseo — centred in its right-hand region so the air falls evenly
+      // around it instead of the shape sitting flush against the edges.
+      cx = left + rectW / 2 - shape.shapeCx * scale;
+      cy = top + rectH / 2 - shape.shapeCy * scale;
     }
     return { cx, cy, scale };
   }

@@ -709,11 +709,11 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
   .gallery-glass .card, .gallery-glass .pregunta-chip{ min-height:clamp(300px, 48vh, 400px); }
 }
 
-/* ══ CONTRAST SECTIONS (Valores Centrales · Método CBCA) ══
-   A warm Luxpont cream field (kept, despite the legacy class name) sets these
-   two apart from the near-white pages so the frosted glass cards read as a
-   clearly lifted surface. Everything else stays in the normal light colours. */
-.slide-dark{ background:#f5f0e8; }
+/* ══ Valores Centrales · Método CBCA ══
+   Same background as every other page (the "Metodología CBCA" module slide);
+   the frosted glass cards are kept a touch brighter so they still read as a
+   lifted surface on the near-white field. */
+.slide-dark{ background:var(--marfil); }
 /* whiter frosted panels so they lift cleanly off the grey */
 .slide-dark .gallery-glass .card,
 .slide-dark .gallery-glass .pregunta-chip{
