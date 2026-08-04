@@ -37,7 +37,6 @@ function onScroll(){
   requestAnimationFrame(() => {
     ticking = false;
     const y = window.scrollY || 0;
-    let navOverDark = false; // true while the black hero is the section under the nav
 
     // Only runs when the wrapper is actually pinned (desktop, motion
     // allowed) — on mobile / reduced-motion the CSS un-pins everything into
@@ -54,7 +53,6 @@ function onScroll(){
       const floatIndex = overall * (n - 1);
       const baseIdx = Math.min(n - 2, Math.floor(floatIndex));
       const frac = Math.max(0, Math.min(1, floatIndex - baseIdx));
-      navOverDark = floatIndex < 0.7; // the black hero (layer 0) is on screen
 
       // Give every section a "dwell" zone: it stays fully on screen for the
       // first DWELL of its scroll window, and the crossfade to the next
@@ -96,17 +94,12 @@ function onScroll(){
         layer.classList.remove('in-view');
       });
       if (heroWhiteout) heroWhiteout.style.opacity = '';
-      // Un-pinned (mobile / reduced-motion): the hero is a normal-flow section;
-      // invert the nav while it's the one under the pill.
-      const heroEl = document.getElementById('hero');
-      if (heroEl) { const r = heroEl.getBoundingClientRect(); navOverDark = r.top <= 46 && r.bottom >= 46; }
     }
 
     // Nav only turns solid once the track has mostly scrolled past, so it
     // never cuts a bar across a photo slide while the sequence is pinned.
     const navThreshold = heroTrack ? Math.max(80, heroTrack.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
-    nav.classList.toggle('nav-over-dark', navOverDark);
 
     if (scrollHint) scrollHint.style.opacity = Math.max(0, 1 - y / 260);
   });
