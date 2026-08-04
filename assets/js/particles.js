@@ -45,6 +45,11 @@
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // The hero sits on a near-black "cover" field now; the particle buffer is
+  // filled with it and every particle fades toward it (not white) as it dims.
+  const COVER = [14, 12, 10]; // #0E0C0A
+  const COVER_U32 = ((0xff << 24) | (COVER[2] << 16) | (COVER[1] << 8) | COVER[0]) >>> 0;
+
   // Coliseo builds on the right (text stays left); Metropolis mirrors to
   // the left (text slides right); Castillo builds centered, covering
   // almost the entire hero (text moves to the middle). Anything not
@@ -229,6 +234,7 @@
   let width = 0, height = 0, dpr = 1;
   let imgData = null;
   let buf = null;
+  let buf32 = null;
   let dw = 0, dh = 0;
   let lastShapeIdx = -1;
   let cachedLayout = { cx: 0, cy: 0, scale: 1 };
@@ -267,6 +273,7 @@
     canvas.style.height = height + 'px';
     imgData = ctx.createImageData(dw, dh);
     buf = imgData.data;
+    buf32 = new Uint32Array(buf.buffer);
     needsLayoutRefresh = true;
   }
   resize();
@@ -338,7 +345,7 @@
     const { points, colors, order, totalPts } = shape;
     const { depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle, edge } = shape;
 
-    buf.fill(255); // reset the whole buffer to opaque white
+    buf32.fill(COVER_U32); // reset the whole buffer to the opaque cover (near-black)
 
     for (let k = 0; k < totalPts; k++) {
       const i = order[k];
@@ -425,12 +432,12 @@
         g = g + (255 - g) * boost;
         b = b + (255 - b) * boost;
       }
-      // blend toward the white background by (1 - opacity) — direct pixel
+      // blend toward the cover background by (1 - opacity) — direct pixel
       // writes don't get automatic alpha compositing, so the fade has to
       // be baked into the written colour itself.
-      const fr = 255 + (r - 255) * opacity;
-      const fg = 255 + (g - 255) * opacity;
-      const fb = 255 + (b - 255) * opacity;
+      const fr = COVER[0] + (r - COVER[0]) * opacity;
+      const fg = COVER[1] + (g - COVER[1]) * opacity;
+      const fb = COVER[2] + (b - COVER[2]) * opacity;
 
       const rad = size[i] > 1.8 ? 1 : 0; // most points are a single device
                                           // pixel; only the largest few get
