@@ -196,7 +196,8 @@
   // angles decay to 0 at arrival, so the assembled image is always exact.
   const SPIRAL_TURNS_BUILD = 0.5;
   const SPIRAL_TURNS_FADE = 0.7;
-  const HOLD = 4.4;   // seconds fully formed
+  const HOLD = 9.0;   // seconds fully formed — long, calm hold so each landmark
+                       // (and its hero text) lingers well before the next swap
   const FADE = 5.8;   // seconds — slow: each particle detaches on its own
                        // stagger and drifts down as it fades, not a flat dim
   const PER_SHAPE = BUILD + HOLD + FADE;

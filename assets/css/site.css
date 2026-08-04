@@ -7,8 +7,8 @@
     (pure white) with --shadow-card so they read as a distinct, elevated
     surface instead of blending into the page, matching the design
     reference in Downloads/Sugerencias sitio web paginas. */
- --marfil:    #faf8f4;
- --marfil-2:  #efe9dd;
+ --marfil:    #fbfbfa; /* near-white; the old #faf8f4 read too beige/warm */
+ --marfil-2:  #f1efe9;
  --card-white: #ffffff;
  --shadow-card: 0 1px 2px rgba(22,34,63,0.04), 0 14px 32px rgba(22,34,63,0.07);
  --navy:      #16223f;
@@ -632,11 +632,10 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 #intro-splash{
   position:fixed; inset:0; z-index:9999;
   display:flex; align-items:center; justify-content:center;
-  background:#ffffff;
+  background:#191919; /* elegant matte charcoal — not pure black (harsh), not glossy */
   animation:introSplashOut 2.2s var(--ease) 2s forwards;
   will-change:opacity;
 }
-@media (prefers-color-scheme: dark){ #intro-splash{ background:#000000; } }
 .intro-splash-logo{
   width:min(80vw, 560px); height:auto; display:block;
   opacity:0;
@@ -661,6 +660,10 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 .gallery-split{ display:grid; grid-template-columns:minmax(300px, 38%) 1fr; gap:clamp(28px,4vw,60px); align-items:center; }
 .gallery-split-head{ align-self:center; min-width:0; }
 .gallery-split-head .h2-display{ font-size:clamp(30px,3.8vw,54px); text-align:left; max-width:none; margin-bottom:clamp(14px,1.8vw,22px); }
+/* Método heading: one sentence per line, with a light breath between each so
+   the anaphora reads calm rather than cramped. */
+.metodo-h span, .metodo-h em{ display:block; }
+.metodo-h span{ margin-bottom:0.34em; }
 .gallery-split-head .body-text{ margin-bottom:0; }
 .gallery-split-head .gallery-nav{ margin-top:28px; }
 .gallery-split .gallery{ min-width:0; align-items:stretch; padding-top:8px; padding-bottom:20px; }
@@ -669,7 +672,7 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 .gallery-glass .card,
 .gallery-glass .pregunta-chip{
   flex:0 0 clamp(230px, 25vw, 290px);
-  min-height:clamp(360px, 54vh, 470px);
+  min-height:clamp(300px, 46vh, 420px);
   display:flex; flex-direction:column;
   background:linear-gradient(160deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.34) 100%);
   backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
@@ -691,13 +694,16 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
     inset 0 -1px 0 rgba(255,255,255,0.3),
     0 28px 62px rgba(22,34,63,0.2);
 }
-/* content flows top→bottom; the index sits at the top, the text anchors low */
-.gallery-glass .card .card-body{ padding:34px 30px; flex:1; display:flex; flex-direction:column; }
-.gallery-glass .card.value-card .card-num{ font-size:13px; margin:0 0 auto; }
-.gallery-glass .card.value-card .card-title{ font-size:17px; margin-top:24px; }
-.gallery-glass .pregunta-chip{ padding:34px 30px; justify-content:flex-start; }
-.gallery-glass .pregunta-chip .pregunta-num{ font-size:15px; margin-bottom:auto; }
-.gallery-glass .pregunta-chip p{ font-size:clamp(15px,1.3vw,19px); margin-top:24px; line-height:1.42; }
+/* No image slot here — the text is the whole card, so it fills it: the
+   number + title + copy sit as one vertically-centred block with balanced
+   space top and bottom, never a blank placeholder gap up top. */
+.gallery-glass .card .card-body{ padding:38px 32px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+.gallery-glass .card.value-card .card-num{ font-size:13px; letter-spacing:0.2em; opacity:0.7; margin:0 0 20px; }
+.gallery-glass .card.value-card .card-title{ font-size:19px; margin:0 0 15px; }
+.gallery-glass .card.value-card .card-desc{ font-size:13px; line-height:1.85; }
+.gallery-glass .pregunta-chip{ padding:38px 32px; justify-content:center; }
+.gallery-glass .pregunta-chip .pregunta-num{ font-size:15px; opacity:0.7; margin:0 0 22px; }
+.gallery-glass .pregunta-chip p{ font-size:clamp(18px,1.6vw,24px); margin:0; line-height:1.5; }
 
 @media(max-width:900px){
   .gallery-split{ grid-template-columns:1fr; gap:22px; align-items:start; }
