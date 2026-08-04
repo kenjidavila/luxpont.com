@@ -623,15 +623,15 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 @media(max-width:600px){ :root{ --t-hero:clamp(38px,11vw,52px); } .grid-2{ gap:36px; } .section{ padding-left:6vw; padding-right:6vw; } }
 
 /* ══ INTRO SPLASH ══
-   Brand lockup shown on entry over a clean white field, then dissolves slowly
-   to give way to the hero and the site. pointer-events:none is critical — the
-   splash is purely decorative and must NEVER intercept scroll or clicks, even
-   if its removal script is delayed on a slow load. A small script also drops
-   it from the layout once the fade ends, but the page is usable regardless. */
+   Gold Luxpont lockup on a deep black field, then dissolves slowly to give way
+   to the site. pointer-events:none is critical — the splash is purely
+   decorative and must NEVER intercept scroll or clicks, even if its removal
+   script is delayed on a slow load. A small script also drops it from the
+   layout once the fade ends, but the page is usable regardless. */
 #intro-splash{
   position:fixed; inset:0; z-index:9999; pointer-events:none;
   display:flex; align-items:center; justify-content:center;
-  background:#ffffff;
+  background:#0f0f0f;
   animation:introSplashOut 3s var(--ease) 1.8s forwards;
   will-change:opacity;
 }
