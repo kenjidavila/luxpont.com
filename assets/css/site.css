@@ -30,14 +30,17 @@
  --border: var(--linea);
  --light:  var(--marfil-2);
 
- /* "Vogue" system: Bodoni Moda (Didone) headlines, Jost (geometric) accent/UI,
-    Source Sans 3 body. --serif/--mono kept as aliases so any legacy usage maps
-    to the new roles automatically. */
- --display: 'Bodoni Moda', 'Didot', 'Times New Roman', Georgia, serif;
- --accent:  'Jost', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
- --sans:    'Source Sans 3', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
- --serif: var(--display);
- --mono:  var(--accent);
+ /* Two typefaces, one message: Cormorant Garamond (classic serif) for headlines
+    and the brand signature; DM Sans (geometric) for body, UI, navigation and
+    text labels; DM Mono for figures, dates and technical data only.
+    --serif/--accent/--mono kept as aliases so legacy usage maps to the new roles:
+    text labels default to DM Sans; the few numeric elements opt into --data. */
+ --display: 'Cormorant Garamond', 'Didot', Georgia, 'Times New Roman', serif;
+ --sans:    'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
+ --data:    'DM Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+ --serif:  var(--display);
+ --accent: var(--sans);
+ --mono:   var(--sans);
 
  --t-xs:  10px;
  --t-sm:  12px;
@@ -143,7 +146,7 @@ body.lang-banner-active #nav{ top:57px; }
     0 1px 1px rgba(22,34,63,0.05),
     0 18px 40px rgba(22,34,63,0.16);
 }
-.nav-logo{ display:flex; align-items:center; gap:11px; font-family:var(--accent); font-size:19px; letter-spacing:0.12em; font-weight:500; color:var(--navy); text-shadow:0 1px 3px rgba(246,243,236,0.7); transition:color 0.35s, text-shadow 0.35s; white-space:nowrap; }
+.nav-logo{ display:flex; align-items:center; gap:11px; font-family:var(--serif); font-size:22px; letter-spacing:0.06em; font-weight:600; color:var(--navy); text-shadow:0 1px 3px rgba(246,243,236,0.7); transition:color 0.35s, text-shadow 0.35s; white-space:nowrap; }
 .nav-logo img{ height:34px; width:auto; display:block; flex-shrink:0; }
 #nav.scrolled .nav-logo{ color:var(--black); text-shadow:none; }
 .nav-right{ display:flex; align-items:center; gap:clamp(20px,2.6vw,36px); }
@@ -376,7 +379,7 @@ body.lang-banner-active #nav{ top:57px; }
 .modulos-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2.4vw,24px); margin-top:clamp(24px,4vh,36px); }
 .modulo-card{ background:var(--card-white); border-radius:16px; box-shadow:var(--shadow-card); padding:22px 24px 26px; transition:transform 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap); }
 .modulo-card:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(22,34,63,0.1); }
-.modulo-card .n{ font-family:var(--serif); font-size:24px; font-weight:300; color:var(--oro-texto); line-height:1; }
+.modulo-card .n{ font-family:var(--data); font-size:24px; font-weight:400; color:var(--oro-texto); line-height:1; }
 .modulo-card .tag{ font-family:var(--mono); font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--oro-texto); margin:6px 0 2px; }
 .modulo-card h3{ font-family:var(--serif); font-size:clamp(15px,1.4vw,18px); font-weight:400; color:var(--navy); margin:6px 0 8px; }
 .modulo-card p{ font-family:var(--sans); font-size:12px; font-weight:300; color:var(--texto-sec); line-height:1.6; }
@@ -477,7 +480,7 @@ body.lang-banner-active #nav{ top:57px; }
 
 .card.value-card{ background:var(--card-white); flex-basis:320px; }
 .card.value-card .card-body{ padding:34px 30px; }
-.card.value-card .card-num{ font-family:var(--mono); font-size:11px; color:var(--oro-texto); opacity:0.75; letter-spacing:0.2em; margin-bottom:20px; }
+.card.value-card .card-num{ font-family:var(--data); font-size:11px; color:var(--oro-texto); opacity:0.75; letter-spacing:0.2em; margin-bottom:20px; }
 .card.value-card .card-title{ font-family:var(--sans); font-size:15px; font-weight:500; color:var(--black); line-height:1.32; margin-bottom:10px; }
 .card.value-card .card-desc{ color:var(--muted); }
 
@@ -511,7 +514,7 @@ body.lang-banner-active #nav{ top:57px; }
   METODO CBCA — número de pregunta reutilizado por .pregunta-chip
   (el resto del layout vive en el bloque DIAPOSITIVAS de arriba)
 ════════════════════════════════════════════════════════ */
-.pregunta-num{ font-family:var(--mono); font-size:13px; color:var(--oro-texto); letter-spacing:0.1em; }
+.pregunta-num{ font-family:var(--data); font-size:13px; color:var(--oro-texto); letter-spacing:0.1em; }
 
 /* ════════════════════════════════════════════════════════
   COBERTURA
