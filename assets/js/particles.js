@@ -187,8 +187,15 @@
     return { cx, cy, scale };
   }
 
-  const BUILD = 4.2;  // seconds to fly in from the corner and assemble
-  const SPIRAL_TURNS = 0.16; // fraction of a full turn each particle curls through on approach, same sense for all — decays to 0 exactly at arrival so the final image is unaffected
+  const BUILD = 4.2;  // seconds to spiral in from the far edge and assemble
+  const TAU = Math.PI * 2;
+  // Cross-screen spiral handoff (see draw()): the incoming image winds IN
+  // from the far edge and the outgoing one winds OUT toward it, so each
+  // landmark swap reads as one spiral sweeping across the hero — right-to-
+  // left going into Metropolis, left-to-right going into Coliseo. Both
+  // angles decay to 0 at arrival, so the assembled image is always exact.
+  const SPIRAL_TURNS_BUILD = 0.5;
+  const SPIRAL_TURNS_FADE = 0.7;
   const HOLD = 4.4;   // seconds fully formed
   const FADE = 5.8;   // seconds — slow: each particle detaches on its own
                        // stagger and drifts down as it fades, not a flat dim
@@ -286,15 +293,23 @@
       needsLayoutRefresh = false;
     }
     const { cx, cy, scale } = cachedLayout;
-    // Each landmark's particles originate from whichever bottom point is
-    // nearest its own build region: the left corner for the mirrored
-    // (left-side) landmark, bottom-center for the centered/full-bleed one
-    // (symmetric convergence suits a shape spanning the whole width), the
-    // right corner otherwise.
-    const cornerX = shape.align === 'mirrored' ? width * -0.02
-      : shape.align === 'centered' ? width * 0.5
-      : width * 1.02;
-    const cornerY = height * 1.04;
+    // The shape's centre on screen — the pivot the outgoing image spirals
+    // around as it winds off.
+    const screenCx = cx + shape.shapeCx * scale;
+    const screenCy = cy + shape.shapeCy * scale;
+    // Cross-screen spiral handoff. Each landmark enters from the side
+    // OPPOSITE its resting place and spirals into position, and later leaves
+    // by spiralling off toward that same far side — so a Coliseo(right)->
+    // Metropolis(left) swap reads as one right-to-left spiral, and the way
+    // back as a left-to-right one. Metropolis (mirrored, rests left) enters
+    // from the right; Coliseo (normal, rests right) enters from the left.
+    const swapFromRight = shape.align === 'mirrored';
+    // Origin kept just inside the far edge (not offscreen) so the whole
+    // spiral crossing is visible — particles stream out from a point near the
+    // right (Metropolis) or left (Coliseo) edge and wind across to their rest.
+    const originX = swapFromRight ? width * 0.94 : width * 0.06;
+    const originY = height * 0.52;
+    const buildSign = swapFromRight ? -1 : 1; // rotational sense of the inward spiral
 
     const { points, colors, order, totalPts } = shape;
     const { depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle } = shape;
@@ -313,20 +328,20 @@
         buildBlend = smooth(staggered * 2.1);
       }
 
-      let x = lerp(cornerX, tScreenX, buildBlend);
-      let y = lerp(cornerY, tScreenY, buildBlend);
+      let x = lerp(originX, tScreenX, buildBlend);
+      let y = lerp(originY, tScreenY, buildBlend);
 
       if (phaseName === 'build' && buildBlend > 0 && buildBlend < 1) {
-        // curl the straight corner-to-target path into a slight spiral: rotate
-        // the position around its own origin corner by an angle that decays to
+        // Wind the far-edge-to-target crossing into a spiral: rotate the
+        // in-flight offset around the entry origin by an angle that decays to
         // zero exactly as buildBlend reaches 1, so every particle still lands
-        // precisely on target — only the approach arcs, same rotational sense
-        // for every particle, reading as one coherent swirl assembling the image
-        const spiralAngle = (1 - buildBlend) * SPIRAL_TURNS * Math.PI * 2;
+        // precisely on target — only the crossing arcs, one coherent spiral
+        // sweeping the whole image into place from the far side.
+        const spiralAngle = (1 - buildBlend) * SPIRAL_TURNS_BUILD * TAU * buildSign;
         const cosA = Math.cos(spiralAngle), sinA = Math.sin(spiralAngle);
-        const dx = x - cornerX, dy = y - cornerY;
-        x = cornerX + dx * cosA - dy * sinA;
-        y = cornerY + dx * sinA + dy * cosA;
+        const dx = x - originX, dy = y - originY;
+        x = originX + dx * cosA - dy * sinA;
+        y = originY + dx * sinA + dy * cosA;
       }
 
       const ph = phase[i] + time * speed[i];
@@ -337,21 +352,26 @@
       let opacity = Math.min(1, buildBlend * 3); // soft pop-in as each particle starts moving
 
       if (phaseName === 'fade') {
-        // Each particle detaches on its own stagger, then drifts out as it
-        // dims — not a uniform fade in place. Direction depends on which
-        // landmark is dissolving: Coliseo (right/normal) sweeps left, like
-        // a current of air carrying it toward where Metropolis is about to
-        // build; Metropolis (left/mirrored) falls straight down, inviting
-        // a scroll instead of pointing at a next landmark.
+        // Fade is the time-reverse of a build: each particle leaves its rest
+        // position and spirals OUT to a point on the far edge it winds off
+        // toward, rotating around that exit point by an angle that grows from
+        // zero — the exact mirror of the way the next landmark will spiral IN.
+        // The exit side is the same one this image entered from (Coliseo winds
+        // off left, Metropolis off right), and the turn sense matches the next
+        // build, so a fade-out and the following build read as one continuous
+        // cross-screen spiral (right-to-left into Metropolis, and back).
         const fd = fallDelay[i];
         const fallLocal = Math.max(0, Math.min(1, (phaseLocal - fd) / (1 - fd)));
-        const eased = fallLocal * fallLocal;
-        if (shape.align === 'mirrored') {
-          y += eased * height * 0.55;
-        } else {
-          x -= eased * width * 0.62;
-          y += eased * height * 0.12; // slight downward drift so the sweep reads as wind, not a perfectly flat slide
-        }
+        const eased = smooth(fallLocal);
+        const exitX = (shape.align !== 'mirrored') ? width * 0.06 : width * 0.94;
+        const exitY = originY;
+        const ex = lerp(tScreenX, exitX, eased);
+        const ey = lerp(tScreenY, exitY, eased);
+        const ang = eased * SPIRAL_TURNS_FADE * TAU * -buildSign;
+        const cosA = Math.cos(ang), sinA = Math.sin(ang);
+        const dx = ex - exitX, dy = ey - exitY;
+        x = exitX + dx * cosA - dy * sinA;
+        y = exitY + dx * sinA + dy * cosA;
         opacity *= 1 - smooth(fallLocal);
       }
       if (opacity <= 0.02) continue;
