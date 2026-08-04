@@ -710,10 +710,10 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 }
 
 /* ══ CONTRAST SECTIONS (Valores Centrales · Método CBCA) ══
-   A soft light-grey field (kept, despite the legacy class name) sets these two
-   apart from the near-white pages so the frosted glass cards read as a clearly
-   lifted surface. Everything else stays in the normal light-theme colours. */
-.slide-dark{ background:#d9d9d9; }
+   A warm Luxpont cream field (kept, despite the legacy class name) sets these
+   two apart from the near-white pages so the frosted glass cards read as a
+   clearly lifted surface. Everything else stays in the normal light colours. */
+.slide-dark{ background:#f5f0e8; }
 /* whiter frosted panels so they lift cleanly off the grey */
 .slide-dark .gallery-glass .card,
 .slide-dark .gallery-glass .pregunta-chip{
