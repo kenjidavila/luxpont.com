@@ -37,7 +37,6 @@ function onScroll(){
   requestAnimationFrame(() => {
     ticking = false;
     const y = window.scrollY || 0;
-    let navOverDark = false; // becomes true while a .slide-dark section is the one under the nav
 
     // Only runs when the wrapper is actually pinned (desktop, motion
     // allowed) — on mobile / reduced-motion the CSS un-pins everything into
@@ -70,11 +69,6 @@ function onScroll(){
         layer.classList.toggle('in-view', opacity > 0.5);
       });
 
-      // Which layer is dominant right now decides whether the nav inverts to
-      // light: the stacked layers share a rect, so pick by crossfade weight.
-      const domIdx = frac < 0.5 ? baseIdx : baseIdx + 1;
-      navOverDark = !!(pinLayers[domIdx] && pinLayers[domIdx].classList.contains('slide-dark'));
-
       // Hero-specific whiteout rides on its own outgoing fade (layer 0 -> 1);
       // once we've moved past that first transition the particle canvas
       // stays fully whitened underneath whichever layer is currently showing.
@@ -90,21 +84,12 @@ function onScroll(){
         layer.classList.remove('in-view');
       });
       if (heroWhiteout) heroWhiteout.style.opacity = '';
-      // Un-pinned (mobile / reduced-motion): sections are in normal flow, so
-      // the nav inverts whenever a dark one is the section under the pill.
-      const navMid = 46;
-      navOverDark = pinLayers.some((l) => {
-        if (!l.classList.contains('slide-dark')) return false;
-        const r = l.getBoundingClientRect();
-        return r.top <= navMid && r.bottom >= navMid;
-      });
     }
 
     // Nav only turns solid once the track has mostly scrolled past, so it
     // never cuts a bar across a photo slide while the sequence is pinned.
     const navThreshold = heroTrack ? Math.max(80, heroTrack.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
-    nav.classList.toggle('nav-over-dark', navOverDark);
 
     if (scrollHint) scrollHint.style.opacity = Math.max(0, 1 - y / 260);
   });
