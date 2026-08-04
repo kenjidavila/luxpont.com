@@ -296,7 +296,7 @@
       </div>
 
       <!-- 04 · CORE VALUES — horizontal gallery -->
-      <div class="pin-layer slide">
+      <div class="pin-layer slide slide-dark">
         <div class="slide-inner gallery-split">
           <div class="gallery-split-head">
             <div class="label">Core Values</div>
@@ -318,7 +318,7 @@
       </div>
 
       <!-- 05 · CBCA METHOD — six questions, one screen -->
-      <div class="pin-layer slide">
+      <div class="pin-layer slide slide-dark">
         <div class="slide-inner gallery-split">
           <div class="gallery-split-head">
             <div class="label">CBCA Method</div>
@@ -543,11 +543,11 @@
               <input type="hidden" name="_language" value="en">
               <div>
                 <label class="f-lbl" for="f-nombre">Full name</label>
-                <input class="f-in" type="text" id="f-nombre" name="name" placeholder="First and last name" autocomplete="name">
+                <input class="f-in" type="text" id="f-nombre" name="name" placeholder="First and last name" autocomplete="name" required>
               </div>
               <div>
                 <label class="f-lbl" for="f-email">Email</label>
-                <input class="f-in" type="email" id="f-email" name="email" placeholder="name@company.com" autocomplete="email">
+                <input class="f-in" type="email" id="f-email" name="email" placeholder="name@company.com" autocomplete="email" required>
               </div>
               <div>
                 <label class="f-lbl" for="f-empresa">Company / Group</label>
@@ -558,9 +558,8 @@
                 <span class="f-consent-lbl">I have read and accept the <a href="#" class="js-open-privacy">Privacy Policy</a>. I consent to the processing of my data to handle my request.</span>
               </label>
               <div class="f-note">Data controller: Luxpont Strategy &amp; Capital, S.L. · Purpose: handling contact requests · Rights: questions@luxpont.com</div>
-              <button class="f-btn" type="submit" id="submit-btn" data-sending="Sending..." data-sent="Message sent">
+              <button class="f-btn" type="submit" id="submit-btn" disabled data-sending="Sending..." data-sent="Message sent">
                 <span id="btn-text" style="color:inherit">Request a first conversation</span>
-                <span id="btn-arrow">→</span>
               </button>
               <p id="form-success" style="display:none;font-family:var(--sans);font-size:12px;color:var(--gold);margin-top:8px;letter-spacing:0.04em">Message received. We will be in touch within 48 hours.</p>
               <p id="form-error" style="display:none;font-family:var(--sans);font-size:12px;color:#c0392b;margin-top:8px">An error occurred. Please write to us directly at questions@luxpont.com</p>

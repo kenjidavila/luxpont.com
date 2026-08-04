@@ -341,9 +341,13 @@ body.lang-banner-active #nav{ top:57px; }
 
 /* Pieza de galería — texto a un lado, imagen enmarcada al otro, como un
    cuadro con su cartela (usada en Firma, GBP, Cobertura) */
-.gallery-piece{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,5vw,64px); align-items:center; }
+/* Narrower text column so the copy block reads as a tall, vertical measure in
+   proportion with the portrait image beside it; body copy justified for an
+   editorial, magazine-set feel. */
+.gallery-piece{ display:grid; grid-template-columns:0.82fr 1fr; gap:clamp(32px,5vw,72px); align-items:center; }
 .gallery-piece.reverse .gallery-piece-frame{ order:-1; }
-.gallery-piece-copy p{ font-size:12.5px; line-height:1.65; margin-bottom:12px; }
+.gallery-piece-copy{ text-align:justify; hyphens:auto; }
+.gallery-piece-copy p{ font-size:12.5px; line-height:1.7; margin-bottom:12px; }
 .gallery-piece-frame{ margin:0; height:clamp(440px,72vh,680px); border-radius:16px; overflow:hidden; }
 .gallery-piece-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
 /* Cobertura's Madrid/Four Seasons photo specifically — taller than the
@@ -550,34 +554,28 @@ body.lang-banner-active #nav{ top:57px; }
 .ct-val a{ color:var(--black); }
 .ct-form{ display:flex; flex-direction:column; gap:14px; }
 .f-lbl{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.45); letter-spacing:0.14em; text-transform:uppercase; display:block; margin-bottom:6px; }
-.f-in{ width:100%; background:var(--light); border:1px solid rgba(22,34,63,0.16); color:var(--black); padding:13px 15px; font-family:var(--sans); font-size:13px; font-weight:300; line-height:1.6; outline:none; transition:border-color 0.2s var(--ease-snap), box-shadow 0.2s var(--ease-snap); }
-.f-in:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(119,102,72,0.12); }
+.f-in{ width:100%; background:rgba(22,34,63,0.04); border:1px solid rgba(22,34,63,0.10); border-radius:12px; color:var(--black); padding:14px 16px; font-family:var(--sans); font-size:13px; font-weight:300; line-height:1.6; outline:none; transition:border-color 0.2s var(--ease-snap), box-shadow 0.2s var(--ease-snap), background 0.2s var(--ease-snap); }
+.f-in:focus{ border-color:var(--gold); background:#fff; box-shadow:0 0 0 3px rgba(119,102,72,0.12); }
 .f-in::placeholder{ color:rgba(22,34,63,0.32); }
 .f-consent{ display:flex; gap:10px; align-items:flex-start; }
 .f-consent input{ margin-top:3px; accent-color:var(--gold); flex-shrink:0; }
 .f-consent-lbl{ font-family:var(--sans); font-size:11px; font-weight:300; color:rgba(22,34,63,0.55); line-height:1.7; cursor:pointer; }
 .f-consent-lbl a{ color:var(--oro-texto); text-decoration:underline; }
 .f-note{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.35); letter-spacing:0.08em; line-height:1.8; border-top:1px solid var(--border); padding-top:12px; }
-/* Same liquid-glass treatment as .btn-solid ("Solicitar...conversación"
-   is the same CTA family in both places) — translucent + backdrop blur
-   + inset highlight instead of flat opaque black. */
+/* Solid navy submit button — its "real" colour. It stays visibly muted
+   (translucent navy) until the required fields are filled and consent is
+   given, then snaps to the full solid navy so the form reads as ready. */
 .f-btn{
-  font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
-  background:linear-gradient(180deg, rgba(22,34,63,0.66) 0%, rgba(15,24,48,0.62) 100%);
-  color:var(--white); border:1px solid rgba(255,255,255,0.18); border-radius:999px; padding:16px 32px;
-  backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%);
-  cursor:pointer; display:flex; align-items:center; justify-content:space-between; width:100%;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.22),
-    inset 0 -1px 0 rgba(0,0,0,0.12),
-    0 1px 2px rgba(22,34,63,0.08);
-  transition:background 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap), transform 0.15s var(--ease-snap);
+  font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+  background:var(--navy); color:var(--marfil); border:1px solid var(--navy); border-radius:999px; padding:16px 32px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; width:100%;
+  box-shadow:0 8px 22px rgba(22,34,63,0.22);
+  transition:background 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap), color 0.3s var(--ease-snap), transform 0.15s var(--ease-snap);
   margin-top:4px;
 }
-.f-btn:hover{ background:linear-gradient(180deg, rgba(15,24,48,0.78) 0%, rgba(10,17,35,0.74) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.12), 0 10px 24px rgba(22,34,63,0.2); }
-.f-btn:active:not(:disabled){ transform:scale(0.985); transition-duration:0.1s; }
-.f-btn:disabled{ opacity:0.6; cursor:default; }
-.f-btn span{ color:var(--gold); font-size:16px; }
+.f-btn:not(:disabled):hover{ background:var(--navy-2); box-shadow:0 12px 30px rgba(22,34,63,0.3); transform:translateY(-1px); }
+.f-btn:not(:disabled):active{ transform:scale(0.985); transition-duration:0.1s; }
+.f-btn:disabled{ background:rgba(22,34,63,0.22); border-color:transparent; color:rgba(255,255,255,0.9); box-shadow:none; cursor:not-allowed; }
 
 /* ════════════════════════════════════════════════════════
   FOOTER
@@ -710,3 +708,45 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
   .gallery-split-head .h2-display{ font-size:clamp(26px,7vw,40px); }
   .gallery-glass .card, .gallery-glass .pregunta-chip{ min-height:clamp(300px, 48vh, 400px); }
 }
+
+/* ══ DARK CONTRAST SECTIONS (Valores Centrales · Método CBCA) ══
+   A deep navy field turns these into editorial "dark spreads": the frosted
+   glass cards pop hard off the navy, and the heading/copy invert to light. */
+.slide-dark{ background:var(--navy); }
+.slide-dark .label{ color:var(--oro-claro); }
+.slide-dark .h2-display{ color:var(--marfil); }
+.slide-dark .h2-display em{ color:var(--oro-claro); }
+.slide-dark .body-text{ color:rgba(255,255,255,0.66); }
+.slide-dark .gallery-nav button{ border-color:rgba(255,255,255,0.32); color:var(--marfil); }
+.slide-dark .gallery-nav button:hover{ border-color:var(--oro-claro); color:var(--oro-claro); }
+/* brighter frosted panels so they read as light glass lifting off the navy;
+   card text stays dark and legible on the bright panel */
+.slide-dark .gallery-glass .card,
+.slide-dark .gallery-glass .pregunta-chip{
+  background:linear-gradient(160deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.74) 100%);
+  border-color:rgba(255,255,255,0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(255,255,255,0.3),
+    0 24px 54px rgba(0,0,0,0.30);
+}
+.slide-dark .gallery-glass .card:hover,
+.slide-dark .gallery-glass .pregunta-chip:hover{
+  background:linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.84) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    0 32px 68px rgba(0,0,0,0.4);
+}
+
+/* Nav inverts to light text while a dark section is the one on screen, so the
+   pill stays legible over the navy (toggled from main.js). */
+#nav.nav-over-dark{ background:rgba(18,26,48,0.4); border-color:rgba(255,255,255,0.26); box-shadow:inset 0 1px 0 rgba(255,255,255,0.18), 0 14px 34px rgba(0,0,0,0.3); }
+/* #nav-prefixed so these beat the equally-specific #nav.scrolled colour rules
+   (the nav is both scrolled and over-dark inside these sections). */
+#nav.nav-over-dark .nav-logo{ color:var(--marfil); text-shadow:none; }
+#nav.nav-over-dark .nav-links a{ color:rgba(255,255,255,0.82); text-shadow:none; }
+#nav.nav-over-dark .nav-links a:hover{ color:var(--marfil); }
+#nav.nav-over-dark .nav-langs a{ color:rgba(255,255,255,0.7); }
+#nav.nav-over-dark .nav-langs a.current{ color:var(--oro-claro); }
+#nav.nav-over-dark .nav-langs .sep{ color:rgba(255,255,255,0.35); }
+#nav.nav-over-dark .nav-burger span{ background:var(--marfil); }

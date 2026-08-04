@@ -37,6 +37,7 @@ function onScroll(){
   requestAnimationFrame(() => {
     ticking = false;
     const y = window.scrollY || 0;
+    let navOverDark = false; // becomes true while a .slide-dark section is the one under the nav
 
     // Only runs when the wrapper is actually pinned (desktop, motion
     // allowed) — on mobile / reduced-motion the CSS un-pins everything into
@@ -69,6 +70,11 @@ function onScroll(){
         layer.classList.toggle('in-view', opacity > 0.5);
       });
 
+      // Which layer is dominant right now decides whether the nav inverts to
+      // light: the stacked layers share a rect, so pick by crossfade weight.
+      const domIdx = frac < 0.5 ? baseIdx : baseIdx + 1;
+      navOverDark = !!(pinLayers[domIdx] && pinLayers[domIdx].classList.contains('slide-dark'));
+
       // Hero-specific whiteout rides on its own outgoing fade (layer 0 -> 1);
       // once we've moved past that first transition the particle canvas
       // stays fully whitened underneath whichever layer is currently showing.
@@ -84,12 +90,21 @@ function onScroll(){
         layer.classList.remove('in-view');
       });
       if (heroWhiteout) heroWhiteout.style.opacity = '';
+      // Un-pinned (mobile / reduced-motion): sections are in normal flow, so
+      // the nav inverts whenever a dark one is the section under the pill.
+      const navMid = 46;
+      navOverDark = pinLayers.some((l) => {
+        if (!l.classList.contains('slide-dark')) return false;
+        const r = l.getBoundingClientRect();
+        return r.top <= navMid && r.bottom >= navMid;
+      });
     }
 
     // Nav only turns solid once the track has mostly scrolled past, so it
     // never cuts a bar across a photo slide while the sequence is pinned.
     const navThreshold = heroTrack ? Math.max(80, heroTrack.offsetHeight - 120) : 80;
     nav.classList.toggle('scrolled', y > navThreshold);
+    nav.classList.toggle('nav-over-dark', navOverDark);
 
     if (scrollHint) scrollHint.style.opacity = Math.max(0, 1 - y / 260);
   });
@@ -194,23 +209,32 @@ const contactForm = document.getElementById('contact-form');
 if (contactForm) {
   const btnTextEl = document.getElementById('btn-text');
   const idleLabel = btnTextEl ? btnTextEl.textContent : '';
+  const submitBtn = document.getElementById('submit-btn');
+  const nameEl = contactForm.querySelector('[name="name"]');
+  const emailEl = contactForm.querySelector('[name="email"]');
+  const gdprEl = document.getElementById('f-gdpr');
+
+  // The button stays muted (disabled) until name + a plausible email are
+  // filled and consent is ticked — only then does it snap to its real colour.
+  function refreshReady(){
+    const nameOk = nameEl && nameEl.value.trim().length > 1;
+    const emailOk = emailEl && /.+@.+\..+/.test(emailEl.value.trim());
+    const consentOk = gdprEl && gdprEl.checked;
+    if (submitBtn) submitBtn.disabled = !(nameOk && emailOk && consentOk);
+  }
+  contactForm.addEventListener('input', refreshReady);
+  contactForm.addEventListener('change', refreshReady);
+  refreshReady();
 
   contactForm.addEventListener('submit', async function(e){
     e.preventDefault();
-    const gdpr = document.getElementById('f-gdpr');
-    if (!gdpr || !gdpr.checked) {
-      alert(contactForm.dataset.gdprAlert || idleLabel);
-      return;
-    }
-    const btn = document.getElementById('submit-btn');
+    if (submitBtn && submitBtn.disabled) return;
     const btnText = document.getElementById('btn-text');
-    const btnArrow = document.getElementById('btn-arrow');
     const successMsg = document.getElementById('form-success');
     const errorMsg = document.getElementById('form-error');
 
-    btn.disabled = true;
-    btnText.textContent = btn.dataset.sending || idleLabel;
-    btnArrow.style.display = 'none';
+    submitBtn.disabled = true;
+    btnText.textContent = submitBtn.dataset.sending || idleLabel;
 
     const formData = new FormData(contactForm);
 
@@ -222,7 +246,7 @@ if (contactForm) {
         contactForm.reset();
         successMsg.style.display = 'block';
         errorMsg.style.display = 'none';
-        btnText.textContent = btn.dataset.sent || idleLabel;
+        btnText.textContent = submitBtn.dataset.sent || idleLabel;
       } else {
         throw new Error('Server error');
       }
@@ -230,8 +254,7 @@ if (contactForm) {
       errorMsg.style.display = 'block';
       successMsg.style.display = 'none';
       btnText.textContent = idleLabel;
-      btnArrow.style.display = 'inline';
-      btn.disabled = false;
+      refreshReady();
     }
   });
 }

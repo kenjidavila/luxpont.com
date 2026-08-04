@@ -103,13 +103,27 @@
     for (let i = 0; i < totalPts; i++) order[i] = i;
     Array.prototype.sort.call(order, (a, b) => depth[a] - depth[b]);
 
+    // Per-particle edge factor: normalized radial distance from the shape
+    // centre (0 = dense core, 1 = outermost dust). Used to give only the
+    // silhouette's edge a subtle, living drift while the core stays crisp.
+    const scx = (minX + maxX) / 2, scy = (minY + maxY) / 2;
+    const edge = new Float32Array(totalPts);
+    let maxR = 1e-6;
+    for (let i = 0; i < totalPts; i++) {
+      const dx = points[i * 2] - scx, dy = points[i * 2 + 1] - scy;
+      const r = Math.sqrt(dx * dx + dy * dy);
+      edge[i] = r;
+      if (r > maxR) maxR = r;
+    }
+    for (let i = 0; i < totalPts; i++) edge[i] /= maxR;
+
     return {
       name: shapeData.name, points, colors, totalPts, order,
       minX, maxX, minY, maxY,
       shapeCx: (minX + maxX) / 2, shapeCy: (minY + maxY) / 2,
       xSpan: maxX - minX, ySpan: maxY - minY,
       align: ALIGN[shapeData.name] || 'normal',
-      depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle,
+      depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle, edge,
     };
   }
 
@@ -313,7 +327,7 @@
     const buildSign = swapFromRight ? -1 : 1; // rotational sense of the inward spiral
 
     const { points, colors, order, totalPts } = shape;
-    const { depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle } = shape;
+    const { depth, phase, speed, wobble, size, isGlow, buildDelay, fallDelay, twinkle, edge } = shape;
 
     buf.fill(255); // reset the whole buffer to opaque white
 
@@ -349,6 +363,18 @@
       const wob = wobble[i] * (0.4 + 0.6 * (1 - buildBlend)) * scale * 0.15;
       x += Math.sin(ph) * wob;
       y += Math.cos(ph * 1.17) * wob;
+
+      // Alive edges: only the outer band (edge > 0.4) breathes, with a slow
+      // per-particle drift that grows quadratically toward the outermost dust,
+      // so the silhouette's rim and the stray motes around it float gently
+      // while the dense core stays perfectly still. Full once built.
+      const e = edge[i];
+      if (e > 0.4) {
+        const t2 = e - 0.4;
+        const amp = t2 * t2 * scale * 0.09 * buildBlend;
+        x += Math.sin(time * (0.32 + speed[i]) + phase[i]) * amp;
+        y += Math.cos(time * (0.28 + speed[i] * 0.9) + phase[i] * 1.3) * amp;
+      }
 
       let opacity = Math.min(1, buildBlend * 3); // soft pop-in as each particle starts moving
 

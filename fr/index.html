@@ -296,7 +296,7 @@
       </div>
 
       <!-- 04 · VALEURS FONDAMENTALES — galerie horizontale -->
-      <div class="pin-layer slide">
+      <div class="pin-layer slide slide-dark">
         <div class="slide-inner gallery-split">
           <div class="gallery-split-head">
             <div class="label">Valeurs Fondamentales</div>
@@ -318,7 +318,7 @@
       </div>
 
       <!-- 05 · MÉTHODE CBCA — six questions, un seul écran -->
-      <div class="pin-layer slide">
+      <div class="pin-layer slide slide-dark">
         <div class="slide-inner gallery-split">
           <div class="gallery-split-head">
             <div class="label">Méthode CBCA</div>
@@ -543,11 +543,11 @@
               <input type="hidden" name="_language" value="fr">
               <div>
                 <label class="f-lbl" for="f-nombre">Nom complet</label>
-                <input class="f-in" type="text" id="f-nombre" name="name" placeholder="Prénom et nom" autocomplete="name">
+                <input class="f-in" type="text" id="f-nombre" name="name" placeholder="Prénom et nom" autocomplete="name" required>
               </div>
               <div>
                 <label class="f-lbl" for="f-email">E-mail</label>
-                <input class="f-in" type="email" id="f-email" name="email" placeholder="nom@entreprise.com" autocomplete="email">
+                <input class="f-in" type="email" id="f-email" name="email" placeholder="nom@entreprise.com" autocomplete="email" required>
               </div>
               <div>
                 <label class="f-lbl" for="f-empresa">Entreprise / Groupe</label>
@@ -558,9 +558,8 @@
                 <span class="f-consent-lbl">J'ai lu et j'accepte la <a href="#" class="js-open-privacy">Politique de Confidentialité</a>. Je consens au traitement de mes données pour traiter ma demande.</span>
               </label>
               <div class="f-note">Responsable du traitement : Luxpont Strategy &amp; Capital, S.L. · Finalité : traitement des demandes de contact · Droits : questions@luxpont.com</div>
-              <button class="f-btn" type="submit" id="submit-btn" data-sending="Envoi en cours..." data-sent="Message envoyé">
+              <button class="f-btn" type="submit" id="submit-btn" disabled data-sending="Envoi en cours..." data-sent="Message envoyé">
                 <span id="btn-text" style="color:inherit">Demander un premier entretien</span>
-                <span id="btn-arrow">→</span>
               </button>
               <p id="form-success" style="display:none;font-family:var(--sans);font-size:12px;color:var(--gold);margin-top:8px;letter-spacing:0.04em">Message reçu. Nous vous recontacterons sous 48 heures maximum.</p>
               <p id="form-error" style="display:none;font-family:var(--sans);font-size:12px;color:#c0392b;margin-top:8px">Une erreur s'est produite. Merci d'écrire directement à questions@luxpont.com</p>
