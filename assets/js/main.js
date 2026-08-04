@@ -54,14 +54,24 @@ function onScroll(){
       const baseIdx = Math.min(n - 2, Math.floor(floatIndex));
       const frac = Math.max(0, Math.min(1, floatIndex - baseIdx));
 
+      // Give every section a "dwell" zone: it stays fully on screen for the
+      // first DWELL of its scroll window, and the crossfade to the next
+      // section is compressed (and smoothstepped) into the remaining tail.
+      // Without this the layers crossfade continuously, so any scroll position
+      // sits permanently mid-transition and it's impossible to land squarely on
+      // a section — which read as the scroll being "too sensitive".
+      const DWELL = 0.62;
+      let t = frac <= DWELL ? 0 : (frac - DWELL) / (1 - DWELL);
+      t = t * t * (3 - 2 * t); // smoothstep for a soft in/out on the crossfade
+
       pinLayers.forEach((layer, i) => {
         let opacity = 0;
         let transform = 'none';
         if (i === baseIdx) {
-          opacity = 1 - frac;
+          opacity = 1 - t;
         } else if (i === baseIdx + 1) {
-          opacity = frac;
-          transform = `translateY(${(1 - frac) * 18}px) scale(${0.985 + frac * 0.015})`;
+          opacity = t;
+          transform = `translateY(${(1 - t) * 18}px) scale(${0.985 + t * 0.015})`;
         }
         if (i === n - 1 && baseIdx === n - 2 && frac >= 0.999) opacity = 1;
         layer.style.opacity = String(opacity);
@@ -73,7 +83,7 @@ function onScroll(){
       // once we've moved past that first transition the particle canvas
       // stays fully whitened underneath whichever layer is currently showing.
       if (baseIdx === 0) {
-        if (heroWhiteout) heroWhiteout.style.opacity = String(frac);
+        if (heroWhiteout) heroWhiteout.style.opacity = String(t);
       } else {
         if (heroWhiteout) heroWhiteout.style.opacity = '1';
       }
