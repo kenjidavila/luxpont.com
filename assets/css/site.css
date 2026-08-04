@@ -623,15 +623,16 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 @media(max-width:600px){ :root{ --t-hero:clamp(38px,11vw,52px); } .grid-2{ gap:36px; } .section{ padding-left:6vw; padding-right:6vw; } }
 
 /* ══ INTRO SPLASH ══
-   Brand lockup shown on entry, over a plain black or white field (per the
-   viewer's OS colour scheme), then fades out SLOWLY so the eye has a couple
-   of seconds to watch the Luxpont hero emerge underneath. Self-contained:
-   removed from the layout by a small script once the fade-out ends. */
+   Brand lockup shown on entry over a clean white field, then dissolves slowly
+   to give way to the hero and the site. pointer-events:none is critical — the
+   splash is purely decorative and must NEVER intercept scroll or clicks, even
+   if its removal script is delayed on a slow load. A small script also drops
+   it from the layout once the fade ends, but the page is usable regardless. */
 #intro-splash{
-  position:fixed; inset:0; z-index:9999;
+  position:fixed; inset:0; z-index:9999; pointer-events:none;
   display:flex; align-items:center; justify-content:center;
-  background:#191919; /* elegant matte charcoal — not pure black (harsh), not glossy */
-  animation:introSplashOut 2.2s var(--ease) 2s forwards;
+  background:#ffffff;
+  animation:introSplashOut 3s var(--ease) 1.8s forwards;
   will-change:opacity;
 }
 .intro-splash-logo{
@@ -645,9 +646,9 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
   100%{ opacity:1; transform:none; }
 }
 @keyframes introSplashOut{
-  0%{ opacity:1; visibility:visible; }
+  0%{ opacity:1; visibility:visible; filter:blur(0); }
   99%{ visibility:visible; }
-  100%{ opacity:0; visibility:hidden; }
+  100%{ opacity:0; visibility:hidden; filter:blur(5px); } /* soft dissolve ("difuminado") as it clears */
 }
 @media(max-width:600px){ .intro-splash-logo{ width:min(86vw, 420px); } }
 
