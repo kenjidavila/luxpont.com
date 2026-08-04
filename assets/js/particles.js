@@ -298,11 +298,21 @@
       let opacity = Math.min(1, buildBlend * 3); // soft pop-in as each particle starts moving
 
       if (phaseName === 'fade') {
-        // each particle detaches on its own stagger, then drifts slowly
-        // down and out as it dims — not a uniform fade in place.
+        // Each particle detaches on its own stagger, then drifts out as it
+        // dims — not a uniform fade in place. Direction depends on which
+        // landmark is dissolving: Coliseo (right/normal) sweeps left, like
+        // a current of air carrying it toward where Metropolis is about to
+        // build; Metropolis (left/mirrored) falls straight down, inviting
+        // a scroll instead of pointing at a next landmark.
         const fd = fallDelay[i];
         const fallLocal = Math.max(0, Math.min(1, (phaseLocal - fd) / (1 - fd)));
-        y += fallLocal * fallLocal * height * 0.55;
+        const eased = fallLocal * fallLocal;
+        if (shape.align === 'mirrored') {
+          y += eased * height * 0.55;
+        } else {
+          x -= eased * width * 0.62;
+          y += eased * height * 0.12; // slight downward drift so the sweep reads as wind, not a perfectly flat slide
+        }
         opacity *= 1 - smooth(fallLocal);
       }
       if (opacity <= 0.02) continue;
