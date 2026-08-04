@@ -182,7 +182,7 @@ body.lang-banner-active #nav{ top:57px; }
 /* ════════════════════════════════════════════════════════
   HERO — imagen 4K full-bleed, tema claro
 ════════════════════════════════════════════════════════ */
-#hero-track{ position:relative; height:1420vh; }
+#hero-track{ position:relative; height:1540vh; }
 .pin-anchor{ position:absolute; left:0; width:1px; height:1px; pointer-events:none; }
 .pin-wrapper{ position:sticky; top:0; height:100vh; min-height:600px; overflow:hidden; }
 .pin-layer{ position:absolute; inset:0; opacity:0; pointer-events:none; transition:none; }
@@ -663,6 +663,8 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
    the anaphora reads calm rather than cramped. */
 .metodo-h span, .metodo-h em{ display:block; }
 .metodo-h span{ margin-bottom:0.34em; }
+/* Standalone manifesto slide (Método, section 1): larger, prominent statement. */
+.metodo-manifesto{ font-size:clamp(38px,5.2vw,66px); max-width:none; }
 .gallery-split-head .body-text{ margin-bottom:0; }
 .gallery-split-head .gallery-nav{ margin-top:28px; }
 .gallery-split .gallery{ min-width:0; align-items:stretch; padding-top:8px; padding-bottom:20px; }
