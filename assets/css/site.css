@@ -31,7 +31,7 @@
  --light:  var(--marfil-2);
 
  --serif: 'Source Serif 4', Georgia, serif;
- --sans: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+ --sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
  --mono: 'JetBrains Mono', monospace;
 
  --t-xs:  10px;
@@ -79,7 +79,7 @@ button { font-family:inherit; }
 ════════════════════════════════════════════════════════ */
 .label { font-family:var(--mono); font-size:9px; font-weight:400; letter-spacing:0.22em; text-transform:uppercase; color:var(--oro-texto); margin-bottom:14px; }
 .label.on-dark { color:var(--oro-texto); }
-.h2-display { font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:clamp(var(--t-2xl),4vw,var(--t-3xl)); font-weight:800; font-stretch:condensed; letter-spacing:-0.03em; line-height:1.12; color:var(--black); margin:0 0 clamp(18px,2.2vw,30px); }
+.h2-display { font-family:var(--serif); font-size:clamp(var(--t-2xl),4vw,var(--t-3xl)); font-weight:600; letter-spacing:-0.01em; line-height:1.15; color:var(--black); margin:0 0 clamp(18px,2.2vw,30px); }
 /* The accent phrase stays in the same display face as the rest of the heading
    — set apart by the gold colour alone, not a second (serif) typeface. Mixing
    the heavy condensed sans with a light serif italic mid-line read as a clash;
@@ -195,7 +195,7 @@ body.lang-banner-active #nav{ top:57px; }
 .hero-grain{ position:absolute; inset:0; z-index:3; opacity:0.02; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .hero-content{ position:relative; z-index:4; padding:0 var(--gutter); max-width:780px; width:100%; margin:0; text-align:left; }
 .hero-eyebrow{ font-family:var(--mono); font-size:9px; color:var(--oro-texto); letter-spacing:0.28em; text-transform:uppercase; margin-bottom:20px; opacity:0; animation:fadeUp 0.8s var(--ease) 0.3s forwards; }
-.hero-h1{ font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:var(--t-hero); font-weight:800; font-stretch:condensed; line-height:1.08; color:var(--navy); text-shadow:0 0 22px rgba(255,255,255,0.7); margin:0 0 24px; max-width:780px; letter-spacing:-0.04em; opacity:0; animation:fadeUp 0.9s var(--ease) 0.45s forwards; }
+.hero-h1{ font-family:var(--serif); font-size:var(--t-hero); font-weight:600; line-height:1.12; color:var(--navy); text-shadow:0 0 22px rgba(255,255,255,0.7); margin:0 0 24px; max-width:780px; letter-spacing:-0.01em; opacity:0; animation:fadeUp 0.9s var(--ease) 0.45s forwards; }
 .hero-h1 em{ font-family:var(--serif); font-style:italic; font-weight:300; font-stretch:normal; letter-spacing:-0.01em; color:var(--oro-texto); }
 /* Which clause is gold flips with the active landmark: "Preserva tu
    legado" for Coliseo (the default/normal state), "Expande tu futuro"
@@ -543,7 +543,7 @@ body.lang-banner-active #nav{ top:57px; }
 /* ════════════════════════════════════════════════════════
   CONTACTO
 ════════════════════════════════════════════════════════ */
-.ct-h2{ font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Sofia Sans","Source Sans 3",var(--sans); font-size:clamp(var(--t-2xl),3vw,var(--t-3xl)); font-weight:800; font-stretch:condensed; letter-spacing:-0.03em; color:var(--black); margin-bottom:18px; line-height:1.1; }
+.ct-h2{ font-family:var(--serif); font-size:clamp(var(--t-2xl),3vw,var(--t-3xl)); font-weight:600; letter-spacing:-0.01em; color:var(--black); margin-bottom:18px; line-height:1.15; }
 .ct-h2 em{ font-family:var(--serif); font-style:italic; font-weight:300; font-stretch:normal; letter-spacing:-0.01em; color:var(--oro-texto); }
 .ct-sub{ font-family:var(--sans); font-size:13px; font-weight:300; color:var(--muted); line-height:1.85; max-width:400px; margin-bottom:36px; }
 .ct-detail{ display:flex; flex-direction:column; }
