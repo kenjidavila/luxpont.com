@@ -203,12 +203,24 @@
   let transitionEndsAt = -Infinity;
   let needsLayoutRefresh = true; // forces one fresh measurement on first frame and after resize
   // .hero-content is stationary for ~92% of each shape's time on screen —
-  // it only physically moves for the ~1.8s CSS transition right after a
-  // switch. Querying getBoundingClientRect() (forces a layout read) every
-  // single frame regardless was measured to cause real, compounding frame-
-  // time growth over a running page; only re-querying while a slide is
+  // it only physically moves for the ~3.2s slide right after a switch.
+  // Querying getBoundingClientRect() (forces a layout read) every single
+  // frame regardless was measured to cause real, compounding frame-time
+  // growth over a running page; only re-querying while a slide is
   // actually in flight removes that cost for the steady-state 92%.
-  const TRANSITION_WINDOW = 1.9;
+  const TRANSITION_DURATION = 3.2; // seconds — matches the CSS @keyframes duration below
+  const TRANSITION_WINDOW = TRANSITION_DURATION + 0.15;
+
+  // The slide passes through the exact centre position (blurred) instead
+  // of going straight from one edge to the other — a `transition:left`
+  // can only interpolate directly between two values, so the through-
+  // centre motion needs a real @keyframes animation, and which one
+  // depends on the direction of travel.
+  if (heroContentEl) {
+    heroContentEl.addEventListener('animationend', (e) => {
+      if (e.target === heroContentEl) heroContentEl.style.animation = '';
+    });
+  }
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -240,8 +252,13 @@
     if (shapeIdx !== lastShapeIdx) {
       lastShapeIdx = shapeIdx;
       if (heroContentEl) {
-        heroContentEl.classList.toggle('mirrored', shape.align === 'mirrored');
+        const enteringMirrored = shape.align === 'mirrored';
+        heroContentEl.classList.toggle('mirrored', enteringMirrored);
         heroContentEl.classList.toggle('centered', shape.align === 'centered');
+        heroContentEl.style.animation = 'none';
+        void heroContentEl.offsetWidth; // force reflow so the animation restarts even if the same name fires twice in a row
+        heroContentEl.style.animation = (enteringMirrored ? 'hero-pass-to-mirrored' : 'hero-pass-to-normal')
+          + ' ' + TRANSITION_DURATION + 's var(--ease) both';
       }
       transitionEndsAt = time + TRANSITION_WINDOW;
     }

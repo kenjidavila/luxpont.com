@@ -234,12 +234,35 @@ body.lang-banner-active #nav{ top:57px; }
    edge) much wider than the inner one (text-to-particles, 24px in
    particles.js), so the text read as pinned off to one side with a big
    imbalanced gap instead of sitting evenly framed. */
+/* The slide between the left (Coliseo) and right (Metropolis) resting
+   positions goes through the exact centre point, not a direct line
+   between them — an intentional bridge through the same centred
+   position .centered (Castillo, no longer in the rotation) used to hold
+   at, now visited in transit instead of held. A short blur peaks at that
+   midpoint and clears on either end, masking the discrete text-align
+   snap (left/right aren't interpolatable) and reading as one soft,
+   unhurried motion rather than a slide. particles.js triggers these via
+   .style.animation (not this file's own trigger) because the direction
+   depends on which landmark is becoming active — see the comment there. */
+@keyframes hero-pass-to-mirrored{
+  0%   { left:var(--hero-edge); text-align:left; filter:blur(0); }
+  8%   { filter:blur(7px); }
+  50%  { left:calc(50% - min(780px, calc(100% - 2 * var(--hero-edge))) / 2); text-align:center; filter:blur(9px); }
+  92%  { filter:blur(7px); }
+  100% { left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge)))); text-align:right; filter:blur(0); }
+}
+@keyframes hero-pass-to-normal{
+  0%   { left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge)))); text-align:right; filter:blur(0); }
+  8%   { filter:blur(7px); }
+  50%  { left:calc(50% - min(780px, calc(100% - 2 * var(--hero-edge))) / 2); text-align:center; filter:blur(9px); }
+  92%  { filter:blur(7px); }
+  100% { left:var(--hero-edge); text-align:left; filter:blur(0); }
+}
 @media(min-width:1101px){
   .hero-content{
     position:absolute; top:50%; left:var(--hero-edge); right:auto;
     transform:translateY(-50%);
     width:min(780px, calc(100% - 2 * var(--hero-edge)));
-    transition:left 1.8s var(--ease);
   }
   .hero-content.mirrored{
     left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge))));
@@ -277,9 +300,37 @@ body.lang-banner-active #nav{ top:57px; }
     background:radial-gradient(ellipse at center, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%);
   }
 }
-.btn-solid{ font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--marfil); background:var(--navy); border:1px solid var(--navy); border-radius:999px; padding:14px 36px; box-shadow:0 1px 2px rgba(22,34,63,0.08); transition:background 0.25s var(--ease-snap), border-color 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.15s var(--ease-snap); cursor:pointer; }
-.btn-solid:hover{ background:var(--navy-2); border-color:var(--navy-2); box-shadow:0 10px 24px rgba(22,34,63,0.22); transform:translateY(-1px); }
-.btn-solid:active{ transform:scale(0.97); box-shadow:0 2px 8px rgba(22,34,63,0.16); transition-duration:0.1s; }
+/* "Liquid glass": translucent instead of flat-opaque, with backdrop-
+   filter doing real work here since this sits directly over the hero's
+   particle canvas — it blurs the moving field behind the pill rather
+   than just sitting on top of it. Inset highlight/shadow pair simulates
+   light catching the top edge of the glass and falling off at the
+   bottom, the way Apple's material does it. */
+.btn-solid{
+  font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--marfil);
+  background:linear-gradient(180deg, rgba(22,34,63,0.72) 0%, rgba(15,24,48,0.68) 100%);
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:999px; padding:14px 36px;
+  backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 -1px 0 rgba(0,0,0,0.12),
+    0 1px 2px rgba(22,34,63,0.1),
+    0 10px 26px rgba(22,34,63,0.16);
+  transition:background 0.3s var(--ease-snap), border-color 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap), transform 0.15s var(--ease-snap);
+  cursor:pointer;
+}
+.btn-solid:hover{
+  background:linear-gradient(180deg, rgba(15,24,48,0.82) 0%, rgba(10,17,35,0.78) 100%);
+  border-color:rgba(255,255,255,0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.34),
+    inset 0 -1px 0 rgba(0,0,0,0.12),
+    0 14px 34px rgba(22,34,63,0.26);
+  transform:translateY(-1px);
+}
+.btn-solid:active{ transform:scale(0.97); transition-duration:0.1s; }
 .btn-outline{ font-family:var(--sans); font-size:10px; font-weight:400; letter-spacing:0.16em; text-transform:uppercase; color:var(--navy); background:rgba(246,243,236,0.5); border:1px solid rgba(22,34,63,0.35); border-radius:999px; padding:13px 36px; transition:background 0.25s var(--ease-snap), border-color 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.15s var(--ease-snap); cursor:pointer; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
 .btn-outline:hover{ background:rgba(246,243,236,0.85); border-color:var(--navy); box-shadow:0 10px 24px rgba(22,34,63,0.1); transform:translateY(-1px); }
 .btn-outline:active{ transform:scale(0.97); transition-duration:0.1s; }
@@ -515,8 +566,23 @@ body.lang-banner-active #nav{ top:57px; }
 .f-consent-lbl{ font-family:var(--sans); font-size:11px; font-weight:300; color:rgba(22,34,63,0.55); line-height:1.7; cursor:pointer; }
 .f-consent-lbl a{ color:var(--oro-texto); text-decoration:underline; }
 .f-note{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.35); letter-spacing:0.08em; line-height:1.8; border-top:1px solid var(--border); padding-top:12px; }
-.f-btn{ font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; background:var(--black); color:var(--white); border-radius:999px; padding:16px 32px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; width:100%; box-shadow:0 1px 2px rgba(22,34,63,0.08); transition:background 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.15s var(--ease-snap); margin-top:4px; }
-.f-btn:hover{ background:var(--black2); box-shadow:0 10px 24px rgba(22,34,63,0.2); }
+/* Same liquid-glass treatment as .btn-solid ("Solicitar...conversación"
+   is the same CTA family in both places) — translucent + backdrop blur
+   + inset highlight instead of flat opaque black. */
+.f-btn{
+  font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
+  background:linear-gradient(180deg, rgba(22,34,63,0.82) 0%, rgba(15,24,48,0.78) 100%);
+  color:var(--white); border:1px solid rgba(255,255,255,0.18); border-radius:999px; padding:16px 32px;
+  backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%);
+  cursor:pointer; display:flex; align-items:center; justify-content:space-between; width:100%;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1px 0 rgba(0,0,0,0.12),
+    0 1px 2px rgba(22,34,63,0.08);
+  transition:background 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap), transform 0.15s var(--ease-snap);
+  margin-top:4px;
+}
+.f-btn:hover{ background:linear-gradient(180deg, rgba(15,24,48,0.9) 0%, rgba(10,17,35,0.86) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.12), 0 10px 24px rgba(22,34,63,0.2); }
 .f-btn:active:not(:disabled){ transform:scale(0.985); transition-duration:0.1s; }
 .f-btn:disabled{ opacity:0.6; cursor:default; }
 .f-btn span{ color:var(--gold); font-size:16px; }
