@@ -188,6 +188,7 @@
   }
 
   const BUILD = 4.2;  // seconds to fly in from the corner and assemble
+  const SPIRAL_TURNS = 0.16; // fraction of a full turn each particle curls through on approach, same sense for all — decays to 0 exactly at arrival so the final image is unaffected
   const HOLD = 4.4;   // seconds fully formed
   const FADE = 5.8;   // seconds — slow: each particle detaches on its own
                        // stagger and drifts down as it fades, not a flat dim
@@ -202,20 +203,21 @@
   let cachedLayout = { cx: 0, cy: 0, scale: 1 };
   let transitionEndsAt = -Infinity;
   let needsLayoutRefresh = true; // forces one fresh measurement on first frame and after resize
-  // .hero-content is stationary for ~92% of each shape's time on screen —
-  // it only physically moves for the ~3.2s slide right after a switch.
-  // Querying getBoundingClientRect() (forces a layout read) every single
-  // frame regardless was measured to cause real, compounding frame-time
-  // growth over a running page; only re-querying while a slide is
-  // actually in flight removes that cost for the steady-state 92%.
-  const TRANSITION_DURATION = 3.2; // seconds — matches the CSS @keyframes duration below
+  // .hero-content is stationary for ~90% of each shape's time on screen —
+  // it only physically moves (repositions while invisible, mid-fade) for
+  // the ~2.2s fade right after a switch. Querying getBoundingClientRect()
+  // (forces a layout read) every single frame regardless was measured to
+  // cause real, compounding frame-time growth over a running page; only
+  // re-querying while a fade is actually in flight removes that cost for
+  // the steady-state ~90%.
+  const TRANSITION_DURATION = 2.2; // seconds — matches the CSS @keyframes duration below
   const TRANSITION_WINDOW = TRANSITION_DURATION + 0.15;
 
-  // The slide passes through the exact centre position (blurred) instead
-  // of going straight from one edge to the other — a `transition:left`
-  // can only interpolate directly between two values, so the through-
-  // centre motion needs a real @keyframes animation, and which one
-  // depends on the direction of travel.
+  // A plain `transition:left` would animate the position change visibly
+  // (a slide) — what's wanted instead is invisible: fade out, reposition
+  // while opacity is 0, fade back in. That needs a real @keyframes
+  // animation (to hold the position jump exactly at the opacity-0
+  // moment), and which one depends on the direction of travel.
   if (heroContentEl) {
     heroContentEl.addEventListener('animationend', (e) => {
       if (e.target === heroContentEl) heroContentEl.style.animation = '';
@@ -253,12 +255,19 @@
       lastShapeIdx = shapeIdx;
       if (heroContentEl) {
         const enteringMirrored = shape.align === 'mirrored';
-        heroContentEl.classList.toggle('mirrored', enteringMirrored);
-        heroContentEl.classList.toggle('centered', shape.align === 'centered');
+        const enteringCentered = shape.align === 'centered';
         heroContentEl.style.animation = 'none';
         void heroContentEl.offsetWidth; // force reflow so the animation restarts even if the same name fires twice in a row
-        heroContentEl.style.animation = (enteringMirrored ? 'hero-pass-to-mirrored' : 'hero-pass-to-normal')
-          + ' ' + TRANSITION_DURATION + 's var(--ease) both';
+        heroContentEl.style.animation = (enteringMirrored ? 'hero-fade-to-mirrored' : 'hero-fade-to-normal')
+          + ' ' + TRANSITION_DURATION + 's ease-in-out both';
+        // the keyframes jump position/text-align at 40% (while opacity is 0); the
+        // .mirrored/.centered classes also drive hero-lead/hero-actions alignment,
+        // so their toggle must land at that same invisible instant, not at time 0,
+        // or the paragraph/buttons would visibly snap ahead of the headline
+        setTimeout(() => {
+          heroContentEl.classList.toggle('mirrored', enteringMirrored);
+          heroContentEl.classList.toggle('centered', enteringCentered);
+        }, TRANSITION_DURATION * 1000 * 0.4);
       }
       transitionEndsAt = time + TRANSITION_WINDOW;
     }
@@ -306,6 +315,19 @@
 
       let x = lerp(cornerX, tScreenX, buildBlend);
       let y = lerp(cornerY, tScreenY, buildBlend);
+
+      if (phaseName === 'build' && buildBlend > 0 && buildBlend < 1) {
+        // curl the straight corner-to-target path into a slight spiral: rotate
+        // the position around its own origin corner by an angle that decays to
+        // zero exactly as buildBlend reaches 1, so every particle still lands
+        // precisely on target — only the approach arcs, same rotational sense
+        // for every particle, reading as one coherent swirl assembling the image
+        const spiralAngle = (1 - buildBlend) * SPIRAL_TURNS * Math.PI * 2;
+        const cosA = Math.cos(spiralAngle), sinA = Math.sin(spiralAngle);
+        const dx = x - cornerX, dy = y - cornerY;
+        x = cornerX + dx * cosA - dy * sinA;
+        y = cornerY + dx * sinA + dy * cosA;
+      }
 
       const ph = phase[i] + time * speed[i];
       const wob = wobble[i] * (0.4 + 0.6 * (1 - buildBlend)) * scale * 0.15;
