@@ -30,9 +30,14 @@
  --border: var(--linea);
  --light:  var(--marfil-2);
 
- --serif: 'Source Serif 4', Georgia, serif;
- --sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
- --mono: 'JetBrains Mono', monospace;
+ /* "Vogue" system: Bodoni Moda (Didone) headlines, Jost (geometric) accent/UI,
+    Source Sans 3 body. --serif/--mono kept as aliases so any legacy usage maps
+    to the new roles automatically. */
+ --display: 'Bodoni Moda', 'Didot', 'Times New Roman', Georgia, serif;
+ --accent:  'Jost', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+ --sans:    'Source Sans 3', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
+ --serif: var(--display);
+ --mono:  var(--accent);
 
  --t-xs:  10px;
  --t-sm:  12px;
@@ -105,7 +110,7 @@ button { font-family:inherit; }
 #lang-banner.visible{ display:flex; }
 @keyframes slideDown{ from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
 .lang-banner-text{ color:var(--texto-sec); }
-.lang-banner-btn{ font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:transparent; color:var(--oro-texto); border:1px solid rgba(183,148,78,0.5); border-radius:999px; padding:6px 18px; cursor:pointer; transition:background 0.2s var(--ease-snap), border-color 0.2s var(--ease-snap), transform 0.15s var(--ease-snap); text-decoration:none; white-space:nowrap; }
+.lang-banner-btn{ font-family:var(--accent); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:transparent; color:var(--oro-texto); border:1px solid rgba(183,148,78,0.5); border-radius:999px; padding:6px 18px; cursor:pointer; transition:background 0.2s var(--ease-snap), border-color 0.2s var(--ease-snap), transform 0.15s var(--ease-snap); text-decoration:none; white-space:nowrap; }
 .lang-banner-btn:active{ transform:scale(0.96); transition-duration:0.1s; }
 .lang-banner-btn:hover{ background:rgba(183,148,78,0.1); border-color:var(--gold); }
 .lang-banner-close{ background:none; border:none; color:rgba(22,34,63,0.3); font-size:18px; cursor:pointer; padding:0 4px; line-height:1; flex-shrink:0; }
@@ -138,12 +143,12 @@ body.lang-banner-active #nav{ top:57px; }
     0 1px 1px rgba(22,34,63,0.05),
     0 18px 40px rgba(22,34,63,0.16);
 }
-.nav-logo{ display:flex; align-items:center; gap:11px; font-family:var(--serif); font-size:19px; letter-spacing:0.01em; font-weight:400; color:var(--navy); text-shadow:0 1px 3px rgba(246,243,236,0.7); transition:color 0.35s, text-shadow 0.35s; white-space:nowrap; }
+.nav-logo{ display:flex; align-items:center; gap:11px; font-family:var(--accent); font-size:19px; letter-spacing:0.12em; font-weight:500; color:var(--navy); text-shadow:0 1px 3px rgba(246,243,236,0.7); transition:color 0.35s, text-shadow 0.35s; white-space:nowrap; }
 .nav-logo img{ height:34px; width:auto; display:block; flex-shrink:0; }
 #nav.scrolled .nav-logo{ color:var(--black); text-shadow:none; }
 .nav-right{ display:flex; align-items:center; gap:clamp(20px,2.6vw,36px); }
 .nav-links{ display:flex; align-items:center; gap:clamp(18px,2.2vw,32px); }
-.nav-links a{ font-family:var(--sans); font-size:var(--t-sm); font-weight:300; letter-spacing:0.1em; text-transform:uppercase; color:rgba(22,34,63,0.75); text-shadow:0 1px 3px rgba(246,243,236,0.6); transition:color 0.25s var(--ease-snap); white-space:nowrap; }
+.nav-links a{ font-family:var(--accent); font-size:var(--t-sm); font-weight:300; letter-spacing:0.18em; text-transform:uppercase; color:rgba(22,34,63,0.75); text-shadow:0 1px 3px rgba(246,243,236,0.6); transition:color 0.25s var(--ease-snap); white-space:nowrap; }
 .nav-links a:hover{ color:var(--navy); }
 #nav.scrolled .nav-links a{ color:rgba(22,34,63,0.55); text-shadow:none; }
 #nav.scrolled .nav-links a:hover{ color:var(--black); }
@@ -166,7 +171,7 @@ body.lang-banner-active #nav{ top:57px; }
 .nav-mobile-close{ background:transparent; border:none; font-size:22px; color:var(--black); cursor:pointer; transition:transform 0.2s var(--ease-snap); }
 .nav-mobile-close:hover{ transform:rotate(90deg); }
 .nav-mobile-links{ display:flex; flex-direction:column; margin-top:12px; }
-.nav-mobile-links a{ font-family:var(--serif); font-size:26px; font-weight:300; color:var(--black); padding:14px 0; border-bottom:1px solid var(--border); transition:color 0.2s var(--ease-snap), padding-left 0.2s var(--ease-snap); display:block; }
+.nav-mobile-links a{ font-family:var(--accent); font-size:26px; font-weight:300; color:var(--black); padding:14px 0; border-bottom:1px solid var(--border); transition:color 0.2s var(--ease-snap), padding-left 0.2s var(--ease-snap); display:block; }
 .nav-mobile-links a:hover{ color:var(--oro-texto); padding-left:6px; }
 .nav-mobile-langs{ display:flex; gap:18px; margin-top:24px; font-family:var(--mono); font-size:11px; letter-spacing:0.1em; }
 .nav-mobile-langs a{ color:rgba(22,34,63,0.5); }
@@ -195,7 +200,7 @@ body.lang-banner-active #nav{ top:57px; }
 .hero-grain{ position:absolute; inset:0; z-index:3; opacity:0.02; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .hero-content{ position:relative; z-index:4; padding:0 var(--gutter); max-width:780px; width:100%; margin:0; text-align:left; }
 .hero-eyebrow{ font-family:var(--mono); font-size:9px; color:var(--oro-texto); letter-spacing:0.28em; text-transform:uppercase; margin-bottom:20px; opacity:0; animation:fadeUp 0.8s var(--ease) 0.3s forwards; }
-.hero-h1{ font-family:var(--serif); font-size:var(--t-hero); font-weight:600; line-height:1.12; color:var(--navy); text-shadow:0 0 22px rgba(255,255,255,0.7); margin:0 0 24px; max-width:780px; letter-spacing:-0.01em; opacity:0; animation:fadeUp 0.9s var(--ease) 0.45s forwards; }
+.hero-h1{ font-family:var(--serif); font-size:var(--t-hero); font-weight:500; line-height:1.12; color:var(--navy); text-shadow:0 0 22px rgba(255,255,255,0.7); margin:0 0 24px; max-width:780px; letter-spacing:-0.01em; opacity:0; animation:fadeUp 0.9s var(--ease) 0.45s forwards; }
 .hero-h1 em{ font-family:var(--serif); font-style:italic; font-weight:300; font-stretch:normal; letter-spacing:-0.01em; color:var(--oro-texto); }
 /* Which clause is gold flips with the active landmark: "Preserva tu
    legado" for Coliseo (the default/normal state), "Expande tu futuro"
@@ -308,7 +313,7 @@ body.lang-banner-active #nav{ top:57px; }
    backdrop-filter, no translucency, no inset specular edges. Just a crisp
    solid button with a soft drop shadow. */
 .btn-solid{
-  font-family:var(--sans); font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase;
+  font-family:var(--accent); font-size:10px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase;
   color:var(--marfil);
   background:var(--navy);
   border:1px solid var(--navy);
@@ -323,7 +328,7 @@ body.lang-banner-active #nav{ top:57px; }
   transform:translateY(-1px);
 }
 .btn-solid:active{ transform:scale(0.97); transition-duration:0.1s; }
-.btn-outline{ font-family:var(--sans); font-size:10px; font-weight:400; letter-spacing:0.16em; text-transform:uppercase; color:var(--navy); background:rgba(246,243,236,0.5); border:1px solid rgba(22,34,63,0.35); border-radius:999px; padding:13px 36px; transition:background 0.25s var(--ease-snap), border-color 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.15s var(--ease-snap); cursor:pointer; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.btn-outline{ font-family:var(--accent); font-size:10px; font-weight:400; letter-spacing:0.16em; text-transform:uppercase; color:var(--navy); background:rgba(246,243,236,0.5); border:1px solid rgba(22,34,63,0.35); border-radius:999px; padding:13px 36px; transition:background 0.25s var(--ease-snap), border-color 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.15s var(--ease-snap); cursor:pointer; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
 .btn-outline:hover{ background:rgba(246,243,236,0.85); border-color:var(--navy); box-shadow:0 10px 24px rgba(22,34,63,0.1); transform:translateY(-1px); }
 .btn-outline:active{ transform:scale(0.97); transition-duration:0.1s; }
 .hero-scroll{ position:absolute; left:50%; transform:translateX(-50%); bottom:40px; z-index:4; transition:opacity 0.3s; }
@@ -566,7 +571,7 @@ body.lang-banner-active #nav{ top:57px; }
    (translucent navy) until the required fields are filled and consent is
    given, then snaps to the full solid navy so the form reads as ready. */
 .f-btn{
-  font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+  font-family:var(--accent); font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase;
   background:var(--navy); color:var(--marfil); border:1px solid var(--navy); border-radius:999px; padding:16px 32px;
   cursor:pointer; display:flex; align-items:center; justify-content:center; width:100%;
   box-shadow:0 8px 22px rgba(22,34,63,0.22);
@@ -612,10 +617,10 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 .cookie-text{ font-family:var(--sans); font-size:12px; font-weight:300; color:var(--texto-sec); line-height:1.7; max-width:680px; flex:1; }
 .cookie-text a{ color:var(--oro-texto); text-decoration:underline; cursor:pointer; }
 .cookie-actions{ display:flex; gap:10px; flex-shrink:0; }
-.btn-cookie-accept{ font-family:var(--sans); font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--gold); color:var(--black); border:none; border-radius:999px; padding:10px 24px; cursor:pointer; transition:background 0.2s var(--ease-snap), transform 0.15s var(--ease-snap); }
+.btn-cookie-accept{ font-family:var(--accent); font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--gold); color:var(--black); border:none; border-radius:999px; padding:10px 24px; cursor:pointer; transition:background 0.2s var(--ease-snap), transform 0.15s var(--ease-snap); }
 .btn-cookie-accept:hover{ background:var(--gold2); }
 .btn-cookie-accept:active{ transform:scale(0.96); transition-duration:0.1s; }
-.btn-cookie-reject{ font-family:var(--sans); font-size:10px; font-weight:300; letter-spacing:0.1em; text-transform:uppercase; background:transparent; color:rgba(22,34,63,0.5); border:1px solid rgba(22,34,63,0.25); border-radius:999px; padding:10px 20px; cursor:pointer; transition:color 0.2s var(--ease-snap), border-color 0.2s var(--ease-snap), transform 0.15s var(--ease-snap); }
+.btn-cookie-reject{ font-family:var(--accent); font-size:10px; font-weight:300; letter-spacing:0.1em; text-transform:uppercase; background:transparent; color:rgba(22,34,63,0.5); border:1px solid rgba(22,34,63,0.25); border-radius:999px; padding:10px 20px; cursor:pointer; transition:color 0.2s var(--ease-snap), border-color 0.2s var(--ease-snap), transform 0.15s var(--ease-snap); }
 .btn-cookie-reject:hover{ color:rgba(22,34,63,0.85); border-color:rgba(22,34,63,0.45); }
 .btn-cookie-reject:active{ transform:scale(0.96); transition-duration:0.1s; }
 
