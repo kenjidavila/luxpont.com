@@ -377,23 +377,72 @@ body.lang-banner-active #nav{ top:57px; }
   .gallery-piece-frame--tall{ height:clamp(380px,62vh,540px); }
 }
 
-/* Método CBCA — seis preguntas en una sola pantalla, sin scroll propio */
-.preguntas-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px 20px; margin-top:clamp(24px,4vh,40px); }
-.pregunta-chip{ background:var(--card-white); border-radius:16px; box-shadow:var(--shadow-card); padding:22px 22px 26px; transition:transform 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap); }
-.pregunta-chip:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(22,34,63,0.1); }
-.pregunta-chip p{ font-family:var(--serif); font-style:italic; font-size:clamp(16px,1.5vw,19px); font-weight:500; color:var(--ink); line-height:1.35; margin-top:8px; }
+/* ════════════════════════════════════════════════════════
+  MICROESTRUCTURA EDITORIAL — el patrón único de contenido
+  ────────────────────────────────────────────────────────
+  Ninguna pieza de contenido vive dentro de una caja. Toda pieza
+  —valor, pregunta, módulo, mandato, perfil— se compone siempre en
+  el mismo orden, como una columna de revista:
+
+      visual  → foto a sangre, o el NÚMERO GRANDE donde no hay foto
+      kicker  → DM Mono, versalitas anchas, oro
+      titular → Cormorant Garamond
+      firma   → línea de cierre en cuerpo pequeño, tras un filete
+
+  Lo único que separa una columna de la siguiente es el aire: sin
+  fondo, sin borde, sin sombra, sin radio. El filete bajo el número
+  hace de "pie de foto" y le da al numeral la misma huella que
+  tendría la imagen que sustituye.
+════════════════════════════════════════════════════════ */
+.card-num,
+.pregunta-num,
+.modulo-card .n{
+  display:block;
+  font-family:var(--serif); font-weight:500; font-style:normal;
+  font-size:clamp(52px,5.4vw,88px); line-height:0.88;
+  letter-spacing:-0.02em;
+  color:var(--oro-texto); opacity:0.9;
+  font-variant-numeric:lining-nums tabular-nums;
+  margin:0 0 clamp(14px,1.7vw,22px);
+  padding-bottom:clamp(12px,1.4vw,18px);
+  border-bottom:1px solid rgba(183,148,78,0.3);
+}
+/* Firma — la línea de cierre de la columna, separada por filete */
+.card-result,
+.modulo-card p,
+.value-card .card-desc,
+[data-gallery-track="perfiles"] .card-desc{
+  margin-top:clamp(12px,1.4vw,18px);
+  padding-top:clamp(10px,1.2vw,14px);
+  border-top:1px solid rgba(22,34,63,0.12);
+}
+
+/* Método CBCA — seis preguntas, sin caja */
+.preguntas-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(28px,3.6vw,60px); margin-top:clamp(24px,4vh,40px); }
+.pregunta-chip{ background:none; border:0; border-radius:0; box-shadow:none; padding:0; }
+.pregunta-chip p{ font-family:var(--serif); font-style:italic; font-size:clamp(16px,1.5vw,19px); font-weight:500; color:var(--ink); line-height:1.35; margin-top:0; }
 @media(max-width:760px){ .preguntas-grid{ grid-template-columns:1fr 1fr; } }
 @media(max-width:520px){ .preguntas-grid{ grid-template-columns:1fr; } }
 
-/* La Metodología — cuatro módulos condensados en cuadrícula */
-.modulos-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2.4vw,24px); margin-top:clamp(24px,4vh,36px); }
-.modulo-card{ background:var(--card-white); border-radius:16px; box-shadow:var(--shadow-card); padding:22px 24px 26px; transition:transform 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-snap); }
-.modulo-card:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(22,34,63,0.1); }
-.modulo-card .n{ font-family:var(--data); font-size:24px; font-weight:400; color:var(--oro-texto); line-height:1; letter-spacing:0.02em; font-variant-numeric:tabular-nums; }
-.modulo-card .tag{ font-family:var(--mono); font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--oro-texto); margin:6px 0 2px; }
-.modulo-card h3{ font-family:var(--serif); font-size:clamp(16px,1.5vw,19px); font-weight:600; color:var(--ink); margin:6px 0 8px; }
-.modulo-card p{ font-family:var(--sans); font-size:13px; font-weight:400; color:var(--ink-soft); line-height:1.6; }
-@media(max-width:760px){ .modulos-grid{ grid-template-columns:1fr; } }
+/* La Metodología — cuatro módulos en cuatro columnas de aire */
+.modulos-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(26px,3.2vw,56px); margin-top:clamp(26px,4vh,44px); align-items:start; }
+.modulo-card{ background:none; border:0; border-radius:0; box-shadow:none; padding:0; }
+.modulo-card .tag{ font-family:var(--mono); font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--oro-texto); margin:0 0 8px; }
+.modulo-card h3{ font-family:var(--serif); font-size:clamp(17px,1.6vw,21px); font-weight:600; color:var(--ink); line-height:1.22; margin:0; }
+.modulo-card p{ font-family:var(--sans); font-size:12.5px; font-weight:400; color:var(--ink-soft); line-height:1.65; }
+/* Disciplina de retícula: en las cuatro columnas de escritorio, numeral,
+   kicker, titular y firma comparten pauta, de modo que los filetes cruzan
+   la página a la misma altura aunque los títulos midan distinto. Sin
+   subgrid (navegadores antiguos) cada columna simplemente fluye: se pierde
+   la alineación, no el orden. */
+@media(min-width:961px){
+  @supports (grid-template-rows: subgrid){
+    .modulos-grid{ grid-template-rows:auto auto auto auto; }
+    .modulo-card{ display:grid; grid-row:span 4; grid-template-rows:subgrid; row-gap:0; }
+  }
+}
+@media(max-width:960px){ .modulos-grid{ grid-template-columns:1fr 1fr; } }
+@media(max-width:600px){ .modulos-grid{ grid-template-columns:1fr; } }
 
 .foco-list.compact .foco-item{ padding:12px 0; }
 .dossier-slide, .contacto-slide{ display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(40px,6vw,80px); align-items:center; }
@@ -471,60 +520,60 @@ body.lang-banner-active #nav{ top:57px; }
 .gallery-note{ font-family:var(--mono); font-size:9px; color:rgba(22,34,63,0.4); letter-spacing:0.08em; margin:14px 0 0; max-width:560px; }
 .bg-black .gallery-note{ color:rgba(22,34,63,0.4); }
 
-.gallery{ display:flex; gap:20px; overflow-x:auto; padding-right:var(--gutter); padding-top:4px; padding-bottom:16px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:thin; scrollbar-color:rgba(183,148,78,0.3) transparent; }
+/* El aire entre columnas es la única separación: nada de marcos. */
+.gallery{ display:flex; gap:clamp(34px,4.2vw,72px); overflow-x:auto; padding-right:var(--gutter); padding-top:4px; padding-bottom:16px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:thin; scrollbar-color:rgba(183,148,78,0.3) transparent; }
 .gallery::-webkit-scrollbar{ height:2px; }
 .gallery::-webkit-scrollbar-thumb{ background:rgba(183,148,78,0.3); }
 
-.card{ flex:0 0 340px; scroll-snap-align:start; background:var(--card-white); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-card); transition:box-shadow 0.4s var(--ease-snap), transform 0.4s var(--ease-snap); }
-.card:hover{ box-shadow:0 20px 48px rgba(22,34,63,0.16); transform:translateY(-6px); }
-.card-img{ width:100%; height:220px; position:relative; overflow:hidden; }
-.card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.6s var(--ease-snap); }
-.card:hover .card-img img{ transform:scale(1.06); }
-.card-img::after{ content:''; position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,0.4) 0%,transparent 55%); }
-.card-body{ padding:24px 26px 28px; }
+.card{ flex:0 0 clamp(260px,27vw,330px); scroll-snap-align:start; background:none; border:0; border-radius:0; box-shadow:none; }
+.card-img{ width:100%; height:clamp(150px,24vh,240px); position:relative; overflow:hidden; margin-bottom:clamp(14px,1.7vw,22px); }
+.card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.8s var(--ease-snap); }
+.card:hover .card-img img{ transform:scale(1.04); }
+.card-body{ padding:0; }
 .card-kicker{ font-family:var(--mono); font-size:10px; color:var(--oro-texto); letter-spacing:0.22em; text-transform:uppercase; margin-bottom:10px; }
-.card-title{ font-family:var(--serif); font-size:clamp(20px,1.8vw,23px); font-weight:600; color:var(--ink); line-height:1.2; margin-bottom:12px; }
-.card-desc{ font-family:var(--sans); font-size:13.5px; font-weight:400; color:var(--ink-soft); line-height:1.7; }
-.card-result{ margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-family:var(--sans); font-size:13.5px; font-weight:400; color:var(--ink-soft); line-height:1.65; }
+.card-title{ font-family:var(--serif); font-size:clamp(20px,1.8vw,23px); font-weight:600; color:var(--ink); line-height:1.2; margin-bottom:0; }
+.card-desc{ font-family:var(--sans); font-size:13px; font-weight:400; color:var(--ink-soft); line-height:1.7; margin-top:clamp(10px,1.2vw,14px); }
+.card-result{ font-family:var(--sans); font-size:12.5px; font-weight:400; color:var(--ink-soft); line-height:1.65; }
 .card-result strong{ color:var(--black); font-weight:600; }
 
-.card.value-card{ background:var(--card-white); flex-basis:320px; }
-.card.value-card .card-body{ padding:34px 30px; }
-.card.value-card .card-num{ font-family:var(--data); font-size:14px; color:var(--oro-texto); opacity:0.9; letter-spacing:0.05em; margin-bottom:20px; font-variant-numeric:tabular-nums; }
-.card.value-card .card-title{ font-family:var(--sans); font-size:15px; font-weight:500; color:var(--black); line-height:1.32; margin-bottom:10px; }
-.card.value-card .card-desc{ color:var(--muted); }
+/* Valores — sin foto: el número grande ocupa su lugar */
+.card.value-card{ flex:0 0 clamp(240px,25vw,300px); }
+.card.value-card .card-title{ font-size:clamp(19px,1.7vw,22px); }
+.card.value-card .card-desc{ font-size:12.5px; color:var(--muted); }
 
-@media(max-width:960px){ .card{ flex:0 0 290px; } .card.value-card{ flex-basis:270px; } }
+@media(max-width:960px){ .card{ flex:0 0 clamp(240px,64vw,290px); } .card.value-card{ flex:0 0 clamp(230px,62vw,270px); } }
 
-/* Mandatos cards: horizontal (image beside copy) instead of stacked
-   (image above copy) — a stacked 220px image + kicker/title/description/
-   result body routinely ran taller than the pinned slide's fixed 100vh,
-   so with .slide's overflow:hidden + centered content, the heading above
-   the cards ended up partially clipped by the container instead of the
-   cards themselves visibly overflowing. Putting the image beside the text
-   instead of above it removes ~220px from the card's height without
-   cutting any content. Scoped to this one gallery — "Con quién
-   trabajamos" reuses .card too and wasn't reported broken.
-   Stays horizontal all the way down to 761px, not the usual 960px
-   tablet breakpoint: the pinned/fixed-100vh .slide behaviour this is
-   working around doesn't switch off until 760px (see the reduced-motion/
-   max-width:760px query further down), so reverting to the tall stacked
-   layout any earlier would reopen the exact overflow this exists to
-   prevent on tablets like iPad portrait (768px). */
-[data-gallery-track="mandatos"] .card{ flex:0 0 620px; display:flex; flex-direction:row; align-items:stretch; }
-[data-gallery-track="mandatos"] .card-img{ width:220px; height:auto; flex-shrink:0; }
-[data-gallery-track="mandatos"] .card-body{ flex:1; min-width:0; padding:22px 24px; display:flex; flex-direction:column; justify-content:center; }
-[data-gallery-track="mandatos"] .card-desc{ line-height:1.65; }
-@media(max-width:760px){
-  [data-gallery-track="mandatos"] .card{ flex-basis:300px; flex-direction:column; }
-  [data-gallery-track="mandatos"] .card-img{ width:100%; height:180px; }
+/* Mandatos — la pieza más densa de la página (foto + kicker + titular +
+   descripción + firma) y la única que se apila dentro de una diapositiva
+   fijada a 100vh con overflow:hidden. Al quitar la caja desaparece el
+   padding del marco, pero el riesgo de desbordar sigue ahí, así que todo
+   lo que ocupa alto —foto y cuerpo— se dimensiona con vh: la columna
+   respira en pantallas altas y se comprime sin recortar contenido en las
+   bajas, en lugar de volver a tumbar la foto al lado del texto.
+   Antes esto era horizontal (foto al lado) precisamente por ese motivo;
+   ahora se apila para respetar el orden foto → kicker → titular → firma. */
+[data-gallery-track="mandatos"] .card{ flex:0 0 clamp(280px,30vw,360px); }
+[data-gallery-track="mandatos"] .card-img{ height:clamp(110px,17vh,190px); }
+[data-gallery-track="mandatos"] .card-title{ font-size:clamp(18px,1.6vw,21px); }
+[data-gallery-track="mandatos"] .card-desc{ font-size:12.5px; line-height:1.6; }
+
+/* Portátiles bajos (1280×720 y similares): la diapositiva sigue fijada a
+   100vh con overflow:hidden, así que ahí se recorta el margen —no el
+   contenido— para que la columna de mandatos, que es la más alta, entre
+   entera. */
+@media(min-width:761px) and (max-height:820px){
+  .slide{ padding-top:76px; padding-bottom:24px; }
+  .gallery-note{ margin-top:8px; }
+  [data-gallery-track="mandatos"] .card-img{ height:clamp(88px,13vh,150px); }
+  [data-gallery-track="mandatos"] .card-desc{ font-size:12px; line-height:1.55; }
+  [data-gallery-track="mandatos"] .card-result{ font-size:12px; }
 }
 
 /* ════════════════════════════════════════════════════════
-  METODO CBCA — número de pregunta reutilizado por .pregunta-chip
-  (el resto del layout vive en el bloque DIAPOSITIVAS de arriba)
+  METODO CBCA — el número de pregunta comparte el tratamiento de
+  numeral-sustituto-de-foto (bloque MICROESTRUCTURA EDITORIAL);
+  el resto del layout vive en el bloque DIAPOSITIVAS de arriba
 ════════════════════════════════════════════════════════ */
-.pregunta-num{ font-family:var(--data); font-size:15px; color:var(--oro-texto); letter-spacing:0.05em; font-variant-numeric:tabular-nums; }
 
 /* ════════════════════════════════════════════════════════
   COBERTURA
@@ -671,9 +720,10 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 @media(max-width:600px){ .intro-splash-logo{ width:min(86vw, 420px); } }
 
 /* ══ SPLIT GALLERY (Valores Centrales · Método CBCA) ══
-   A big, left-aligned heading holds the left column; the cards live in a
-   horizontal-scroll track on the right, taller/portrait, rendered as iOS-style
-   "liquid glass" — translucent frosted panels with a specular top edge. */
+   A big, left-aligned heading holds the left column; the items live in a
+   horizontal-scroll track on the right, as bare editorial columns — no
+   panel, no frame. The frosted "liquid glass" cards that used to live here
+   were removed: they boxed the content instead of setting it. */
 .gallery-split{ display:grid; grid-template-columns:minmax(300px, 38%) 1fr; gap:clamp(28px,4vw,60px); align-items:center; }
 .gallery-split-head{ align-self:center; min-width:0; }
 .gallery-split-head .h2-display{ font-size:clamp(30px,3.8vw,54px); text-align:left; max-width:none; margin-bottom:clamp(14px,1.8vw,22px); }
@@ -685,70 +735,18 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 .metodo-manifesto{ font-size:clamp(38px,5.2vw,66px); max-width:none; }
 .gallery-split-head .body-text{ margin-bottom:0; }
 .gallery-split-head .gallery-nav{ margin-top:28px; }
-.gallery-split .gallery{ min-width:0; align-items:stretch; padding-top:8px; padding-bottom:20px; }
-
-/* Liquid-glass cards — translucent, frosted, portrait */
-.gallery-glass .card,
-.gallery-glass .pregunta-chip{
-  flex:0 0 clamp(230px, 25vw, 290px);
-  min-height:clamp(300px, 46vh, 420px);
-  display:flex; flex-direction:column;
-  background:linear-gradient(160deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.34) 100%);
-  backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
-  border:1px solid rgba(255,255,255,0.7);
-  border-radius:24px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.85),
-    inset 0 -1px 0 rgba(255,255,255,0.25),
-    0 18px 46px rgba(22,34,63,0.13);
-  scroll-snap-align:start;
-  transition:transform 0.4s var(--ease-snap), box-shadow 0.4s var(--ease-snap), background 0.4s var(--ease-snap);
-}
-.gallery-glass .card:hover,
-.gallery-glass .pregunta-chip:hover{
-  transform:translateY(-6px);
-  background:linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.44) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -1px 0 rgba(255,255,255,0.3),
-    0 28px 62px rgba(22,34,63,0.2);
-}
-/* No image slot here — the text is the whole card, so it fills it: the
-   number + title + copy sit as one vertically-centred block with balanced
-   space top and bottom, never a blank placeholder gap up top. */
-.gallery-glass .card .card-body{ padding:38px 32px; flex:1; display:flex; flex-direction:column; justify-content:center; }
-.gallery-glass .card.value-card .card-num{ font-size:13px; letter-spacing:0.2em; opacity:0.7; margin:0 0 20px; }
-.gallery-glass .card.value-card .card-title{ font-size:19px; margin:0 0 15px; }
-.gallery-glass .card.value-card .card-desc{ font-size:13px; line-height:1.85; }
-.gallery-glass .pregunta-chip{ padding:38px 32px; justify-content:center; }
-.gallery-glass .pregunta-chip .pregunta-num{ font-size:15px; opacity:0.7; margin:0 0 22px; }
-.gallery-glass .pregunta-chip p{ font-size:clamp(18px,1.6vw,24px); margin:0; line-height:1.5; }
+/* Columnas alineadas por arriba: sin caja, lo que ordena la retícula es la
+   línea superior de cada numeral, no un panel de altura común. */
+.gallery-split .gallery{ min-width:0; align-items:flex-start; padding-top:8px; padding-bottom:20px; }
+.gallery-split .pregunta-chip{ flex:0 0 clamp(230px,25vw,300px); scroll-snap-align:start; }
+.gallery-split .pregunta-chip p{ font-size:clamp(18px,1.6vw,24px); line-height:1.45; }
 
 @media(max-width:900px){
   .gallery-split{ grid-template-columns:1fr; gap:22px; align-items:start; }
   .gallery-split-head .h2-display{ font-size:clamp(26px,7vw,40px); }
-  .gallery-glass .card, .gallery-glass .pregunta-chip{ min-height:clamp(300px, 48vh, 400px); }
+  .gallery-split .pregunta-chip{ flex:0 0 clamp(230px,64vw,280px); }
 }
 
 /* ══ Valores Centrales · Método CBCA ══
-   Same background as every other page (the "Metodología CBCA" module slide);
-   the frosted glass cards are kept a touch brighter so they still read as a
-   lifted surface on the near-white field. */
+   Mismo fondo que el resto de la página. */
 .slide-dark{ background:var(--marfil); }
-/* whiter frosted panels so they lift cleanly off the grey */
-.slide-dark .gallery-glass .card,
-.slide-dark .gallery-glass .pregunta-chip{
-  background:linear-gradient(160deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.82) 100%);
-  border-color:rgba(255,255,255,0.85);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -1px 0 rgba(255,255,255,0.4),
-    0 20px 46px rgba(22,34,63,0.16);
-}
-.slide-dark .gallery-glass .card:hover,
-.slide-dark .gallery-glass .pregunta-chip:hover{
-  background:linear-gradient(160deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,1),
-    0 30px 60px rgba(22,34,63,0.22);
-}
