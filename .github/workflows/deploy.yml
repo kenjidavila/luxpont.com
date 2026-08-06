@@ -1,0 +1,54 @@
+# Publica el sitio en GitHub Pages en cada push a main.
+#
+# Sustituye al build "legacy" de Pages, que dejó de funcionar el 6 de agosto de
+# 2026: cuatro builds seguidos se quedaron colgados y murieron contra el techo
+# de ~11 minutos (639s, 635s, 654s, 675s) sin más explicación que "Page build
+# failed". Los builds sanos previos tardaban entre 64s y 234s.
+#
+# La causa está en el historial: el repo arrastra 232 MB de objetos —un
+# hero.mp4 de 95 MB y otros binarios que ya no se usan pero siguen en el
+# pasado— y el builder legacy clona el repositorio entero. Aquí no pasa, porque
+# actions/checkout clona con profundidad 1: baja el árbol de trabajo (~76 MB) y
+# nada más. Y si algo falla, esto deja un log completo en vez de una línea.
+
+name: Deploy a GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:      # permite relanzarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Nunca dos despliegues a la vez. No se cancelan los que ya corren, para no
+# dejar el sitio a medio publicar.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Descargar el repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1    # explícito aunque sea el valor por defecto: es el motivo de existir de este workflow
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empaquetar el sitio
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .           # sitio estático servido desde la raíz; la acción ya excluye .git y .github
+
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4

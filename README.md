@@ -45,17 +45,25 @@ los tres en el mismo commit, o se desincronizan.
 
 ## Deploy
 
-**GitHub Pages** publica automáticamente la rama `main` (raíz del repo) con el
-build legacy — **no hay GitHub Actions ni workflow propio**; basta con `push` a
-`main`. Delante hay **Cloudflare** como DNS y proxy.
+Un `push` a `main` dispara el workflow `.github/workflows/deploy.yml`, que
+empaqueta la raíz del repo y la publica en **GitHub Pages**. Delante hay
+**Cloudflare** como DNS y proxy.
 
 ```
-push a main → GitHub Pages (build legacy) → proxy Cloudflare → luxpont.com
+push a main → GitHub Actions (deploy.yml) → GitHub Pages → proxy Cloudflare → luxpont.com
 ```
+
+Hasta el 6 de agosto de 2026 esto lo hacía el build *legacy* de Pages, sin
+workflow. Dejó de funcionar: cuatro builds seguidos se colgaron hasta morir
+contra el techo de ~11 minutos, sin más diagnóstico que "Page build failed",
+cuando los sanos tardaban entre 64s y 234s. La causa está en el historial —el
+repo arrastra 232 MB de objetos, incluido un `hero.mp4` de 95 MB ya retirado
+del árbol— y el builder legacy clona el repositorio entero. `actions/checkout`
+clona con profundidad 1 y solo baja el árbol de trabajo, unos 76 MB.
 
 | Elemento | Valor real |
 |---|---|
-| Fuente de Pages | rama `main`, path `/` |
+| Fuente de Pages | GitHub Actions (`build_type: workflow`) |
 | Dominio | `luxpont.com` (fichero `CNAME`) + `www` |
 | HTTPS | certificado GitHub, `Enforce HTTPS` activo |
 | DNS | nameservers de Cloudflare (`alexandra` / `lamar`.ns.cloudflare.com) |
@@ -76,15 +84,20 @@ comportamiento esperado, no un error del repo.
 
 ### Comprobar que un cambio está realmente publicado
 
-Los builds de Pages pueden **fallar y dejar producción en un commit anterior**
-sin aviso visible. Tras cada push conviene verificar:
+Un despliegue puede fallar y dejar producción en un commit anterior. Tras cada
+push:
 
 ```bash
-gh api repos/kenjidavila/luxpont.com/pages/builds \
-  --jq '.[0] | "\(.created_at)  \(.status)  \(.commit[0:7])"'
+gh run list --workflow=deploy.yml --limit 3
+gh run view --log-failed          # si algo ha fallado, aquí está el motivo
 ```
 
-`status` debe ser `built`, y el commit debe coincidir con el `HEAD` local.
+La comprobación que no miente es preguntarle al sitio en vivo qué versión
+sirve, porque Cloudflare cachea el HTML 10 minutos:
+
+```bash
+curl -s https://luxpont.com/ | grep -o 'site.css?v=[0-9]*' | head -1
+```
 
 ---
 
