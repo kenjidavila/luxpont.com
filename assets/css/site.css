@@ -535,7 +535,7 @@ body.lang-banner-active #nav{ top:57px; }
 .gallery-nav button:active{ transform:scale(0.92); transition-duration:0.1s; }
 .bg-black .gallery-nav button{ border-color:rgba(22,34,63,0.22); color:var(--navy); }
 .bg-black .gallery-nav button:hover{ border-color:var(--gold); color:var(--oro-texto); }
-.gallery-note{ font-family:var(--mono); font-size:9px; color:rgba(22,34,63,0.4); letter-spacing:0.08em; margin:14px 0 0; max-width:560px; }
+.gallery-note{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.4); letter-spacing:0.08em; margin:14px 0 0; max-width:560px; }
 .bg-black .gallery-note{ color:rgba(22,34,63,0.4); }
 
 /* El aire entre columnas es la única separación: nada de marcos. */
@@ -630,9 +630,9 @@ body.lang-banner-active #nav{ top:57px; }
 .dossier-btn{ display:flex; align-items:center; gap:16px; background:var(--marfil); border:1px solid rgba(183,148,78,0.3); border-radius:10px; padding:17px 24px; color:var(--navy); transition:background 0.25s var(--ease-snap), border-color 0.25s var(--ease-snap), box-shadow 0.25s var(--ease-snap), transform 0.25s var(--ease-snap); }
 .dossier-btn:hover{ background:rgba(183,148,78,0.1); border-color:rgba(183,148,78,0.6); color:var(--navy); box-shadow:0 8px 20px rgba(22,34,63,0.08); transform:translateX(4px); }
 .db-flag{ font-size:16px; flex-shrink:0; }
-.db-text{ font-family:var(--mono); font-size:9px; letter-spacing:0.14em; text-transform:uppercase; flex:1; }
+.db-text{ font-family:var(--mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; flex:1; }
 .db-arrow{ color:var(--oro-texto); font-family:var(--mono); font-size:14px; }
-.dossier-note{ font-family:var(--mono); font-size:7px; color:rgba(22,34,63,0.4); letter-spacing:0.16em; text-transform:uppercase; margin-top:10px; }
+.dossier-note{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.4); letter-spacing:0.16em; text-transform:uppercase; margin-top:10px; }
 
 /* ════════════════════════════════════════════════════════
   CONTACTO
@@ -643,11 +643,11 @@ body.lang-banner-active #nav{ top:57px; }
 .ct-detail{ display:flex; flex-direction:column; }
 .ct-row{ display:flex; justify-content:space-between; align-items:baseline; padding:13px 0; border-bottom:1px solid var(--border); gap:16px; }
 .ct-row:first-child{ border-top:1px solid var(--border); }
-.ct-lbl{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.4); letter-spacing:0.14em; text-transform:uppercase; flex-shrink:0; }
+.ct-lbl{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.4); letter-spacing:0.14em; text-transform:uppercase; flex-shrink:0; }
 .ct-val{ font-family:var(--sans); font-size:12px; font-weight:300; color:var(--black); text-align:right; }
 .ct-val a{ color:var(--black); }
 .ct-form{ display:flex; flex-direction:column; gap:14px; }
-.f-lbl{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.45); letter-spacing:0.14em; text-transform:uppercase; display:block; margin-bottom:6px; }
+.f-lbl{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.45); letter-spacing:0.14em; text-transform:uppercase; display:block; margin-bottom:6px; }
 .f-in{ width:100%; background:rgba(22,34,63,0.04); border:1px solid rgba(22,34,63,0.10); border-radius:12px; color:var(--ink); padding:14px 16px; font-family:var(--sans); font-size:15px; font-weight:400; line-height:1.6; outline:none; transition:border-color 0.2s var(--ease-snap), box-shadow 0.2s var(--ease-snap), background 0.2s var(--ease-snap); }
 .f-in:focus{ border-color:var(--gold); background:#fff; box-shadow:0 0 0 3px rgba(119,102,72,0.12); }
 .f-in::placeholder{ color:rgba(22,34,63,0.32); }
@@ -655,7 +655,7 @@ body.lang-banner-active #nav{ top:57px; }
 .f-consent input{ margin-top:3px; accent-color:var(--gold); flex-shrink:0; }
 .f-consent-lbl{ font-family:var(--sans); font-size:11px; font-weight:300; color:rgba(22,34,63,0.55); line-height:1.7; cursor:pointer; }
 .f-consent-lbl a{ color:var(--oro-texto); text-decoration:underline; }
-.f-note{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.35); letter-spacing:0.08em; line-height:1.8; border-top:1px solid var(--border); padding-top:12px; }
+.f-note{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.35); letter-spacing:0.08em; line-height:1.8; border-top:1px solid var(--border); padding-top:12px; }
 /* Solid navy submit button — its "real" colour. It stays visibly muted
    (translucent navy) until the required fields are filled and consent is
    given, then snaps to the full solid navy so the form reads as ready. */
@@ -677,11 +677,15 @@ body.lang-banner-active #nav{ top:57px; }
 footer{ background:var(--white); padding:14px var(--gutter); display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px; }
 .ft-word{ display:flex; align-items:center; gap:9px; font-family:var(--serif); font-size:20px; font-weight:600; color:var(--ink); }
 .ft-word img{ height:26px; width:auto; display:block; flex-shrink:0; }
-.ft-cities{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.45); letter-spacing:0.1em; }
+/* El pie estaba a 8px: por debajo del suelo de legibilidad, y en móvil sus
+   enlaces medían 14px de alto frente a los ~44px de área táctil recomendada.
+   10px en mono es el mismo cuerpo que .card-kicker y .tag, así que sigue
+   siendo tipografía de metadato —discreta— pero se lee. */
+.ft-cities{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.45); letter-spacing:0.1em; }
 .ft-links{ display:flex; gap:20px; }
-.ft-links a{ font-family:var(--mono); font-size:8px; color:rgba(22,34,63,0.42); letter-spacing:0.1em; text-transform:uppercase; transition:color 0.2s var(--ease-snap); }
+.ft-links a{ font-family:var(--mono); font-size:10px; color:rgba(22,34,63,0.42); letter-spacing:0.1em; text-transform:uppercase; transition:color 0.2s var(--ease-snap); }
 .ft-links a:hover{ color:var(--oro-texto); }
-.ft-copy{ font-family:var(--sans); font-size:10px; font-weight:300; color:rgba(22,34,63,0.4); }
+.ft-copy{ font-family:var(--sans); font-size:11px; font-weight:300; color:rgba(22,34,63,0.4); }
 
 /* ════════════════════════════════════════════════════════
   PRIVACY MODAL
@@ -713,6 +717,16 @@ footer{ background:var(--white); padding:14px var(--gutter); display:flex; align
 .btn-cookie-reject:hover{ color:rgba(22,34,63,0.85); border-color:rgba(22,34,63,0.45); }
 .btn-cookie-reject:active{ transform:scale(0.96); transition-duration:0.1s; }
 
+/* Áreas táctiles en pantallas de dedo. Los enlaces del pie y el email de
+   contacto son objetivos aislados —no van dentro de un párrafo—, así que les
+   toca el mínimo de 44px: se lo damos con padding, sin tocar el cuerpo de
+   letra ni el ritmo del pie en escritorio. Los enlaces en línea dentro de
+   prosa (la Política de Privacidad del consentimiento) quedan fuera: partirles
+   la caja rompería el interlineado y la propia norma los exceptúa. */
+@media(hover:none) and (pointer:coarse), (max-width:960px){
+  .ft-links a{ display:inline-flex; align-items:center; min-height:44px; }
+  .ct-val a{ display:inline-block; padding:12px 0; }
+}
 @media(max-width:960px){ :root{ --section:72px; --gutter:6vw; } }
 @media(max-width:600px){ :root{ --t-hero:clamp(38px,11vw,52px); } .grid-2{ gap:36px; } .section{ padding-left:6vw; padding-right:6vw; } }
 
