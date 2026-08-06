@@ -175,15 +175,31 @@ body.lang-banner-active #nav{ top:57px; }
 .nav-burger span{ display:block; height:1px; background:var(--navy); transition:background 0.35s; }
 #nav.scrolled .nav-burger span{ background:var(--black); }
 
-#nav-mobile{ position:fixed; inset:0 0 auto 0; top:0; z-index:950; background:var(--white); transform:translateY(-100%); transition:transform 0.4s var(--ease); padding:0 var(--gutter) 40px; box-shadow:0 20px 50px rgba(0,0,0,0.18); max-height:100vh; overflow-y:auto; }
+/* Menú móvil a pantalla completa. Antes era una hoja desplegable cuya altura la
+   marcaba el contenido: 606px fijos, o sea el 72% de un iPhone y el 51% de un
+   iPad, con la página asomando debajo y el banner de cookies por encima. Ahora
+   ocupa el alto real de ventana (100dvh: en iOS descuenta la barra del
+   navegador) y reparte el espacio en tres franjas —cabecera, índice, idiomas—
+   así que se ve proporcionado en cualquier pantalla. z-index por encima del
+   banner de cookies (9000) y del de idioma (9100), por debajo del modal. */
+#nav-mobile{
+  position:fixed; inset:0; z-index:9500; background:var(--white);
+  transform:translateY(-100%); transition:transform 0.4s var(--ease);
+  padding:0 var(--gutter) max(28px, env(safe-area-inset-bottom));
+  box-shadow:0 20px 50px rgba(0,0,0,0.18);
+  height:100vh; height:100dvh; overflow-y:auto; overscroll-behavior:contain;
+  display:flex; flex-direction:column;
+}
 #nav-mobile.open{ transform:translateY(0); }
-.nav-mobile-top{ display:flex; align-items:center; justify-content:space-between; height:72px; }
-.nav-mobile-close{ background:transparent; border:none; font-size:22px; color:var(--black); cursor:pointer; transition:transform 0.2s var(--ease-snap); }
+.nav-mobile-top{ display:flex; align-items:center; justify-content:space-between; height:clamp(56px,8vh,76px); flex:0 0 auto; }
+.nav-mobile-close{ background:transparent; border:none; font-size:26px; line-height:1; color:var(--black); cursor:pointer; transition:transform 0.2s var(--ease-snap); width:44px; height:44px; display:flex; align-items:center; justify-content:center; margin-right:-10px; }
 .nav-mobile-close:hover{ transform:rotate(90deg); }
-.nav-mobile-links{ display:flex; flex-direction:column; margin-top:12px; }
-.nav-mobile-links a{ font-family:var(--accent); font-size:26px; font-weight:400; color:var(--black); padding:14px 0; border-bottom:1px solid var(--border); transition:color 0.2s var(--ease-snap), padding-left 0.2s var(--ease-snap); display:block; }
+/* El índice se queda con el espacio sobrante y se centra en él; flex-basis auto
+   + shrink 0 para que en apaisado crezca y sea el panel el que haga scroll. */
+.nav-mobile-links{ display:flex; flex-direction:column; justify-content:center; flex:1 0 auto; width:100%; max-width:560px; margin:0; }
+.nav-mobile-links a{ font-family:var(--accent); font-size:clamp(21px,5.2vw,30px); font-weight:400; color:var(--black); padding:clamp(13px,3vh,26px) 0; border-bottom:1px solid var(--border); transition:color 0.2s var(--ease-snap), padding-left 0.2s var(--ease-snap); display:block; }
 .nav-mobile-links a:hover{ color:var(--oro-texto); padding-left:6px; }
-.nav-mobile-langs{ display:flex; gap:18px; margin-top:24px; font-family:var(--mono); font-size:11px; letter-spacing:0.1em; }
+.nav-mobile-langs{ display:flex; gap:18px; flex:0 0 auto; padding-top:clamp(20px,3vh,30px); font-family:var(--mono); font-size:11px; letter-spacing:0.1em; }
 .nav-mobile-langs a{ color:rgba(22,34,63,0.5); }
 .nav-mobile-langs a.current{ color:var(--oro-texto); }
 
@@ -457,6 +473,10 @@ body.lang-banner-active #nav{ top:57px; }
   .pin-layer{ position:relative; inset:auto; opacity:1; pointer-events:auto; }
   #hero{ height:100vh; min-height:600px; }
   .slide{ min-height:0; padding:72px var(--gutter) 56px; }
+  /* Con las capas en flujo, el ancla cae justo en el borde superior de su
+     sección y la barra fija del nav taparía el kicker. Este margen la deja
+     por debajo. Pineado no hace falta: allí la capa ocupa toda la ventana. */
+  .pin-anchor{ scroll-margin-top:84px; }
 }
 @media(max-width:960px){ .hero-h1{ font-size:clamp(40px,6vw,64px); } }
 @media(max-width:600px){ .hero-h1{ font-size:clamp(32px,9vw,48px); } .hero-lead{ font-size:16px; max-width:100%; } .hero-actions{ flex-direction:column; gap:10px; } .btn-solid,.btn-outline{ text-align:center; } }

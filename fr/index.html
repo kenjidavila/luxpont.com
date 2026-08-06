@@ -171,8 +171,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/assets/css/site.css?v=10">
-<link rel="preload" as="script" href="/assets/js/particle-shapes.js?v=10">
+<link rel="stylesheet" href="/assets/css/site.css?v=11">
+<link rel="preload" as="script" href="/assets/js/particle-shapes.js?v=11">
 </head>
 <body>
 
@@ -237,12 +237,17 @@
 
   <!-- ══ SÉQUENCE FIXE — 12 diapositives superposées, sans défilement perceptible ══ -->
   <div id="hero-track">
-    <div id="firma" class="pin-anchor" aria-hidden="true" style="top:156vh"></div>
-    <div id="metodo" class="pin-anchor" aria-hidden="true" style="top:516vh"></div>
-    <div id="mandatos" class="pin-anchor" aria-hidden="true" style="top:996vh"></div>
-    <div id="cobertura" class="pin-anchor" aria-hidden="true" style="top:1236vh"></div>
-    <div id="dossier" class="pin-anchor" aria-hidden="true" style="top:1356vh"></div>
-    <div id="contacto" class="pin-anchor" aria-hidden="true" style="top:1476vh"></div>
+    <!-- Anclas de navegacion. data-layer = indice de la .pin-layer destino; main.js
+         calcula su posicion real en cada resize, tanto con la secuencia pineada
+         (recorrido del track) como en movil, donde las capas caen a flujo normal.
+         NO fijar "top" a mano: los valores en vh que habia aqui solo cuadraban en
+         una ventana concreta y en movil mandaban al usuario a espacio vacio. -->
+    <div id="firma" class="pin-anchor" data-layer="1" aria-hidden="true"></div>
+    <div id="metodo" class="pin-anchor" data-layer="4" aria-hidden="true"></div>
+    <div id="mandatos" class="pin-anchor" data-layer="8" aria-hidden="true"></div>
+    <div id="cobertura" class="pin-anchor" data-layer="10" aria-hidden="true"></div>
+    <div id="dossier" class="pin-anchor" data-layer="11" aria-hidden="true"></div>
+    <div id="contacto" class="pin-anchor" data-layer="12" aria-hidden="true"></div>
 
     <div class="pin-wrapper">
 
@@ -626,8 +631,8 @@
   </div>
 </div>
 
-<script src="/assets/js/particle-shapes.js?v=10"></script>
-<script src="/assets/js/particles.js?v=10"></script>
-<script src="/assets/js/main.js?v=10"></script>
+<script src="/assets/js/particle-shapes.js?v=11"></script>
+<script src="/assets/js/particles.js?v=11"></script>
+<script src="/assets/js/main.js?v=11"></script>
 </body>
 </html>

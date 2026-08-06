@@ -108,6 +108,60 @@ window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', onScroll);
 onScroll();
 
+// ── ANCLAS DE NAVEGACIÓN ────────────────────────────────────────────────────
+// Los enlaces del nav (#metodo, #contacto…) apuntan a divs .pin-anchor de 1px
+// dentro del track. Su posición NO puede escribirse a mano: depende de si la
+// secuencia está pineada —y entonces del recorrido del track, que se mide en
+// alturas de ventana— o de si el CSS la ha soltado a flujo normal (móvil y
+// reduced-motion), donde cada capa ocupa su altura real de contenido. Las
+// posiciones fijas en vh que había antes solo cuadraban en una ventana
+// concreta: en móvil mandaban al usuario a espacio vacío, y la última ancla
+// caía más allá del final del track, así que "Contacto" aterrizaba en el hueco
+// entre la última diapositiva y el pie. Aquí se recalculan contra la geometría
+// real cada vez que cambia.
+const pinAnchors = Array.from(document.querySelectorAll('.pin-anchor[data-layer]'));
+function placeAnchors(){
+  if (!heroTrack || !pinWrapper || pinLayers.length < 2 || !pinAnchors.length) return;
+  const pinned = getComputedStyle(pinWrapper).position === 'sticky' && !reduceMotion;
+  const n = pinLayers.length;
+  // Recorrido que consume la secuencia pineada: el mismo denominador que usa
+  // onScroll() para repartir las capas, así que la capa i queda exactamente
+  // centrada (frac = 0 → opacidad 1) al aterrizar en i * paso.
+  const span = Math.max(1, heroTrack.offsetHeight - window.innerHeight);
+  const trackTop = heroTrack.getBoundingClientRect().top + window.scrollY;
+  pinAnchors.forEach(a => {
+    const i = Math.min(n - 1, Math.max(0, parseInt(a.dataset.layer, 10) || 0));
+    const top = pinned
+      ? Math.round(i * span / (n - 1))
+      : Math.round(pinLayers[i].getBoundingClientRect().top + window.scrollY - trackTop);
+    a.style.top = top + 'px';
+  });
+}
+
+// Un hash de entrada (luxpont.com/#contacto) lo resuelve el navegador antes de
+// que este script coloque las anclas, así que hay que repetir el salto —sin
+// animación— una vez la geometría es correcta.
+function honourHash(){
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (!el || !el.classList.contains('pin-anchor')) return;
+  const root = document.documentElement;
+  const prev = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  el.scrollIntoView();
+  root.style.scrollBehavior = prev;
+  onScroll();
+}
+
+placeAnchors();
+honourHash();
+window.addEventListener('load', () => { placeAnchors(); honourHash(); });
+window.addEventListener('resize', placeAnchors);
+// Las imágenes lazy cambian la altura real de las capas cuando el layout está
+// en flujo (móvil), y con ella la posición correcta de cada ancla.
+if (window.ResizeObserver) new ResizeObserver(placeAnchors).observe(pinWrapper || document.body);
+
 // ── REVEAL ON SCROLL — fades in AND out as content crosses the viewport ──────
 // Symmetric top/bottom margin so each element fades in a touch before it
 // reaches the edge and fades out a touch before it fully leaves, instead of
