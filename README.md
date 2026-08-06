@@ -78,9 +78,24 @@ JavaScript está externalizado en `assets/js/` y no puede haber `<script>` inlin
 ni handlers `onclick=` en el HTML. Si se añade JS inline, la CSP lo bloquea en
 producción aunque funcione en local.
 
+**`connect-src` incluye `https://formspree.io`, y no es un descuido: es lo que
+mantiene vivo el formulario de contacto.** `main.js` envía por `fetch()` a
+Formspree, que es otro origen; con el `connect-src 'self'` a secas que había
+antes, el navegador abortaba cada envío y el visitante veía "Ha ocurrido un
+error". Ningún contacto llegaba, y nada en el repo lo delataba porque la CSP no
+vive aquí. Si alguien vuelve a cerrar esa directiva, el formulario deja de
+funcionar en silencio.
+
 Cloudflare también aplica **email obfuscation**: las direcciones de correo del
 HTML se reescriben a `/cdn-cgi/l/email-protection` en la respuesta servida. Es
 comportamiento esperado, no un error del repo.
+
+Ninguna de estas cabeceras está versionada aquí. Para comprobar qué sirve
+producción de verdad:
+
+```bash
+curl -sI https://luxpont.com/ | grep -i content-security-policy
+```
 
 ### Comprobar que un cambio está realmente publicado
 
@@ -135,6 +150,17 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqegodkr';
 
 El botón de envío arranca deshabilitado y solo se habilita con nombre, email
 válido y consentimiento RGPD marcado.
+
+Depende de que `connect-src` de la CSP autorice `https://formspree.io` — ver
+más arriba. Esa cabecera la pone Cloudflare, no el repo: si el formulario deja
+de enviar sin que nadie haya tocado el código, es lo primero que hay que mirar.
+
+Se usa Formspree en vez de enviar el correo desde aquí porque el sitio es
+estático y no ejecuta nada. La alternativa de un Worker de Cloudflare con Email
+Routing no es viable: exigiría poner los MX de Cloudflare en el dominio, y el
+buzón está en Proton Mail. Formspree además envía desde su propio dominio con el
+correo del visitante en `Reply-To`, así que el DMARC de luxpont.com (`p=quarantine`)
+no interfiere.
 
 ---
 
