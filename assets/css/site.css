@@ -611,15 +611,15 @@ body.lang-banner-active #nav{ top:57px; }
 .cov-zona{ font-family:var(--serif); font-size:clamp(20px,1.9vw,26px); font-weight:600; letter-spacing:-0.005em; line-height:1.15; color:var(--ink); margin:0 0 8px; }
 .cov-desc{ font-family:var(--sans); font-size:14px; font-weight:300; line-height:1.65; color:var(--muted); margin:0 0 6px; max-width:54ch; }
 .cov-juris{ font-family:var(--sans); font-size:14px; font-weight:400; line-height:1.65; color:var(--ink-soft); margin:0; max-width:54ch; }
-/* El segundo titular de la sección necesita su propio aire: dos display
-   seguidos, con la lista en medio, se pisaban. Mínimo 64px de separación. */
-.cov-cierre{ margin-top:clamp(64px,7vw,88px); }
+/* El segundo titular de la sección necesita su propio aire, pero con la lista
+   en dos ítems ya no hay riesgo de que se pisen: sube y se acerca al bloque. */
+.cov-cierre{ margin-top:clamp(36px,4vw,52px); }
 .cov-cierre .h2-display{ margin-bottom:14px; }
 @media(max-width:960px){
   .cov-item{ padding:18px 0; }
   .cov-zona{ font-size:20px; }
   .cov-desc, .cov-juris{ font-size:13.5px; }
-  .cov-cierre{ margin-top:64px; }
+  .cov-cierre{ margin-top:36px; }
 }
 
 /* ════════════════════════════════════════════════════════
