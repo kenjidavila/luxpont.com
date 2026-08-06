@@ -101,6 +101,15 @@ button { font-family:inherit; }
    al kicker en mayúsculas (.label / .card-kicker / .tag / eyebrow). */
 .h2-display em { font-family:inherit; font-style:normal; font-weight:inherit; font-stretch:inherit; letter-spacing:inherit; color:inherit; }
 .h2-display.on-dark { color:var(--navy); }
+/* El remate de un titular en oro. Dos variantes, según lo que pida el titular:
+   el manifiesto del método sólo cambia de color, porque sus frases ya van cada
+   una en su línea; los de Cobertura llevan además display:block, que es lo que
+   baja el remate a una línea propia debajo de la frase que lo introduce.
+   Van con mayor especificidad (.h2-display.x em) que la regla de arriba, que
+   fuerza color:inherit y si no ganaría por orden. Y el oro es --oro-texto: el
+   de marca no pasa AA como texto sobre marfil. */
+.h2-display.metodo-manifesto em { color:var(--oro-texto); }
+.h2-display.remate-oro em { display:block; color:var(--oro-texto); }
 .body-text { font-family:var(--sans); font-size:16px; font-weight:400; line-height:1.7; color:var(--ink-soft); }
 .body-text p { margin-bottom:16px; }
 .body-text p:last-child { margin-bottom:0; }
@@ -228,12 +237,47 @@ body.lang-banner-active #nav{ top:57px; }
 .hero-eyebrow{ font-family:var(--mono); font-size:11px; color:var(--oro-texto); letter-spacing:0.24em; text-transform:uppercase; margin-bottom:20px; opacity:0; animation:fadeUp 0.8s var(--ease) 0.3s forwards; }
 .hero-h1{ font-family:var(--serif); font-size:clamp(40px,5vw,64px); font-weight:600; line-height:1.05; color:var(--ink); text-shadow:0 0 22px rgba(255,255,255,0.7); margin:0 0 24px; max-width:780px; letter-spacing:-0.01em; opacity:0; animation:fadeUp 0.9s var(--ease) 0.45s forwards; }
 .hero-h1 em{ font-family:var(--serif); font-style:italic; font-weight:500; font-stretch:normal; letter-spacing:-0.01em; color:inherit; }
-/* MONOCROMO: el H1 iba antes en dos colores, alternando qué frase se teñía de
-   dorado según el landmark activo (.mirrored). Ambas cláusulas van ahora en
-   marino sólido; el movimiento del hero lo lleva la posición, no el color. */
-.hero-h1-a, .hero-h1-b{ display:block; color:inherit; }
-.hero-content.mirrored .hero-h1-a,
-.hero-content.mirrored .hero-h1-b{ color:inherit; }
+/* El H1 vuelve a dos colores: se tiñe de oro la frase que le toca al landmark
+   activo — "Preserva tu legado" mientras está el Coliseo, "Expande tu futuro"
+   cuando entra Metropolis — y la otra se queda en marino.
+
+   El color NO puede colgar de la clase .mirrored. particles.js la aplica con
+   un setTimeout a los 880ms del relevo, y ese temporizador compite con el
+   dibujado del campo de partículas, que ocupa el hilo principal entero cada
+   frame: llega tarde, y para entonces el titular ya ha reaparecido con los
+   colores viejos, así que el cambio se ve ocurrir. La posición y la opacidad
+   no sufrían ese retraso porque las lleva la animación CSS, que va por su
+   propia línea de tiempo.
+   Así que el color se muda a esa misma línea de tiempo: las keyframes del
+   relevo llevan ahora los dos tonos, y cambian entre el 38% y el 40%, que es
+   la ventana en la que el titular está a opacity:0. Al ir dentro de la
+   animación es imposible que se desincronice del salto de lado. Reaparece ya
+   con el color definitivo, siempre.
+   Van como custom properties registradas para que las keyframes puedan
+   interpolarlas; @property no admite var() en initial-value, de ahí que los
+   dos tonos estén en crudo: #8a6e2e es --oro-texto y #16223f es --navy. Los
+   valores iniciales son los del Coliseo, que es el estado de partida antes
+   de que corra ninguna animación.
+   Ojo con el tono: el oro de texto es #8a6e2e, no el de marca (#b7944e), que
+   sobre marfil da 2.6:1 y no pasa AA. */
+@property --h1-a{ syntax:'<color>'; inherits:true; initial-value:#8a6e2e; }
+@property --h1-b{ syntax:'<color>'; inherits:true; initial-value:#16223f; }
+.hero-h1-a, .hero-h1-b{ display:block; }
+.hero-h1-a{ color:var(--h1-a); }
+.hero-h1-b{ color:var(--h1-b); }
+/* El reposo lo fija la clase, igual que la posición. Hace falta porque
+   particles.js borra la animación inline en cuanto termina (el animationend de
+   ahí arriba): si el color viviera solo en las keyframes, al limpiarlas volvería
+   al valor inicial con Metropolis todavía en pantalla otros 17 segundos, que es
+   justo lo que pasaba. Los dos mecanismos coinciden, así que el relevo entre
+   ellos no se ve.
+   Y la clase habla en custom properties, no en `color`, a propósito: las
+   animaciones ganan a las declaraciones normales pase lo que pase con la
+   especificidad, así que mientras corre el relevo mandan las keyframes aunque
+   la clase ya esté puesta. Eso desactiva por completo el retraso del setTimeout
+   que la aplica, en los dos sentidos del ciclo. */
+.hero-content{ --h1-a:#8a6e2e; --h1-b:#16223f; }
+.hero-content.mirrored{ --h1-a:#16223f; --h1-b:#8a6e2e; }
 .hero-lead{ font-family:var(--sans); font-size:clamp(18px,1.8vw,20px); font-weight:400; color:var(--ink-soft); text-shadow:0 1px 3px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.85), 0 0 30px rgba(255,255,255,0.6); max-width:520px; margin:0 0 40px; line-height:1.55; letter-spacing:0; opacity:0; animation:fadeUp 0.9s var(--ease) 0.6s forwards; }
 .hero-lead em{ font-style:italic; color:var(--navy); }
 .hero-actions{ display:flex; gap:14px; flex-wrap:wrap; justify-content:flex-start; opacity:0; animation:fadeUp 0.9s var(--ease) 0.75s forwards; }
@@ -277,16 +321,16 @@ body.lang-banner-active #nav{ top:57px; }
    .style.animation (not this file's own trigger) because the direction
    depends on which landmark is becoming active — see the comment there. */
 @keyframes hero-fade-to-mirrored{
-  0%   { opacity:1; left:var(--hero-edge); text-align:left; }
-  38%  { opacity:0; }
-  40%  { opacity:0; left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge)))); text-align:right; }
-  100% { opacity:1; }
+  0%   { opacity:1; left:var(--hero-edge); text-align:left; --h1-a:#8a6e2e; --h1-b:#16223f; }
+  38%  { opacity:0; --h1-a:#8a6e2e; --h1-b:#16223f; }
+  40%  { opacity:0; left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge)))); text-align:right; --h1-a:#16223f; --h1-b:#8a6e2e; }
+  100% { opacity:1; --h1-a:#16223f; --h1-b:#8a6e2e; }
 }
 @keyframes hero-fade-to-normal{
-  0%   { opacity:1; left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge)))); text-align:right; }
-  38%  { opacity:0; }
-  40%  { opacity:0; left:var(--hero-edge); text-align:left; }
-  100% { opacity:1; }
+  0%   { opacity:1; left:calc(100% - var(--hero-edge) - min(780px, calc(100% - 2 * var(--hero-edge)))); text-align:right; --h1-a:#16223f; --h1-b:#8a6e2e; }
+  38%  { opacity:0; --h1-a:#16223f; --h1-b:#8a6e2e; }
+  40%  { opacity:0; left:var(--hero-edge); text-align:left; --h1-a:#8a6e2e; --h1-b:#16223f; }
+  100% { opacity:1; --h1-a:#8a6e2e; --h1-b:#16223f; }
 }
 @media(min-width:1101px){
   .hero-content{

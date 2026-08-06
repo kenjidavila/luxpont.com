@@ -21,3 +21,6 @@ npm-debug.log*
 # Archivos temporales
 *.tmp
 *.bak
+
+# Herramientas locales (no forman parte del sitio publicado)
+preview.py
