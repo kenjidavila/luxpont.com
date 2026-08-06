@@ -52,3 +52,10 @@ jobs:
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # El artefacto ronda los 76 MB (36 MB de dossiers, 30 MB de imágenes y
+          # los 8,5 MB de particle-shapes.js) y Pages tarda en digerirlo: con el
+          # timeout por defecto de 10 minutos la acción aborta un despliegue que
+          # aún iba en marcha y lo cancela. Media hora da margen de sobra.
+          # Lo que de verdad arregla esto es adelgazar el sitio.
+          timeout: 1800000
